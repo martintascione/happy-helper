@@ -17,10 +17,12 @@ function ChatPage() {
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { startDirect } = Route.useSearch() as { startDirect?: string };
+  const navigate = useNavigate();
 
   useEffect(() => {
     initChat();
-  }, []);
+  }, [startDirect]);
 
   useEffect(() => {
     if (selectedConversation) {
@@ -62,6 +64,83 @@ function ChatPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     setCurrentUserId(user.id);
+
+    // Get building_id
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("building_id")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile) return;
+
+    // If startDirect is present, check/create direct conversation
+    if (startDirect && startDirect !== user.id) {
+      // Find if conversation exists
+      const { data: existingMembers } = await supabase
+        .from("conversation_members" as any)
+        .select("conversation_id")
+        .eq("user_id", user.id);
+
+      const convIds = (existingMembers || []).map((m: any) => m.conversation_id);
+
+      if (convIds.length > 0) {
+        const { data: commonConv } = await supabase
+          .from("conversation_members" as any)
+          .select("conversation_id")
+          .eq("user_id", startDirect)
+          .in("conversation_id", convIds)
+          .maybeSingle();
+
+        if (commonConv) {
+          // Check if it's "directa"
+          const { data: convData } = await supabase
+            .from("conversations" as any)
+            .select("type")
+            .eq("id", commonConv.conversation_id)
+            .single();
+          
+          if (convData?.type === 'directa') {
+            // It exists, we'll select it later
+          }
+        } else {
+          // Create new direct conversation
+          const { data: newConv } = await supabase
+            .from("conversations" as any)
+            .insert({ building_id: profile.building_id, type: 'directa' })
+            .select()
+            .single();
+
+          if (newConv) {
+            await supabase
+              .from("conversation_members" as any)
+              .insert([
+                { conversation_id: newConv.id, user_id: user.id },
+                { conversation_id: newConv.id, user_id: startDirect }
+              ]);
+          }
+        }
+      } else {
+        // Create new direct conversation (first one)
+        const { data: newConv } = await supabase
+          .from("conversations" as any)
+          .insert({ building_id: profile.building_id, type: 'directa' })
+          .select()
+          .single();
+
+        if (newConv) {
+          await supabase
+            .from("conversation_members" as any)
+            .insert([
+              { conversation_id: newConv.id, user_id: user.id },
+              { conversation_id: newConv.id, user_id: startDirect }
+            ]);
+        }
+      }
+      
+      // Clear search param to avoid re-creation
+      navigate({ to: "/_authenticated/chat", search: {} as any, replace: true });
+    }
 
     // Fetch conversations
     const { data: membersData } = await supabase
