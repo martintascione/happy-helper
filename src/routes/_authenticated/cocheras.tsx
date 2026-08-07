@@ -725,7 +725,12 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
       <Dialog open={isAddingPayout} onOpenChange={setIsAddingPayout}>
         <DialogContent className="rounded-[2.5rem] border-none">
           <DialogHeader><DialogTitle className="font-black text-2xl">Datos de Cobro</DialogTitle></DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-6 py-4">
+            <InfoBanner 
+              variant="info" 
+              text="Tus datos bancarios se usan únicamente para transferirte tus cobros. Solo los ve la administración de la plataforma: nunca se muestran a otros vecinos." 
+            />
+            <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Titular de la cuenta</label>
               <Input placeholder="Nombre completo" value={payoutForm.holder_name} onChange={(e) => setPayoutForm({...payoutForm, holder_name: e.target.value})} className="rounded-2xl h-12 bg-gray-50 border-none font-bold" />
@@ -738,6 +743,7 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">CBU o Alias</label>
               <Input placeholder="22 dígitos o alias" value={payoutForm.cbu_or_alias} onChange={(e) => setPayoutForm({...payoutForm, cbu_or_alias: e.target.value})} className="rounded-2xl h-12 bg-gray-50 border-none font-bold" />
             </div>
+          </div>
           </div>
           <DialogFooter><Button onClick={handleSavePayout} className="w-full bg-black text-white h-14 rounded-2xl font-black">Guardar datos</Button></DialogFooter>
         </DialogContent>
