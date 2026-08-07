@@ -88,7 +88,7 @@ function MuroPage() {
       title: postTitle || (postType === 'oficial' ? 'Comunicado Oficial' : 'Aviso Vecinal'),
       body: postContent,
       author_id: user.id,
-      building_id: profile?.building_id,
+      building_id: profile?.building_id || '',
       type: postType
     });
 
