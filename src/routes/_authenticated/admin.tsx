@@ -163,9 +163,9 @@ function AdminPage() {
 
         <div className="space-y-3">
           {profiles.map((p) => (
-            <div key={p.id} className="bg-white p-5 rounded-[24px] shadow-soft border border-slate-50 flex items-center gap-4">
-              <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 shrink-0 overflow-hidden">
-                {p.avatar_url ? <img src={p.avatar_url} className="w-full h-full object-cover" /> : <User size={20} />}
+            <div key={p.id} className="bg-white p-6 rounded-[2.5rem] shadow-subtle border border-black/[0.03] flex items-center gap-5 group hover:bg-black/[0.01] transition-all">
+              <div className="w-14 h-14 bg-black/[0.03] rounded-2xl flex items-center justify-center text-muted-foreground shrink-0 overflow-hidden border border-black/[0.05]">
+                {p.avatar_url ? <img src={p.avatar_url} className="w-full h-full object-cover" /> : <User size={24} />}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-slate-900 truncate">{p.full_name}</p>
