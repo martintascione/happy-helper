@@ -232,10 +232,10 @@ function CocherasPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-1 py-3 text-[9px] font-black uppercase rounded-2xl transition-all text-center border ${
+            className={`px-1 py-3 text-[10px] font-bold uppercase tracking-wider rounded-2xl transition-all text-center border ${
               activeTab === tab.id 
-                ? "bg-black text-white shadow-lg border-black" 
-                : "bg-white text-slate-400 border-slate-100"
+                ? "bg-primary text-primary-foreground shadow-pill border-primary" 
+                : "bg-white text-muted-foreground border-black/[0.03]"
             }`}
           >
             {tab.label}
