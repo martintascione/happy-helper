@@ -364,7 +364,7 @@ function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-5 bg-primary text-white rounded-2xl font-bold shadow-xl shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full py-5 bg-primary text-white rounded-2xl font-bold shadow-xl shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 relative z-10"
             >
               {loading ? "Procesando..." : isSignUp ? "Registrarme" : "Ingresar"}
             </button>
