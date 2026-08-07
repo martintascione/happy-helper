@@ -34,8 +34,10 @@ function LoginPage() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
 
+    const isSuperAdminEmail = session.user.email === 'tascione32@gmail.com';
+
     // 1. Proactive check for super admin email
-    if (session.user.email === 'tascione32@gmail.com') {
+    if (isSuperAdminEmail) {
       const { data: profile } = await supabase
         .from("profiles")
         .select("status, role, building_id, unit_id")
