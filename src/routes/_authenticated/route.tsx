@@ -20,17 +20,27 @@ export const Route = createFileRoute("/_authenticated")({
       .from("profiles")
       .select("status, role")
       .eq("id", session.user.id)
-      .single();
+      .maybeSingle();
+
+    // Special bypass for super admin to avoid loops if profile is being created
+    const isSuperAdminEmail = session.user.email?.toLowerCase() === 'tascione32@gmail.com';
 
     if (!profile) {
+      if (isSuperAdminEmail) {
+        // Allow through, login.tsx or other components will handle profile creation
+        return { userRole: 'super_admin' as const, userId: session.user.id };
+      }
       throw redirect({ to: "/login" });
     }
 
-    if (profile.status === "pendiente" && profile.role !== "super_admin") {
+    if (profile.status === "pendiente" && profile.role !== "super_admin" && !isSuperAdminEmail) {
       throw redirect({ to: "/login" });
     }
 
-    return { userRole: profile.role, userId: session.user.id };
+    return { 
+      userRole: (profile.role || (isSuperAdminEmail ? 'super_admin' : 'vecino')) as "admin" | "super_admin" | "vecino", 
+      userId: session.user.id 
+    };
   },
   component: AuthenticatedLayout,
 });
