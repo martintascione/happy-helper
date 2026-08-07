@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageCircle, Send, Search, User, Hash, Clock, ArrowLeft } from "lucide-react";
@@ -46,6 +46,7 @@ function ChatPage() {
         supabase.removeChannel(channel);
       };
     }
+    return () => {};
   }, [selectedConversation]);
 
   useEffect(() => {
@@ -78,6 +79,7 @@ function ChatPage() {
     if (membersData) {
       const convs = await Promise.all(membersData.map(async (m: any) => {
         const conv = m.conversation;
+        if (!conv) return null;
         
         // Get last message
         const { data: lastMsg } = await supabase
@@ -86,7 +88,7 @@ function ChatPage() {
           .eq("conversation_id", conv.id)
           .order("created_at", { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
         // Get other member if direct
         let otherMember = null;
@@ -94,7 +96,7 @@ function ChatPage() {
           const { data: memberData } = await supabase
             .from("conversation_members" as any)
             .select(`
-              user:profiles!user_id (
+              user:profiles!conversation_members_user_id_fkey (
                 id,
                 full_name,
                 avatar_url
@@ -102,8 +104,8 @@ function ChatPage() {
             `)
             .eq("conversation_id", conv.id)
             .neq("user_id", user.id)
-            .single();
-          otherMember = memberData?.user;
+            .maybeSingle();
+          otherMember = (memberData as any)?.user;
         }
 
         return {
@@ -113,14 +115,16 @@ function ChatPage() {
         };
       }));
 
+      const filteredConvs = convs.filter(c => c !== null);
+
       // Sort by last message time
-      convs.sort((a, b) => {
+      filteredConvs.sort((a, b) => {
         const timeA = a.lastMessage?.created_at || a.created_at;
         const timeB = b.lastMessage?.created_at || b.created_at;
         return new Date(timeB).getTime() - new Date(timeA).getTime();
       });
 
-      setConversations(convs);
+      setConversations(filteredConvs);
     }
     setLoading(false);
   }
