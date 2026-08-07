@@ -182,39 +182,62 @@ function GlobalAdminPage() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Panel Global</h1>
-        <p className="text-slate-500 font-medium">Configuración maestra de la plataforma</p>
+      <div className="space-y-1 px-1">
+        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Panel Global</h1>
+        <p className="text-slate-500 font-medium">Configuración y auditoría</p>
       </div>
 
-      <div className="flex p-1 bg-gray-200 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
+      {activeTab === "resumen" && financialStats && (
+        <section className="space-y-6 animate-in fade-in duration-300">
+          <div className="bg-black text-white p-8 rounded-[28px] shadow-2xl shadow-black/20 space-y-2 relative overflow-hidden">
+            <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-accent/10 rounded-full blur-3xl" />
+            <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px] relative z-10">Total cobrado este mes</p>
+            <h2 className="text-5xl font-black tracking-tight relative z-10">${financialStats[0]?.total.toLocaleString('es-AR') || 0}</h2>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider relative z-10">
+              Disponible: ${financialStats[0]?.profit.toLocaleString('es-AR') || 0}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { label: "Comprobantes", icon: FileText, id: "pagos" },
+              { label: "Liquidaciones", icon: Landmark, id: "liquidaciones" },
+              { label: "Edificios", icon: Building2, id: "edificios" },
+              { label: "Configuración", icon: Settings, id: "config" }
+            ].map((action) => (
+              <button 
+                key={action.id}
+                onClick={() => setActiveTab(action.id as any)}
+                className="flex flex-col items-center gap-3 p-6 bg-white rounded-[24px] shadow-soft border border-slate-50 hover:bg-slate-50 transition-all text-center"
+              >
+                <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center text-black">
+                  <action.icon size={20} />
+                </div>
+                <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest leading-none">{action.label}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Tabs */}
+      <div className="flex p-1.5 bg-slate-100 rounded-[22px] overflow-x-auto no-scrollbar">
         {[
-          { id: "config", label: "Configuración", icon: Settings },
-          { id: "edificios", label: "Edificios", icon: Building2 },
-          { id: "vecinos", label: "Vecinos", icon: Users },
-          { id: "pagos", label: "Pagos", icon: FileText },
-          { id: "liquidaciones", label: "Liquidaciones", icon: Landmark },
-          { id: "resumen", label: "Resumen", icon: DollarSign }
+          { id: "resumen", label: "Resumen" },
+          { id: "pagos", label: "Pagos" },
+          { id: "liquidaciones", label: "Liquids" },
+          { id: "edificios", label: "Edificios" },
+          { id: "vecinos", label: "Vecinos" },
+          { id: "config", label: "Config" }
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex-1 min-w-fit px-4 py-3 flex items-center justify-center gap-2 text-[10px] font-black uppercase rounded-xl transition-all whitespace-nowrap ${
-              activeTab === tab.id ? "bg-white text-black shadow-sm" : "text-gray-500"
+            className={`flex-1 min-w-fit px-5 py-3 text-[10px] font-black uppercase rounded-[16px] transition-all whitespace-nowrap ${
+              activeTab === tab.id ? "bg-white text-black shadow-sm" : "text-slate-400 hover:text-slate-600"
             }`}
           >
-            <tab.icon size={16} />
             {tab.label}
-            {tab.id === 'pagos' && pendingPayments.length > 0 && (
-              <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                {pendingPayments.length}
-              </span>
-            )}
-            {tab.id === 'liquidaciones' && pendingPayouts.length > 0 && (
-              <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                {pendingPayouts.length}
-              </span>
-            )}
           </button>
         ))}
       </div>
