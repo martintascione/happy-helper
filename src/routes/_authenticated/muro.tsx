@@ -117,18 +117,21 @@ function MuroPage() {
         {data.loading ? (
           <div className="h-32 bg-slate-100 rounded-[2rem] animate-pulse" />
         ) : data.bookings.length > 0 ? (
-          <div className="bg-black text-white p-8 rounded-[2.8rem] shadow-card relative overflow-hidden group active:scale-[0.98] transition-all border border-white/10 ring-1 ring-white/5">
-            <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-accent/20 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-1000" />
-            <h3 className="text-[12px] font-black text-accent uppercase mb-5 flex items-center gap-2 tracking-[0.25em]">
-              <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" /> Próxima cochera
-            </h3>
-            <div className="space-y-2 relative z-10">
-              <p className="text-4xl font-black tracking-tighter italic uppercase">{data.bookings[0].spot?.identifier}</p>
-              <div className="flex items-center gap-2 text-white/40">
-                <Calendar size={14} />
-                <p className="text-sm font-bold uppercase tracking-widest">
-                  {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
-                </p>
+          <div className="premium-card p-10 bg-primary text-primary-foreground shadow-premium relative group active:scale-[0.99] transition-all">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-accent/20 rounded-full blur-[90px] group-hover:scale-125 transition-transform duration-1000" />
+            <div className="flex flex-col gap-6 relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 w-fit">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                <span className="text-[10px] font-bold text-white uppercase tracking-[0.15em]">Próxima cochera</span>
+              </div>
+              <div className="space-y-2">
+                <p className="text-4xl font-bold tracking-tight uppercase">{data.bookings[0].spot?.identifier}</p>
+                <div className="flex items-center gap-2 text-white/50">
+                  <Calendar size={16} />
+                  <p className="text-sm font-bold uppercase tracking-widest">
+                    {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
