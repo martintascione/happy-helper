@@ -30,15 +30,20 @@ function LoginPage() {
   useEffect(() => {
     console.log("LoginPage mounted");
     
+    let isMounted = true;
+
     // Check session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
       console.log("Current session in mount effect:", session?.user?.email);
       if (session) {
         const userEmail = session.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
-          console.log("Super admin detected on mount, performing immediate cleanup and redirect");
-          // Clear any potentially conflicting local state or breadcrumbs
-          window.location.href = "/muro";
+          console.log("Super admin detected on mount, performing immediate redirect");
+          // Use a slight delay to avoid conflicts with HMR or rapid redirects
+          setTimeout(() => {
+            if (isMounted) window.location.href = "/muro";
+          }, 100);
         } else {
           checkSession();
         }
