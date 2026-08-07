@@ -176,19 +176,29 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
   async function handleBooking() {
-    if (!selectedSpot || !dateRange?.from || !dateRange?.to || !userId) return;
+    if (!selectedSpot || !dateRange?.from || !dateRange?.to || !userId || !settings) return;
 
     const days = differenceInDays(dateRange.to, dateRange.from) + 1;
-    const totalPrice = days * selectedSpot.price_per_day;
+    const ownerPrice = selectedSpot.owner_price_per_day;
+    const margin = settings.margin_type === 'porcentaje' 
+      ? (ownerPrice * (settings.margin_value / 100))
+      : settings.margin_value;
+    
+    const finalPricePerDay = ownerPrice + margin;
+    const totalPrice = days * finalPricePerDay;
+    const totalOwnerAmount = days * ownerPrice;
+    const totalPlatformFee = totalPrice - totalOwnerAmount;
 
     const { error } = await supabase
-      .from("parking_bookings")
+      .from("parking_bookings" as any)
       .insert({
         spot_id: selectedSpot.id,
         renter_id: userId,
         start_date: format(dateRange.from, "yyyy-MM-dd"),
         end_date: format(dateRange.to, "yyyy-MM-dd"),
         total_price: totalPrice,
+        owner_amount: totalOwnerAmount,
+        platform_fee: totalPlatformFee,
         status: 'solicitada'
       });
 
@@ -372,7 +382,7 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
     }
 
     const { error } = await supabase
-      .from("parking_spots")
+      .from("parking_spots" as any)
       .insert({
         building_id: buildingId,
         owner_id: userId,
