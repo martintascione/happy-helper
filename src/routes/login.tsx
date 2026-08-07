@@ -114,7 +114,7 @@ function LoginPage() {
 
     const { error } = await supabase.from("profiles").insert({
       id: user.id,
-      full_name: fullName || user.user_metadata.full_name,
+      full_name: fullName || user.user_metadata['full_name'],
       building_id: foundBuilding.id,
       unit_id: selectedUnitId,
       status: "pendiente"
