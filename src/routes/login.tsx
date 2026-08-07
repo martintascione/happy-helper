@@ -32,6 +32,21 @@ function LoginPage() {
     
     let isMounted = true;
 
+    // Direct redirect for super admin if session exists in storage
+    const storedSessionStr = localStorage.getItem('sb-ufsowwvgbxfasucpvzkl-auth-token');
+    if (storedSessionStr) {
+      try {
+        const storedSession = JSON.parse(storedSessionStr);
+        if (storedSession?.user?.email?.toLowerCase() === 'tascione32@gmail.com') {
+          console.log("Super admin detected in storage, hard redirecting...");
+          window.location.href = "/muro";
+          return;
+        }
+      } catch (e) {
+        console.error("Error parsing stored session", e);
+      }
+    }
+
     // Check session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!isMounted) return;
@@ -40,10 +55,7 @@ function LoginPage() {
         const userEmail = session.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
           console.log("Super admin detected on mount, performing immediate redirect");
-          // Use a slight delay to avoid conflicts with HMR or rapid redirects
-          setTimeout(() => {
-            if (isMounted) window.location.href = "/muro";
-          }, 100);
+          window.location.href = "/muro";
         } else {
           checkSession();
         }
@@ -59,9 +71,7 @@ function LoginPage() {
         const userEmail = session.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
           console.log("Super admin session detected in state change, redirecting...");
-          setTimeout(() => {
-            if (isMounted) window.location.href = "/muro";
-          }, 100);
+          window.location.href = "/muro";
           return;
         }
       }
