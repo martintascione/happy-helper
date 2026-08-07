@@ -106,7 +106,6 @@ function AuthenticatedLayout() {
   
   const navItems = useMemo(() => [
     { label: "Muro", icon: Home, to: "/muro" },
-    { label: "Cocheras", icon: Car, to: "/cocheras" },
     { label: "Chat", icon: MessageSquare, to: "/chat" },
     { label: "Reportes", icon: AlertCircle, to: "/reportes" },
     { label: "Perfil", icon: User, to: "/perfil" },
