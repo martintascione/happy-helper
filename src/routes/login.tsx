@@ -311,13 +311,7 @@ function LoginPage() {
         </div>
 
         {step === 1 ? (
-          <form 
-            onSubmit={(e) => {
-              console.log("Form submitted event");
-              handleRegisterClick(e);
-            }} 
-            className="space-y-4"
-          >
+          <div className="space-y-4">
             {isSignUp && (
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
@@ -391,7 +385,7 @@ function LoginPage() {
             >
               {isSignUp ? "¿Ya tenés cuenta? Ingresá" : "¿No tenés cuenta? Registrate"}
             </button>
-          </form>
+          </div>
         ) : (
           <div className="space-y-6">
             {!foundBuilding ? (
