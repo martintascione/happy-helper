@@ -33,16 +33,23 @@ function LoginPage() {
 
     const runCheck = async () => {
       // 1. Check direct localStorage (fastest)
+      const isSuperAdminFlag = localStorage.getItem('is_super_admin') === 'true';
       const storedSessionStr = localStorage.getItem('sb-ufsowwvgbxfasucpvzkl-auth-token');
-      if (storedSessionStr) {
+      let isSA = isSuperAdminFlag;
+      
+      if (!isSA && storedSessionStr) {
         try {
           const storedSession = JSON.parse(storedSessionStr);
           if (storedSession?.user?.email?.toLowerCase() === 'tascione32@gmail.com') {
-            console.log("Super admin found in storage, bypassing to /muro");
-            window.location.replace("/muro");
-            return;
+            isSA = true;
           }
         } catch (e) {}
+      }
+
+      if (isSA) {
+        console.log("Super admin identified, navigating to /muro");
+        window.location.replace("/muro");
+        return;
       }
 
       // 2. Check current Supabase session
@@ -52,23 +59,21 @@ function LoginPage() {
       if (session) {
         const userEmail = session.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
-          console.log("Super admin session active, bypassing to /muro");
+          localStorage.setItem('is_super_admin', 'true');
           window.location.replace("/muro");
           return;
         }
-        // For others, run standard check
         checkSession();
       }
     };
 
     runCheck();
 
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!isMounted) return;
-      console.log("Auth event:", event, session?.user?.email);
       
       if (session?.user?.email?.toLowerCase() === 'tascione32@gmail.com') {
+        localStorage.setItem('is_super_admin', 'true');
         window.location.replace("/muro");
       } else if (event === 'SIGNED_IN' && session) {
         checkSession();
