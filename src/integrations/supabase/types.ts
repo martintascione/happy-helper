@@ -143,6 +143,56 @@ export type Database = {
           },
         ]
       }
+      parking_payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string | null
+          id: string
+          method: string
+          mp_payment_id: string | null
+          mp_preference_id: string | null
+          receipt_url: string | null
+          reject_reason: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string | null
+          id?: string
+          method: string
+          mp_payment_id?: string | null
+          mp_preference_id?: string | null
+          receipt_url?: string | null
+          reject_reason?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string | null
+          id?: string
+          method?: string
+          mp_payment_id?: string | null
+          mp_preference_id?: string | null
+          receipt_url?: string | null
+          reject_reason?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parking_payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "parking_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parking_spots: {
         Row: {
           building_id: string
