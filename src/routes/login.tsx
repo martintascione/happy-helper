@@ -116,10 +116,13 @@ function LoginPage() {
     
     if (profile) {
       if (profile.role === "super_admin" || profile.status === "aprobado") {
+        console.log("Profile approved or admin, navigating to muro...");
         navigate({ to: "/muro" });
       } else if (profile.status === "pendiente") {
+        console.log("Profile pending, staying on step 3");
         setStep(3); // Pending screen
       } else {
+        console.log("Profile invalid status, moving to step 2");
         setStep(2);
       }
     } else {
