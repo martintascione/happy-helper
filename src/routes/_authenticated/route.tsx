@@ -110,8 +110,6 @@ function AuthenticatedLayout() {
     { label: "Chat", icon: MessageSquare, to: "/chat" },
     { label: "Reportes", icon: AlertCircle, to: "/reportes" },
     { label: "Perfil", icon: User, to: "/perfil" },
-    { label: "Admin", icon: ShieldCheck, to: "/admin", isAdmin: true },
-    { label: "Global", icon: Settings, to: "/admin-global", isAdmin: true },
   ], []);
 
   const filteredNavItems = useMemo(() => navItems.filter(item => {
@@ -234,27 +232,7 @@ function AuthenticatedLayout() {
           </nav>
         </div>
 
-        {/* Role Switcher for Super Admin */}
-        {isSuperAdmin && (
-          <div className="fixed top-4 right-4 z-[60] flex gap-2">
-            <NotificationBell userId={userId} />
-            <div className="flex gap-2 bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-lg border border-slate-200">
-              {["vecino", "admin", "super_admin"].map((role) => (
-                <button
-                  key={role}
-                  onClick={() => setActiveRole(role as any)}
-                  className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all ${
-                    activeRole === role
-                      ? "bg-black text-white shadow-md shadow-black/10"
-                      : "text-slate-400 hover:text-slate-600"
-                  }`}
-                >
-                  {role.replace("_", " ")}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Role Switcher removed from here as requested */}
       </main>
     </div>
   );
