@@ -23,7 +23,7 @@ function GlobalAdminPage() {
 
   async function fetchSettings() {
     setLoading(true);
-    const { data } = await supabase.from("platform_settings").select("*").single();
+    const { data } = await supabase.from("platform_settings" as any).select("*").single();
     if (data) setSettings(data);
     setLoading(false);
   }
@@ -32,9 +32,9 @@ function GlobalAdminPage() {
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase
-      .from("platform_settings")
+      .from("platform_settings" as any)
       .update(settings)
-      .eq("id", 1);
+      .eq("id", 1 as any);
 
     if (error) {
       toast.error("Error al guardar configuración");
