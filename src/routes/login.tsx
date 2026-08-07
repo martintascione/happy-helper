@@ -154,22 +154,32 @@ function LoginPage() {
         // The onAuthStateChange listener or handleAuth final setLoading will trigger
       }
     } else {
-      console.log("Attempting sign in with password...");
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      console.log("Login attempt result:", { success: !!data?.user, email: data?.user?.email, error: error?.message });
-      
-      if (error) {
-        toast.error(error.message);
-        setLoading(false);
-      } else if (data?.user) {
-        // If it's the super admin, force hard redirect immediately
-        if (data.user.email?.toLowerCase() === 'tascione32@gmail.com') {
-          console.log("Super admin signed in, performing hard redirect...");
-          window.location.replace("/muro");
-          return; // Stop execution
+      console.log("Attempting sign in with password for:", email);
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        console.log("Login result details:", { 
+          success: !!data?.user, 
+          email: data?.user?.email, 
+          error: error?.message,
+          session: !!data?.session
+        });
+        
+        if (error) {
+          toast.error(error.message);
+          setLoading(false);
+        } else if (data?.user) {
+          if (data.user.email?.toLowerCase() === 'tascione32@gmail.com') {
+            console.log("Super admin detected, FORCE redirecting to /muro");
+            // Set a flag in localStorage just in case to help layout bypass
+            localStorage.setItem('is_super_admin', 'true');
+            window.location.replace("/muro");
+            return;
+          }
+          await checkSession();
         }
-        // For others, checkSession will be triggered by onAuthStateChange or we call it
-        await checkSession();
+      } catch (err: any) {
+        console.error("Auth exception:", err);
+        toast.error("Error inesperado al iniciar sesión");
       }
     }
     setLoading(false);
