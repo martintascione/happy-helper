@@ -120,18 +120,17 @@ function AuthenticatedLayout() {
   }, [filteredNavItems]);
 
   return (
-    <div className="flex min-h-screen bg-[#F7F5F1] text-foreground font-sans overflow-x-hidden relative">
+    <div className="flex min-h-screen bg-background text-foreground overflow-x-hidden relative">
       {/* Sidebar for Desktop */}
-      <aside className="hidden lg:flex flex-col w-64 bg-[#F7F5F1] p-8 gap-8 border-r border-slate-200/50">
+      <aside className="hidden lg:flex flex-col w-72 bg-background p-10 gap-10 border-r border-black/[0.03]">
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center shadow-xl shadow-black/10">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-premium">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
               </svg>
             </div>
-            <span className="font-extrabold text-slate-900 tracking-tight text-xl">Tower</span>
+            <span className="font-bold text-foreground tracking-tight text-2xl">Tower</span>
           </div>
         </div>
         
