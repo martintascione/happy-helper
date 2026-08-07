@@ -22,36 +22,33 @@ export const Route = createFileRoute("/_authenticated")({
       });
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("status, role")
-      .eq("id", session.user.id)
-      .maybeSingle();
-
-    // Special bypass for super admin to avoid loops if profile is being created
-    const isSuperAdminEmail = session.user.email?.toLowerCase() === 'tascione32@gmail.com';
-
     if (isSuperAdminEmail) {
       console.log("Allowing super admin bypass in layout");
       return { 
         userRole: 'super_admin' as const, 
-        userId: session.user.id,
+        userId: session?.user?.id || 'super-admin-id',
         isSuperAdmin: true
       };
     }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("status, role")
+      .eq("id", session!.user.id)
+      .maybeSingle();
 
     if (!profile) {
       throw redirect({ to: "/login" });
     }
 
-    if (profile.status === "pendiente" && profile.role !== "super_admin" && !isSuperAdminEmail) {
+    if (profile.status === "pendiente" && profile.role !== "super_admin") {
       throw redirect({ to: "/login" });
     }
 
     return { 
-      userRole: (profile.role || (isSuperAdminEmail ? 'super_admin' : 'vecino')) as "admin" | "super_admin" | "vecino", 
-      userId: session.user.id,
-      isSuperAdmin: isSuperAdminEmail
+      userRole: (profile.role || 'vecino') as "admin" | "super_admin" | "vecino", 
+      userId: session!.user.id,
+      isSuperAdmin: false
     };
   },
   component: AuthenticatedLayout,
