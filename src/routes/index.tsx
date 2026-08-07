@@ -7,9 +7,9 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="flex min-h-screen flex-col items-center bg-[#F7F5F1] selection:bg-black/10">
+    <div className="flex min-h-screen flex-col items-center bg-[#F7F5F1] selection:bg-black/10 overflow-x-hidden">
       {/* Desktop/Landscape Block Overlay */}
-      <div className="hidden sm:flex fixed inset-0 z-50 bg-white items-center justify-center p-10 text-center">
+      <div className="hidden lg:flex fixed inset-0 z-[100] bg-[#F7F5F1] items-center justify-center p-10 text-center">
         <div className="max-w-xs space-y-4">
           <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black">

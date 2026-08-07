@@ -133,9 +133,9 @@ function AuthenticatedLayout() {
   }, [filteredNavItems]);
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground font-sans">
+    <div className="flex min-h-screen bg-[#F7F5F1] text-foreground font-sans overflow-x-hidden relative">
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-background p-8 gap-8">
+      <aside className="hidden lg:flex flex-col w-64 bg-[#F7F5F1] p-8 gap-8 border-r border-slate-200/50">
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center shadow-xl shadow-black/10">
@@ -170,16 +170,16 @@ function AuthenticatedLayout() {
         </nav>
       </aside>
 
-      <main className="flex-1 flex flex-col relative min-h-screen">
-        <header className="flex justify-end p-6 md:p-8 sticky top-0 z-[50]">
+      <main className="flex-1 flex flex-col relative min-h-screen max-w-full overflow-x-hidden">
+        <header className="flex justify-end p-6 lg:p-8 sticky top-0 z-[50]">
           <NotificationBell userId={userId} />
         </header>
-        <div className="flex-1 pb-32 md:pb-8">
+        <div className="flex-1 pb-32 lg:pb-8">
           <Outlet />
         </div>
 
         {/* Floating Pill Navigation for Mobile */}
-        <div className="md:hidden fixed bottom-8 left-0 right-0 px-6 z-40">
+        <div className="lg:hidden fixed bottom-8 left-0 right-0 px-6 z-40">
           <nav className="h-16 bg-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 flex items-center justify-around px-2 relative">
             {mobileNavItems.map((item, idx) => {
               if ('isGroup' in item) {
