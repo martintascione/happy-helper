@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated")({
       throw redirect({ to: "/login" });
     }
 
-    if (profile.status === "pendiente") {
+    if (profile.status === "pendiente" && profile.role !== "super_admin") {
       throw redirect({ to: "/login" });
     }
 
