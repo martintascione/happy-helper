@@ -17,8 +17,8 @@ function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   
   // Auth fields
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("tascione32@gmail.com");
+  const [password, setPassword] = useState("admin123");
   const [fullName, setFullName] = useState("");
   
   // Profile fields (Step 2)
@@ -316,7 +316,10 @@ function LoginPage() {
               </div>
             </div>
 
-            {/* Checkbox moved to modal for register, or removed for login */}
+            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 mb-4">
+              <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Acceso Directo (Demo)</p>
+              <p className="text-[10px] text-amber-500 font-medium">Usá tascione32@gmail.com / admin123 para entrar como Super Admin.</p>
+            </div>
 
             <button
               type="submit"
