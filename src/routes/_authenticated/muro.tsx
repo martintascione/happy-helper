@@ -180,30 +180,31 @@ function MuroPage() {
       {/* Comunicados Oficiales */}
       <div className="space-y-4">
         {data.posts.length > 0 ? data.posts.map((post) => (
-          <div key={post.id} className="tint-insight card-dashed p-8 rounded-[2.8rem] space-y-6 relative overflow-hidden group hover:bg-violet-500/5 transition-all duration-500 shadow-sm hover:shadow-card active:scale-[0.99]">
+          <div key={post.id} className="premium-card p-10 bg-white space-y-8 relative overflow-hidden group shadow-subtle border-black/[0.03]">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-tint-insight/40 rounded-full blur-[60px]" />
             <div className="flex justify-between items-start relative z-10">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-[1.2rem] bg-white shadow-card flex items-center justify-center text-violet-600 ring-1 ring-violet-500/10 group-hover:scale-110 transition-transform duration-500">
-                  <Bell size={22} strokeWidth={2.5} />
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center text-primary shadow-inner-glow">
+                  <Bell size={26} strokeWidth={2.5} />
                 </div>
                 <div>
-                  <span className="text-[12px] font-black text-violet-600 uppercase tracking-[0.2em] block">Comunicado</span>
-                  <span className="text-[10px] font-black text-violet-400/60 uppercase tracking-widest">
+                  <span className="text-[13px] font-bold text-foreground uppercase tracking-[0.2em] block">Comunicado Oficial</span>
+                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
                     {format(new Date(post.created_at), "d MMM", { locale: es })}
                   </span>
                 </div>
               </div>
             </div>
             <div className="space-y-4 relative z-10">
-              <h3 className="font-black text-2xl text-slate-900 tracking-tight leading-[1.1]">{post.title}</h3>
-              <p className="text-[16px] text-slate-700/90 font-medium leading-relaxed">{post.body}</p>
+              <h3 className="font-bold text-3xl text-foreground tracking-tight leading-[1.1]">{post.title}</h3>
+              <p className="text-[17px] text-muted-foreground font-medium leading-relaxed">{post.body}</p>
             </div>
             {post.author && (
-              <div className="flex justify-between items-center pt-4 relative z-10 border-t border-violet-500/10">
-                <p className="text-[11px] font-black text-violet-500/80 uppercase tracking-widest flex items-center gap-2">
-                  <Shield size={12} /> {post.author.full_name}
+              <div className="flex justify-between items-center pt-6 relative z-10 border-t border-black/[0.03]">
+                <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                  <ShieldCheck size={16} className="text-accent" /> {post.author.full_name}
                 </p>
-                <div className="px-3 py-1 bg-violet-500/10 rounded-full text-[9px] font-black uppercase tracking-widest text-violet-600">
+                <div className="px-4 py-1.5 bg-accent/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-accent border border-accent/10">
                   Prioridad
                 </div>
               </div>
