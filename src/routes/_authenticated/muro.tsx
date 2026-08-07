@@ -47,31 +47,34 @@ function MuroPage() {
             .from("posts")
             .select("*, author:profiles!author_id(full_name)")
             .eq("building_id", profileData.building_id)
-          .eq("type", "oficial")
-          .order("created_at", { ascending: false })
-          .limit(3),
-        supabase
-          .from("parking_bookings")
-          .select("*, spot:parking_spots(identifier)")
-          .eq("renter_id", user.id)
-          .eq("status", "confirmada")
-          .gte("start_date", new Date().toISOString().split('T')[0])
-          .order("start_date", { ascending: true })
-          .limit(2),
-        supabase
-          .from("posts")
-          .select("*, author:profiles!author_id(full_name, avatar_url, unit:units(floor, apartment))")
-          .eq("building_id", profile.building_id)
-          .eq("type", "vecinal")
-          .order("created_at", { ascending: false })
-      ]);
+            .eq("type", "oficial")
+            .order("created_at", { ascending: false })
+            .limit(3),
+          supabase
+            .from("parking_bookings")
+            .select("*, spot:parking_spots(identifier)")
+            .eq("renter_id", user.id)
+            .eq("status", "confirmada")
+            .gte("start_date", new Date().toISOString().split('T')[0])
+            .order("start_date", { ascending: true })
+            .limit(2),
+          supabase
+            .from("posts")
+            .select("*, author:profiles!author_id(full_name, avatar_url, unit:units(floor, apartment))")
+            .eq("building_id", profileData.building_id)
+            .eq("type", "vecinal")
+            .order("created_at", { ascending: false })
+        ]);
 
-      setData({
-        posts: officialRes.data || [],
-        bookings: bookingsRes.data || [],
-        loading: false
-      });
-      setNeighborPosts(neighborsRes.data || []);
+        setData({
+          posts: officialRes.data || [],
+          bookings: bookingsRes.data || [],
+          loading: false
+        });
+        setNeighborPosts(neighborsRes.data || []);
+      } else {
+        setData(prev => ({ ...prev, loading: false }));
+      }
     } else {
       setData(prev => ({ ...prev, loading: false }));
     }
