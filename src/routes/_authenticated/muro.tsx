@@ -151,25 +151,28 @@ function MuroPage() {
       {/* Comunicados Oficiales */}
       <div className="space-y-4">
         {data.posts.map((post) => (
-          <div key={post.id} className="tint-insight card-dashed p-6 rounded-[24px] space-y-4 relative overflow-hidden">
+          <div key={post.id} className="tint-insight card-dashed p-7 rounded-[2.5rem] space-y-5 relative overflow-hidden group hover:bg-violet-500/5 transition-colors duration-300">
             <div className="flex justify-between items-start relative z-10">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-600">
-                  <Bell size={16} />
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-2xl bg-white shadow-sm flex items-center justify-center text-violet-600 ring-1 ring-violet-500/10">
+                  <Bell size={18} strokeWidth={2.5} />
                 </div>
-                <span className="text-[10px] font-black text-violet-600 uppercase tracking-[0.1em]">Comunicado Oficial</span>
+                <span className="text-[11px] font-black text-violet-600 uppercase tracking-[0.15em]">Comunicado Oficial</span>
               </div>
-              <span className="text-[10px] font-bold text-violet-400 uppercase tracking-wider">
+              <span className="text-[10px] font-black text-violet-400/60 uppercase tracking-widest">
                 {format(new Date(post.created_at), "d MMM", { locale: es })}
               </span>
             </div>
-            <div className="space-y-2 relative z-10">
-              <h3 className="font-bold text-xl text-slate-900 leading-tight">{post.title}</h3>
-              <p className="text-sm text-slate-700 font-medium leading-relaxed">{post.body}</p>
+            <div className="space-y-3 relative z-10">
+              <h3 className="font-bold text-2xl text-slate-900 tracking-tight leading-tight">{post.title}</h3>
+              <p className="text-[15px] text-slate-700/80 font-medium leading-relaxed">{post.body}</p>
             </div>
             {post.author && (
-              <div className="flex justify-end pt-2 relative z-10">
-                <p className="text-[10px] font-bold text-violet-400/70 uppercase">Administración • {post.author.full_name}</p>
+              <div className="flex justify-between items-center pt-3 relative z-10">
+                <div className="h-[1px] flex-1 bg-violet-500/10 mr-4" />
+                <p className="text-[10px] font-black text-violet-400/80 uppercase tracking-widest whitespace-nowrap">
+                  Admin • {post.author.full_name}
+                </p>
               </div>
             )}
           </div>

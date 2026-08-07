@@ -149,17 +149,22 @@ function CocherasPage() {
 
       {/* Featured Next Booking */}
       {nextBooking && (
-        <div className="mb-8 p-6 rounded-[24px] bg-gradient-to-br from-green-500/10 via-green-500/5 to-transparent border border-green-500/20 shadow-sm relative overflow-hidden">
+        <div className="mb-10 p-7 rounded-[2.5rem] bg-black text-white shadow-card relative overflow-hidden group active:scale-[0.98] transition-all border border-white/10">
+          <div className="absolute top-[-40px] right-[-40px] w-48 h-48 bg-accent/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700" />
           <div className="relative z-10 flex justify-between items-start">
-            <div className="space-y-1">
-              <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Próxima Reserva</span>
-              <h3 className="text-xl font-bold text-slate-900">{nextBooking.spot?.identifier}</h3>
-              <p className="text-sm font-medium text-slate-500">
-                {format(new Date(nextBooking.start_date), "d 'de' MMMM", { locale: es })}
-              </p>
+            <div className="space-y-3">
+              <span className="text-[11px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
+                <Circle className="fill-accent text-accent" size={6} /> Próxima Reserva
+              </span>
+              <div className="space-y-1">
+                <h3 className="text-3xl font-black tracking-tight">{nextBooking.spot?.identifier}</h3>
+                <p className="text-sm font-bold text-white/50">
+                  {format(new Date(nextBooking.start_date), "d 'de' MMMM", { locale: es })}
+                </p>
+              </div>
             </div>
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-              <Car className="text-green-500" size={24} />
+            <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-xl">
+              <Car className="text-accent" size={28} strokeWidth={2.5} />
             </div>
           </div>
         </div>

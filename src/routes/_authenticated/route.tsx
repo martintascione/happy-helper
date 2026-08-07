@@ -179,8 +179,8 @@ function AuthenticatedLayout() {
         </div>
 
         {/* Floating Pill Navigation for Mobile */}
-        <div className="lg:hidden fixed bottom-8 left-0 right-0 px-6 z-40">
-          <nav className="h-16 bg-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 flex items-center justify-around px-2 relative">
+        <div className="lg:hidden fixed bottom-10 left-0 right-0 px-8 z-[100]">
+          <nav className="h-16 glass-card rounded-full shadow-pill flex items-center justify-around px-3 relative border border-white/50 ring-1 ring-black/5">
             {mobileNavItems.map((item, idx) => {
               if ('isGroup' in item) {
                 const anyAdminActive = item.items?.some(sub => location.pathname === sub.to);
@@ -188,24 +188,24 @@ function AuthenticatedLayout() {
                   <div key="admin-group" className="relative" ref={adminMenuRef}>
                     <button
                       onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
-                      className={`p-3 rounded-full transition-all ${
-                        anyAdminActive ? "bg-black text-white" : "text-slate-400"
+                      className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
+                        anyAdminActive ? "bg-black text-white shadow-lg scale-110" : "text-slate-400 hover:text-slate-600"
                       }`}
                     >
-                      <item.icon size={22} strokeWidth={1.5} />
+                      <item.icon size={22} strokeWidth={2} />
                     </button>
                     {isAdminMenuOpen && (
-                      <div className="absolute bottom-20 right-0 bg-white rounded-3xl shadow-2xl border border-slate-100 p-2 min-w-[140px] animate-in fade-in slide-in-from-bottom-4">
+                      <div className="absolute bottom-20 right-0 bg-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/50 p-3 min-w-[160px] animate-in fade-in zoom-in-95 slide-in-from-bottom-4 duration-200 ring-1 ring-black/5">
                         {item.items?.map(sub => (
                           <Link
                             key={sub.to}
                             to={sub.to}
                             onClick={() => setIsAdminMenuOpen(false)}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold ${
-                              location.pathname === sub.to ? "bg-slate-50 text-black" : "text-slate-400"
+                            className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-wider transition-all ${
+                              location.pathname === sub.to ? "bg-black text-white shadow-md" : "text-slate-400 hover:bg-slate-50"
                             }`}
                           >
-                            <sub.icon size={16} />
+                            <sub.icon size={16} strokeWidth={2} />
                             {sub.label}
                           </Link>
                         ))}
@@ -220,11 +220,11 @@ function AuthenticatedLayout() {
                   key={item.to}
                   to={item.to}
                   preload="intent"
-                  className={`p-3 rounded-full transition-all ${
-                    isActive ? "bg-black text-white" : "text-slate-400"
+                  className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
+                    isActive ? "bg-black text-white shadow-lg scale-110" : "text-slate-400 hover:text-slate-600"
                   }`}
                 >
-                  <item.icon size={22} strokeWidth={1.5} />
+                  <item.icon size={22} strokeWidth={2} />
                 </Link>
               );
             })}

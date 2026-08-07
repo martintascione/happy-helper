@@ -37,30 +37,30 @@ function Index() {
         </header>
 
         {/* Hero Section */}
-        <section className="px-8 pt-10 pb-16 space-y-8">
-          <div className="space-y-4">
-            <h1 className="text-[52px] font-bold leading-[1.05] tracking-tight text-slate-900">
-              La app de <br />tu edificio.
+        <section className="px-8 pt-10 pb-16 space-y-10">
+          <div className="space-y-6">
+            <h1 className="text-[56px] font-bold leading-[0.95] tracking-tight text-slate-900 animate-in fade-in slide-in-from-bottom-6 duration-700">
+              Vivir <br />mejor, <br /><span className="text-black/30">juntos.</span>
             </h1>
-            <p className="text-slate-500 text-lg font-medium leading-relaxed max-w-[300px]">
-              Conectate con tus vecinos de forma simple, segura y profesional.
+            <p className="text-slate-500 text-lg font-medium leading-relaxed max-w-[280px] animate-in fade-in slide-in-from-bottom-4 delay-200 duration-700">
+              La plataforma exclusiva para la gestión y comunidad de tu edificio.
             </p>
           </div>
           
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 delay-300 duration-700">
             <Link 
               to="/login" 
               preload="intent"
-              className="w-full py-5 bg-black text-white rounded-full font-bold shadow-xl shadow-black/10 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              className="w-full py-5.5 bg-black text-white rounded-[24px] font-bold shadow-2xl shadow-black/20 active:scale-[0.98] hover:scale-[1.02] transition-all flex items-center justify-center gap-2 text-lg"
             >
               Ingresar
             </Link>
             <Link 
               to="/login" 
               preload="intent"
-              className="w-full py-5 bg-white text-black border border-slate-200 rounded-full font-bold shadow-sm active:scale-[0.98] transition-all flex items-center justify-center"
+              className="w-full py-5.5 bg-white text-black border border-slate-200/60 rounded-[24px] font-bold shadow-sm active:scale-[0.98] hover:bg-slate-50 transition-all flex items-center justify-center text-lg"
             >
-              Registrarme
+              Registrar mi edificio
             </Link>
           </div>
         </section>
