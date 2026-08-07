@@ -31,10 +31,19 @@ function LoginPage() {
   }, []);
 
   async function checkSession() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    console.log("Checking session...");
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) {
+      console.error("Session fetch error:", sessionError);
+      return;
+    }
+    if (!session) {
+      console.log("No active session found.");
+      return;
+    }
 
     const userEmail = session.user.email?.toLowerCase();
+    console.log("Session active for:", userEmail);
     const isSuperAdminEmail = userEmail === 'tascione32@gmail.com';
 
     // 1. Proactive check for super admin email
@@ -135,10 +144,11 @@ function LoginPage() {
       }
     } else {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      console.log("Login attempt result:", { success: !!data?.user, error: error?.message });
       if (error) {
         toast.error(error.message);
       } else {
-        checkSession();
+        await checkSession();
       }
     }
     setLoading(false);
