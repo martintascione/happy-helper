@@ -28,6 +28,7 @@ function LoginPage() {
   const [foundBuilding, setFoundBuilding] = useState<any>(null);
 
   useEffect(() => {
+    console.log("LoginPage mounted");
     checkSession();
   }, []);
 
@@ -50,9 +51,12 @@ function LoginPage() {
     const isSuperAdminEmail = userEmail === 'tascione32@gmail.com';
 
     if (isSuperAdminEmail) {
-      console.log("Bypassing for super admin...");
-      // Forcing a hard redirect to bypass any router issues
-      window.location.replace("/muro");
+      console.log("Super admin detected, bypassing all checks...");
+      // Forcing a hard redirect to the canonical muro path
+      // We use setTimeout to ensure the session is fully processed by the auth state listeners
+      setTimeout(() => {
+        window.location.href = "/_authenticated/muro";
+      }, 100);
       return;
     }
 
