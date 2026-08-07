@@ -281,8 +281,8 @@ function MuroPage() {
       <div className="fixed bottom-28 right-6 z-[60]">
         <Dialog open={isComposerOpen} onOpenChange={setIsComposerOpen}>
           <DialogTrigger asChild>
-            <button className="w-14 h-14 bg-black text-white rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-transform">
-              <Plus size={28} strokeWidth={2.5} />
+            <button className="w-16 h-16 bg-primary text-primary-foreground rounded-3xl shadow-premium flex items-center justify-center active:scale-90 transition-all border border-white/10">
+              <Plus size={32} strokeWidth={2.5} />
             </button>
           </DialogTrigger>
           <DialogContent className="rounded-t-[28px] rounded-b-none border-none sm:max-w-[425px] p-8 top-auto bottom-0 translate-y-0 duration-300">
