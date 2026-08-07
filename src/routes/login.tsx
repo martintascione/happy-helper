@@ -17,8 +17,8 @@ function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   
   // Auth fields
-  const [email, setEmail] = useState("tascione32@gmail.com");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   
   // Profile fields (Step 2)
@@ -172,8 +172,9 @@ function LoginPage() {
   }
 
   const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setLoading(true);
+    console.log("handleAuth starting:", { isSignUp, email, fullName });
     
     if (isSignUp) {
       const { data, error } = await supabase.auth.signUp({
@@ -183,19 +184,21 @@ function LoginPage() {
           data: { full_name: fullName }
         }
       });
+      console.log("Signup result:", { data, error });
       if (error) {
         toast.error(error.message);
+        setLoading(false);
       } else {
         toast.success("Cuenta creada.");
-        // The onAuthStateChange listener will handle the redirect
-        setLoading(false);
+        // Close modal if it was open
+        setShowRegisterAgreement(false);
+        // The onAuthStateChange listener or handleAuth final setLoading will trigger
       }
     } else {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       console.log("Login attempt result:", { success: !!data?.user, error: error?.message });
       if (error) {
         toast.error(error.message);
-        // The onAuthStateChange listener will handle the redirect
         setLoading(false);
       }
     }
@@ -210,11 +213,13 @@ function LoginPage() {
   ];
 
   const handleRegisterClick = (e: React.FormEvent) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    console.log("handleRegisterClick called, isSignUp:", isSignUp);
     if (!isSignUp) {
       handleAuth(e);
       return;
     }
+    // If we're signing up, we show the agreement first
     setShowRegisterAgreement(true);
   };
 
@@ -306,7 +311,7 @@ function LoginPage() {
         </div>
 
         {step === 1 ? (
-          <form onSubmit={handleRegisterClick} className="space-y-4">
+          <div className="space-y-4">
             {isSignUp && (
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
@@ -358,21 +363,29 @@ function LoginPage() {
             </div>
 
             <button
-              type="submit"
+              key={isSignUp ? "signup" : "signin"}
+              type="button"
+              onClick={(e) => {
+                console.log("Direct button click");
+                handleRegisterClick(e);
+              }}
               disabled={loading}
-              className="w-full py-5 bg-primary text-white rounded-2xl font-bold shadow-xl shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full py-5 bg-primary text-white rounded-2xl font-bold shadow-xl shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 relative z-10"
             >
               {loading ? "Procesando..." : isSignUp ? "Registrarme" : "Ingresar"}
             </button>
 
             <button
               type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
+              onClick={() => {
+                console.log("Toggling signup mode to:", !isSignUp);
+                setIsSignUp(!isSignUp);
+              }}
               className="w-full text-sm text-slate-500 font-medium"
             >
               {isSignUp ? "¿Ya tenés cuenta? Ingresá" : "¿No tenés cuenta? Registrate"}
             </button>
-          </form>
+          </div>
         ) : (
           <div className="space-y-6">
             {!foundBuilding ? (

@@ -38,6 +38,10 @@ export function AgreementModal({
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
+    // For the initial registration agreement, we don't block by DB check
+    // since the user might not even exist yet (sign up flow)
+    if (agreementKey === "terminos") return;
+
     const { data } = await supabase
       .from("user_agreements" as any)
       .select("*")
@@ -55,6 +59,15 @@ export function AgreementModal({
   const handleConfirm = async () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
+    
+    // If it's the initial registration, we don't require a user to exist in DB yet
+    if (agreementKey === "terminos") {
+      onAccept();
+      onClose();
+      setLoading(false);
+      return;
+    }
+
     if (!user) {
       toast.error("Sesión no encontrada");
       setLoading(false);
