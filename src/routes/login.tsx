@@ -50,7 +50,7 @@ function LoginPage() {
 
     if (isSuperAdminEmail) {
       console.log("Bypassing for super admin...");
-      navigate({ to: "/muro" });
+      window.location.href = "/muro";
       return;
     }
 
