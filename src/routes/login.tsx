@@ -50,9 +50,9 @@ function LoginPage() {
     const isSuperAdminEmail = userEmail === 'tascione32@gmail.com';
 
     if (isSuperAdminEmail) {
-      console.log("Bypassing for super admin...");
-      // Forcing a hard redirect to bypass any router issues
-      window.location.replace("/muro");
+      console.log("Super admin detected, bypassing all checks...");
+      // Forcing a hard redirect to the canonical muro path
+      window.location.href = "/_authenticated/muro";
       return;
     }
 
