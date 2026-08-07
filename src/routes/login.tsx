@@ -455,21 +455,6 @@ function LoginPage() {
           </div>
         )}
       </div>
-                    <ArrowLeft size={24} />
-                  </button>
-                  <button
-                    onClick={handleCompleteProfile}
-                    disabled={loading || !selectedUnitId}
-                    className="flex-1 py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20"
-                  >
-                    Confirmar vinculación
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
 
       <AgreementModal
         isOpen={showRegisterAgreement}
