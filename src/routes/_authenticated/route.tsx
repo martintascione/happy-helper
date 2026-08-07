@@ -53,7 +53,7 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedLayout() {
   const location = useLocation();
-  const { userRole, userId } = Route.useRouteContext();
+  const { userRole, userId, isSuperAdmin } = Route.useRouteContext();
   const [activeRole, setActiveRole] = useState(userRole);
 
   useEffect(() => {
