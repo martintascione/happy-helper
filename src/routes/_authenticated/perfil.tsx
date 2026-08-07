@@ -84,6 +84,11 @@ function PerfilPage() {
 
   return (
     <div className="p-6 max-w-md mx-auto space-y-8 pb-32">
+      <header className="px-1 space-y-1">
+        <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">Mi Perfil</h1>
+        <p className="text-slate-400 font-medium">Gestioná tu cuenta y datos</p>
+      </header>
+
       <div className="flex flex-col items-center gap-4 pt-4">
         <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center text-primary relative overflow-hidden border border-slate-100 shadow-sm">
           {profile.avatar_url ? (
@@ -93,8 +98,8 @@ function PerfilPage() {
           )}
         </div>
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-900">{profile.full_name}</h1>
-          <p className="text-sm text-slate-500 capitalize">{profile.role}</p>
+          <h1 className="text-xl font-bold text-slate-900">{profile.full_name}</h1>
+          <p className="text-sm text-slate-400 font-medium capitalize">{profile.role}</p>
         </div>
       </div>
 
