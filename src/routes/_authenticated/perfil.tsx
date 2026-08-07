@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Building2, Mail, Lock, User, Hash, DoorOpen } from "lucide-react";
+import { Building2, User, DoorOpen } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/perfil")({
   component: PerfilPage,
@@ -15,9 +15,9 @@ function PerfilPage() {
   const [building, setBuilding] = useState<any>(null);
   const [unit, setUnit] = useState<any>(null);
 
-  useState(() => {
+  useEffect(() => {
     fetchProfile();
-  });
+  }, []);
 
   async function fetchProfile() {
     const { data: { user } } = await supabase.auth.getUser();
