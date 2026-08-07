@@ -17,8 +17,8 @@ function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   
   // Auth fields
-  const [email, setEmail] = useState("tascione32@gmail.com");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   
   // Profile fields (Step 2)
