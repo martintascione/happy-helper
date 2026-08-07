@@ -32,57 +32,59 @@ function LoginPage() {
 
   async function checkSession() {
     const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      // If it's the specific super admin email, ensure profile exists AND is approved/super_admin
-      if (session.user.email === 'tascione32@gmail.com') {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("status, role")
-          .eq("id", session.user.id)
-          .single();
+    if (!session) return;
 
-        if (profile && profile.role === 'super_admin' && profile.status === 'aprobado') {
+    // 1. Proactive check for super admin email
+    if (session.user.email === 'tascione32@gmail.com') {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("status, role")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      // If already super_admin and approved, redirect immediately
+      if (profile && profile.role === 'super_admin' && profile.status === 'aprobado') {
+        navigate({ to: "/_authenticated/muro" });
+        return;
+      }
+
+      // Ensure at least one building and unit exist
+      const { data: building } = await supabase.from('buildings').select('id').limit(1).maybeSingle();
+      const { data: unit } = await supabase.from('units').select('id').limit(1).maybeSingle();
+      
+      if (building && unit) {
+        // Upsert super admin profile: force role and status
+        const { error: upsertError } = await supabase.from('profiles').upsert({
+          id: session.user.id,
+          full_name: fullName || (session.user.user_metadata as any)?.['full_name'] || 'Super Admin',
+          building_id: building.id,
+          unit_id: unit.id,
+          role: 'super_admin',
+          status: 'aprobado'
+        });
+        
+        if (!upsertError) {
           navigate({ to: "/_authenticated/muro" });
           return;
         }
-
-        // Try to create or update if it's the super admin
-        const { data: firstBuilding } = await supabase.from('buildings').select('id').limit(1).single();
-        const { data: firstUnit } = await supabase.from('units').select('id').limit(1).single();
-        
-        if (firstBuilding && firstUnit) {
-          const { error: upsertError } = await supabase.from('profiles').upsert({
-            id: session.user.id,
-            full_name: 'Super Admin',
-            building_id: firstBuilding.id,
-            unit_id: firstUnit.id,
-            role: 'super_admin',
-            status: 'aprobado'
-          });
-          
-          if (!upsertError) {
-            navigate({ to: "/_authenticated/muro" });
-            return;
-          }
-        }
       }
+    }
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("status")
-        .eq("id", session.user.id)
-        .single();
-      
-      if (profile) {
-        if (profile.status === "pendiente") {
-          setStep(3); // Pending screen
-        } else {
-          navigate({ to: "/_authenticated/muro" });
-        }
+    // 2. Standard user check
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("status")
+      .eq("id", session.user.id)
+      .maybeSingle();
+    
+    if (profile) {
+      if (profile.status === "pendiente") {
+        setStep(3); // Pending screen
       } else {
-        // The previous block already handles super admin redirect
-        setStep(2); // Authenticated but no profile
+        navigate({ to: "/_authenticated/muro" });
       }
+    } else {
+      setStep(2); // Authenticated but needs invitation
     }
   }
 
