@@ -63,15 +63,23 @@ function AuthenticatedLayout() {
   return (
     <div className="flex min-h-screen bg-[#F2F2F2] text-foreground font-sans">
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r p-8 gap-10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center shadow-xl shadow-black/10">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r p-8 gap-8">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center shadow-xl shadow-black/10">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+              </div>
+              <span className="font-extrabold text-slate-900 tracking-tight text-xl">Tower</span>
+            </div>
           </div>
-          <span className="font-extrabold text-slate-900 tracking-tight text-2xl">Tower</span>
+          <div className="bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Avisos</span>
+            <NotificationBell userId={userId} />
+          </div>
         </div>
         
         <nav className="flex flex-col gap-2">
@@ -96,6 +104,9 @@ function AuthenticatedLayout() {
       </aside>
 
       <main className="flex-1 flex flex-col relative min-h-screen">
+        <header className="md:hidden flex justify-end p-4 sticky top-0 z-[50]">
+          <NotificationBell userId={userId} />
+        </header>
         <div className="flex-1 pb-32 md:pb-8 pt-4">
           <Outlet />
         </div>
@@ -132,20 +143,23 @@ function AuthenticatedLayout() {
 
         {/* Role Switcher for Super Admin */}
         {userRole === "super_admin" && (
-          <div className="fixed top-4 right-4 z-[60] flex gap-2 bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-lg border border-slate-200">
-            {["vecino", "admin", "super_admin"].map((role) => (
-              <button
-                key={role}
-                onClick={() => setActiveRole(role as any)}
-                className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all ${
-                  activeRole === role
-                    ? "bg-black text-white shadow-md shadow-black/10"
-                    : "text-slate-400 hover:text-slate-600"
-                }`}
-              >
-                {role.replace("_", " ")}
-              </button>
-            ))}
+          <div className="fixed top-4 right-4 z-[60] flex gap-2">
+            <NotificationBell userId={userId} />
+            <div className="flex gap-2 bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-lg border border-slate-200">
+              {["vecino", "admin", "super_admin"].map((role) => (
+                <button
+                  key={role}
+                  onClick={() => setActiveRole(role as any)}
+                  className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all ${
+                    activeRole === role
+                      ? "bg-black text-white shadow-md shadow-black/10"
+                      : "text-slate-400 hover:text-slate-600"
+                  }`}
+                >
+                  {role.replace("_", " ")}
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </main>

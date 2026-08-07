@@ -72,6 +72,8 @@ function AdminPage() {
       toast.error("Error al actualizar estado");
     } else {
       toast.success(newStatus === "aprobado" ? "Vecino aprobado" : "Estado actualizado");
+      
+      // Also join chat channel if approved (the trigger handles this, but we refresh local data)
       fetchData();
     }
   };
