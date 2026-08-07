@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useLocation, redirect } from "@tanstack/react-router";
-import { Home, Car, MessageSquare, AlertCircle, User, Plus } from "lucide-react";
+import { Home, Car, MessageSquare, AlertCircle, User, Plus, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated")({
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("status")
+      .select("status, role")
       .eq("id", session.user.id)
       .single();
 
@@ -27,20 +27,29 @@ export const Route = createFileRoute("/_authenticated")({
     if (profile.status === "pendiente") {
       throw redirect({ to: "/login" });
     }
+
+    return { userRole: profile.role };
   },
   component: AuthenticatedLayout,
 });
 
 function AuthenticatedLayout() {
   const location = useLocation();
+  const { userRole } = Route.useRouteContext();
   
   const navItems = [
     { label: "Muro", icon: Home, to: "/_authenticated/muro" },
     { label: "Cocheras", icon: Car, to: "/_authenticated/cocheras" },
     { label: "Chat", icon: MessageSquare, to: "/_authenticated/chat" },
     { label: "Reportes", icon: AlertCircle, to: "/_authenticated/reportes" },
+    { label: "Admin", icon: ShieldCheck, to: "/_authenticated/admin" },
     { label: "Perfil", icon: User, to: "/_authenticated/perfil" },
   ];
+
+  const filteredNavItems = navItems.filter(item => {
+    if (item.label === "Admin") return userRole === "admin" || userRole === "super_admin";
+    return true;
+  });
 
   return (
     <div className="flex min-h-screen bg-[#F2F2F2] text-foreground font-sans">
@@ -57,7 +66,7 @@ function AuthenticatedLayout() {
         </div>
         
         <nav className="flex flex-col gap-2">
-          {navItems.map((item) => {
+          {filteredNavItems.map((item) => {
             const isActive = location.pathname === item.to;
             return (
               <Link
@@ -90,7 +99,7 @@ function AuthenticatedLayout() {
         {/* Floating Pill Navigation for Mobile */}
         <div className="md:hidden fixed bottom-6 left-0 right-0 px-6 z-40">
           <nav className="h-20 bg-white rounded-full shadow-2xl border border-slate-100 flex items-center justify-around px-2">
-            {navItems.map((item) => {
+            {filteredNavItems.map((item) => {
               const isActive = location.pathname === item.to;
               return (
                 <Link

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
 import { Route as AuthenticatedCocherasRouteImport } from './routes/_authenticated/cocheras'
 import { Route as AuthenticatedMuroRouteImport } from './routes/_authenticated/muro'
@@ -31,6 +32,11 @@ const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
   id: '/chat',
@@ -61,6 +67,7 @@ const AuthenticatedReportesRoute = AuthenticatedReportesRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/chat': typeof AuthenticatedChatRoute
   '/cocheras': typeof AuthenticatedCocherasRoute
   '/muro': typeof AuthenticatedMuroRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/chat': typeof AuthenticatedChatRoute
   '/cocheras': typeof AuthenticatedCocherasRoute
   '/muro': typeof AuthenticatedMuroRoute
@@ -81,6 +89,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/chat': typeof AuthenticatedChatRoute
   '/_authenticated/cocheras': typeof AuthenticatedCocherasRoute
   '/_authenticated/muro': typeof AuthenticatedMuroRoute
@@ -90,14 +99,30 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/login' | '/chat' | '/cocheras' | '/muro' | '/perfil' | '/reportes'
+    | '/'
+    | '/login'
+    | '/admin'
+    | '/chat'
+    | '/cocheras'
+    | '/muro'
+    | '/perfil'
+    | '/reportes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/chat' | '/cocheras' | '/muro' | '/perfil' | '/reportes'
+  to:
+    | '/'
+    | '/login'
+    | '/admin'
+    | '/chat'
+    | '/cocheras'
+    | '/muro'
+    | '/perfil'
+    | '/reportes'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/login'
+    | '/_authenticated/admin'
     | '/_authenticated/chat'
     | '/_authenticated/cocheras'
     | '/_authenticated/muro'
@@ -133,6 +158,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/chat': {
       id: '/_authenticated/chat'
@@ -173,6 +205,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedChatRoute: typeof AuthenticatedChatRoute
   AuthenticatedCocherasRoute: typeof AuthenticatedCocherasRoute
   AuthenticatedMuroRoute: typeof AuthenticatedMuroRoute
@@ -181,6 +214,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedChatRoute: AuthenticatedChatRoute,
   AuthenticatedCocherasRoute: AuthenticatedCocherasRoute,
   AuthenticatedMuroRoute: AuthenticatedMuroRoute,
