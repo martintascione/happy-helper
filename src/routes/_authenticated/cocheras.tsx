@@ -21,8 +21,10 @@ import {
   Wallet,
   History,
   TrendingUp,
-  DollarSign
+  DollarSign,
+  ShieldCheck
 } from "lucide-react";
+import { AgreementModal } from "@/components/AgreementModal";
 import { format, isAfter, isBefore, startOfDay, addDays, differenceInDays } from "date-fns";
 import { es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
@@ -219,6 +221,15 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
     }
   }
 
+  const [showBookingAgreement, setShowBookingAgreement] = useState(false);
+  const bookingAgreementItems = [
+    { text: "Voy a usar la cochera únicamente para un vehículo propio o a mi cargo, dentro de las fechas reservadas. No puedo ceder, prestar ni transferir la reserva a terceros que no vivan en el edificio." },
+    { text: "Me comprometo a respetar las indicaciones del dueño (altura máxima, tipo de cochera) y las normas del edificio." },
+    { text: "El pago se hace únicamente por los medios oficiales de la app. Nunca voy a transferir a cuentas personales de otros vecinos." },
+    { text: "Puedo cancelar gratis hasta 24 horas antes del inicio. Después de ese plazo, la reserva se cobra igual." },
+    { text: "Entiendo que Comunidad Tower actúa como intermediaria y que cualquier daño o incidente se resuelve entre las partes." }
+  ];
+
   return (
     <div className="space-y-4">
       {spots.map((spot) => {
@@ -273,12 +284,21 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
             )}
           </div>
           <DialogFooter>
-            <Button onClick={handleBooking} className="w-full bg-black text-white h-14 rounded-2xl font-black">
+            <Button onClick={() => setShowBookingAgreement(true)} className="w-full bg-black text-white h-14 rounded-2xl font-black">
               Solicitar reserva
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AgreementModal
+        isOpen={showBookingAgreement}
+        onClose={() => setShowBookingAgreement(false)}
+        onAccept={handleBooking}
+        title="Compromiso de uso"
+        agreementKey="reservar_cochera"
+        items={bookingAgreementItems}
+      />
     </div>
   );
 }
