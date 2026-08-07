@@ -119,9 +119,12 @@ function PerfilPage() {
           <Link to="/admin-global" className="flex items-center justify-between p-5 hover:bg-slate-50/50 transition-colors border-b border-slate-50 bg-slate-50/30">
             <div className="flex items-center gap-3">
               <Shield size={18} className="text-black" />
-              <span className="font-bold text-black">Panel de Control</span>
+              <span className="font-bold text-black tracking-tight">Panel de Control</span>
             </div>
-            <ChevronRight size={20} className="text-slate-400" />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Admin</span>
+              <ChevronRight size={18} className="text-slate-300" />
+            </div>
           </Link>
         )}
 
