@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { InfoBanner } from "@/components/InfoBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { 
@@ -299,6 +300,15 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
         agreementKey="reservar_cochera"
         items={bookingAgreementItems}
       />
+
+      {selectedSpot && (
+        <div className="mt-4">
+          <InfoBanner 
+            variant="info" 
+            text="Comunidad Tower conecta vecinos del mismo edificio. El alquiler a personas que no viven en el edificio está prohibido y puede implicar la baja de la cuenta." 
+          />
+        </div>
+      )}
     </div>
   );
 }

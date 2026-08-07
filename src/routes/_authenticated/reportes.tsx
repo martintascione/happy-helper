@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MessageSquare, ShieldAlert } from "lucide-react";
+import { MessageSquare, ShieldAlert, AlertTriangle } from "lucide-react";
+import { InfoBanner } from "@/components/InfoBanner";
 
 export const Route = createFileRoute("/_authenticated/reportes")({
   component: ReportesPage,
@@ -12,6 +13,11 @@ function ReportesPage() {
         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Reportes</h1>
         <p className="text-slate-500 font-medium">Informá problemas en el edificio</p>
       </header>
+
+      <InfoBanner 
+        variant="advertencia" 
+        text="Si es una emergencia — incendio, escape de gas, urgencia médica o un hecho de inseguridad en curso — llamá primero al 911 o a los servicios de emergencia. Esta sección no reemplaza los canales de emergencia." 
+      />
 
       <div className="bg-white p-12 rounded-[2.5rem] border-2 border-dashed border-slate-100 text-center space-y-6 shadow-soft">
         <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200 mx-auto">
