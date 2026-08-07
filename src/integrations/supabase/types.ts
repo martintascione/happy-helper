@@ -38,6 +38,79 @@ export type Database = {
         }
         Relationships: []
       }
+      comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          author_id: string
+          body: string
+          building_id: string
+          created_at: string
+          id: string
+          image_url: string | null
+          title: string
+          type: Database["public"]["Enums"]["post_type"]
+        }
+        Insert: {
+          author_id: string
+          body: string
+          building_id: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          title: string
+          type?: Database["public"]["Enums"]["post_type"]
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          building_id?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["post_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_building_id_fkey"
+            columns: ["building_id"]
+            isOneToOne: false
+            referencedRelation: "buildings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -89,6 +162,35 @@ export type Database = {
           },
         ]
       }
+      reactions: {
+        Row: {
+          emoji: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          emoji: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          emoji?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       units: {
         Row: {
           apartment: string
@@ -136,6 +238,7 @@ export type Database = {
     }
     Enums: {
       app_role: "vecino" | "admin" | "super_admin"
+      post_type: "oficial" | "vecinal"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -264,6 +367,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["vecino", "admin", "super_admin"],
+      post_type: ["oficial", "vecinal"],
     },
   },
 } as const
