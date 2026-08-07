@@ -283,16 +283,10 @@ function GlobalAdminPage() {
           {loading ? "Guardando..." : "Guardar Configuración"}
         </button>
       </form>
-      ) : (
+      ) : activeTab === "pagos" ? (
         <div className="space-y-6 animate-in fade-in duration-300">
           {pendingPayments.length === 0 ? (
-            <div className="bg-white rounded-[2rem] p-12 text-center border border-dashed border-slate-200">
-              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                <Check size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Todo al día</h3>
-              <p className="text-slate-500 font-medium">No hay comprobantes pendientes de revisión.</p>
-            </div>
+            <EmptyState title="Todo al día" description="No hay comprobantes pendientes de revisión." />
           ) : (
             pendingPayments.map((payment) => (
               <div key={payment.id} className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 space-y-4">
@@ -336,7 +330,122 @@ function GlobalAdminPage() {
             ))
           )}
         </div>
+      ) : activeTab === "liquidaciones" ? (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          {pendingPayouts.length === 0 ? (
+            <EmptyState title="Sin pendientes" description="No hay liquidaciones por realizar." />
+          ) : (
+            pendingPayouts.map((payout) => (
+              <PayoutCard key={payout.id} payout={payout} onReview={handleReviewPayout} />
+            ))
+          )}
+        </div>
+      ) : (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          {(!financialStats || financialStats.length === 0) ? (
+            <EmptyState title="Sin datos" description="Aún no hay reservas confirmadas para mostrar estadísticas." />
+          ) : (
+            financialStats.map((stat: any) => (
+              <div key={stat.month} className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 space-y-6">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-black text-xl text-slate-900 capitalize">
+                    {format(new Date(stat.month + '-02'), 'MMMM yyyy', { locale: es })}
+                  </h4>
+                  <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                    Profit: ${stat.profit.toLocaleString('es-AR')}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-slate-50 p-5 rounded-[1.5rem] space-y-1">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cobrado Vecinos</p>
+                    <p className="font-black text-xl text-slate-900">${stat.total.toLocaleString('es-AR')}</p>
+                  </div>
+                  <div className="bg-slate-50 p-5 rounded-[1.5rem] space-y-1">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Dueños</p>
+                    <p className="font-black text-xl text-slate-900">${stat.owner_sum.toLocaleString('es-AR')}</p>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       )}
+    </div>
+  );
+}
+
+function EmptyState({ title, description }: { title: string, description: string }) {
+  return (
+    <div className="bg-white rounded-[2rem] p-12 text-center border border-dashed border-slate-200">
+      <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+        <Check size={32} />
+      </div>
+      <h3 className="text-xl font-bold text-slate-900 mb-2">{title}</h3>
+      <p className="text-slate-500 font-medium">{description}</p>
+    </div>
+  );
+}
+
+function PayoutCard({ payout, onReview }: { payout: any, onReview: any }) {
+  const account = payout.owner?.payout_accounts?.[0];
+  const copy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Copiado");
+  };
+
+  return (
+    <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 space-y-6">
+      <div className="flex justify-between items-start">
+        <div>
+          <h4 className="font-black text-lg text-slate-900">{payout.owner?.full_name}</h4>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            A liquidar: ${Number(payout.amount).toLocaleString('es-AR')}
+          </p>
+        </div>
+        <button 
+          onClick={() => copy(String(payout.amount))} 
+          className="p-3 bg-slate-50 rounded-xl text-black hover:bg-slate-100 transition-colors"
+          title="Copiar monto"
+        >
+          <DollarSign size={20} />
+        </button>
+      </div>
+
+      {account ? (
+        <div className="bg-slate-900 text-white p-6 rounded-[2rem] space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Titular</p>
+              <p className="font-bold text-sm">{account.holder_name}</p>
+            </div>
+            <p className="text-[10px] text-slate-500 font-bold uppercase">{account.document_number}</p>
+          </div>
+          <div className="flex items-center justify-between group">
+            <div>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">CBU / Alias</p>
+              <p className="font-mono text-xs">{account.cbu_or_alias}</p>
+            </div>
+            <button 
+              onClick={() => copy(account.cbu_or_alias)} 
+              className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+            >
+              <Plus size={16} className="text-slate-400" />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="p-4 bg-amber-50 rounded-2xl text-xs font-bold text-amber-800 border border-amber-100">
+          El dueño aún no ha configurado sus datos de cobro.
+        </div>
+      )}
+
+      <Button 
+        onClick={() => onReview(payout.id, 'pagado')} 
+        disabled={!account}
+        className="w-full bg-black text-white rounded-[2rem] font-bold h-14 shadow-lg shadow-black/10 active:scale-[0.98] transition-all"
+      >
+        Transferencia realizada
+      </Button>
     </div>
   );
 }
