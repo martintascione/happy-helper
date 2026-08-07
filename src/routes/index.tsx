@@ -35,16 +35,16 @@ function Index() {
         {/* Hero Section */}
         <div className="space-y-6">
           <div className="space-y-2">
-            <p className="text-[11px] font-bold text-primary uppercase tracking-[0.25em] opacity-80">Diseño Profesional</p>
+            <p className="text-[11px] font-bold text-primary uppercase tracking-[0.25em] opacity-80">Estructura del Proyecto</p>
             <h1 className="text-[44px] font-extrabold text-[#1A1D21] leading-[1.05] tracking-[-0.04em]">
-              Pulido &<br />
-              <span className="text-primary">Estructurado</span>
+              Web &<br />
+              <span className="text-primary">iOS Swift</span>
             </h1>
           </div>
           <p className="text-[#64748B] text-[15px] leading-relaxed font-medium">
-            Implementando buenas prácticas de diseño con un enfoque en la calidad 
-            visual, alejándonos de patrones genéricos para lograr una interfaz 
-            premium y artesanal.
+            Organizando el proyecto en GitHub con carpetas dedicadas para Web y iOS. 
+            Cada avance se transcribe y adapta fielmente a SwiftUI para garantizar 
+            un diseño idéntico en ambas plataformas.
           </p>
         </div>
 
