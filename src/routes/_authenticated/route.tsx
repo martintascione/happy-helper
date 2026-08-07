@@ -170,8 +170,8 @@ function AuthenticatedLayout() {
         </nav>
       </aside>
 
-      <main className="flex-1 flex flex-col relative min-h-screen">
-        <header className="flex justify-end p-6 md:p-8 sticky top-0 z-[50]">
+      <main className="flex-1 flex flex-col relative min-h-screen max-w-full overflow-x-hidden">
+        <header className="flex justify-end p-6 lg:p-8 sticky top-0 z-[50]">
           <NotificationBell userId={userId} />
         </header>
         <div className="flex-1 pb-32 md:pb-8">
