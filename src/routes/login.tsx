@@ -36,8 +36,8 @@ function LoginPage() {
       if (session) {
         const userEmail = session.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
-          console.log("Super admin session found on mount, forcing redirect...");
-          // Try both router navigate and window location
+          console.log("Super admin detected on mount, performing immediate cleanup and redirect");
+          // Clear any potentially conflicting local state or breadcrumbs
           window.location.href = "/muro";
         } else {
           checkSession();
