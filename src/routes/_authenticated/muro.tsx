@@ -24,6 +24,7 @@ interface MuroData {
 function MuroPage() {
   const [data, setData] = useState<MuroData>({ posts: [], bookings: [], loading: true });
   const [neighborPosts, setNeighborPosts] = useState<any[]>([]);
+  const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const { userRole, userId } = Route.useRouteContext();
   const navigate = useNavigate();
 
@@ -35,39 +36,45 @@ function MuroPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { data: profile } = await supabase.from("profiles").select("building_id").eq("id", user.id).single();
+    const { data: profileData } = await supabase.from("profiles").select("full_name, avatar_url, building_id").eq("id", user.id).single();
     
-    if (profile?.building_id) {
-      const [officialRes, bookingsRes, neighborsRes] = await Promise.all([
-        supabase
-          .from("posts")
-          .select("*, author:profiles!author_id(full_name)")
-          .eq("building_id", profile.building_id)
-          .eq("type", "oficial")
-          .order("created_at", { ascending: false })
-          .limit(3),
-        supabase
-          .from("parking_bookings")
-          .select("*, spot:parking_spots(identifier)")
-          .eq("renter_id", user.id)
-          .eq("status", "confirmada")
-          .gte("start_date", new Date().toISOString().split('T')[0])
-          .order("start_date", { ascending: true })
-          .limit(2),
-        supabase
-          .from("posts")
-          .select("*, author:profiles!author_id(full_name, avatar_url, unit:units(floor, apartment))")
-          .eq("building_id", profile.building_id)
-          .eq("type", "vecinal")
-          .order("created_at", { ascending: false })
-      ]);
+    if (profileData) {
+      setProfile({ full_name: profileData.full_name, avatar_url: profileData.avatar_url });
+      
+      if (profileData.building_id) {
+        const [officialRes, bookingsRes, neighborsRes] = await Promise.all([
+          supabase
+            .from("posts")
+            .select("*, author:profiles!author_id(full_name)")
+            .eq("building_id", profileData.building_id)
+            .eq("type", "oficial")
+            .order("created_at", { ascending: false })
+            .limit(3),
+          supabase
+            .from("parking_bookings")
+            .select("*, spot:parking_spots(identifier)")
+            .eq("renter_id", user.id)
+            .eq("status", "confirmada")
+            .gte("start_date", new Date().toISOString().split('T')[0])
+            .order("start_date", { ascending: true })
+            .limit(2),
+          supabase
+            .from("posts")
+            .select("*, author:profiles!author_id(full_name, avatar_url, unit:units(floor, apartment))")
+            .eq("building_id", profileData.building_id)
+            .eq("type", "vecinal")
+            .order("created_at", { ascending: false })
+        ]);
 
-      setData({
-        posts: officialRes.data || [],
-        bookings: bookingsRes.data || [],
-        loading: false
-      });
-      setNeighborPosts(neighborsRes.data || []);
+        setData({
+          posts: officialRes.data || [],
+          bookings: bookingsRes.data || [],
+          loading: false
+        });
+        setNeighborPosts(neighborsRes.data || []);
+      } else {
+        setData(prev => ({ ...prev, loading: false }));
+      }
     } else {
       setData(prev => ({ ...prev, loading: false }));
     }
@@ -105,9 +112,23 @@ function MuroPage() {
 
   return (
     <div className="p-8 max-w-2xl mx-auto space-y-12 pb-32 bg-background overflow-x-hidden relative">
-      <header className="px-1">
-        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Comunidad</h1>
-        <p className="text-muted-foreground font-medium text-lg">Edificio Libertador</p>
+      <header className="px-1 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight mb-1">
+            Hola {profile?.full_name?.split(' ')[0] || 'Vecino'},
+          </h1>
+          <p className="text-muted-foreground font-medium text-lg italic">¡Bienvenido a tu edificio!</p>
+        </div>
+        <button 
+          onClick={() => navigate({ to: "/_authenticated/perfil" } as any)}
+          className="w-16 h-16 rounded-3xl overflow-hidden border-4 border-white shadow-premium active:scale-90 transition-all bg-secondary flex items-center justify-center group"
+        >
+          {profile?.avatar_url ? (
+            <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+          ) : (
+            <User size={32} className="text-primary group-hover:scale-110 transition-transform" />
+          )}
+        </button>
       </header>
 
       {/* Resumen */}
