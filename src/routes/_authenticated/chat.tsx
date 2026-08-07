@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageCircle, Send, Search, User, Hash, Clock, ArrowLeft } from "lucide-react";
@@ -97,10 +97,10 @@ function ChatPage() {
           const { data: convData } = await supabase
             .from("conversations" as any)
             .select("type")
-            .eq("id", commonConv.conversation_id)
+            .eq("id", (commonConv as any).conversation_id)
             .single();
           
-          if (convData?.type === 'directa') {
+          if ((convData as any)?.type === 'directa') {
             // It exists, we'll select it later
           }
         } else {
@@ -115,8 +115,8 @@ function ChatPage() {
             await supabase
               .from("conversation_members" as any)
               .insert([
-                { conversation_id: newConv.id, user_id: user.id },
-                { conversation_id: newConv.id, user_id: startDirect }
+                { conversation_id: (newConv as any).id, user_id: user.id },
+                { conversation_id: (newConv as any).id, user_id: startDirect }
               ]);
           }
         }
@@ -132,8 +132,8 @@ function ChatPage() {
           await supabase
             .from("conversation_members" as any)
             .insert([
-              { conversation_id: newConv.id, user_id: user.id },
-              { conversation_id: newConv.id, user_id: startDirect }
+              { conversation_id: (newConv as any).id, user_id: user.id },
+              { conversation_id: (newConv as any).id, user_id: startDirect }
             ]);
         }
       }
@@ -156,7 +156,7 @@ function ChatPage() {
       .eq("user_id", user.id);
 
     if (membersData) {
-      const convs = await Promise.all(membersData.map(async (m: any) => {
+      const convs = await Promise.all((membersData as any[]).map(async (m: any) => {
         const conv = m.conversation;
         if (!conv) return null;
         
