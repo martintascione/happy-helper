@@ -2,8 +2,10 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Settings, Landmark, Percent, DollarSign, Save, FileText, Check, X, ExternalLink } from "lucide-react";
+import { Settings, Landmark, Percent, DollarSign, Save, FileText, Check, X, ExternalLink, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 export const Route = createFileRoute("/_authenticated/admin-global")({
   beforeLoad: async ({ context }) => {
