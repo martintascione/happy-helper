@@ -24,6 +24,7 @@ interface MuroData {
 function MuroPage() {
   const [data, setData] = useState<MuroData>({ posts: [], bookings: [], loading: true });
   const [neighborPosts, setNeighborPosts] = useState<any[]>([]);
+  const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const { userRole, userId } = Route.useRouteContext();
   const navigate = useNavigate();
 
