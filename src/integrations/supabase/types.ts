@@ -193,6 +193,57 @@ export type Database = {
           },
         ]
       }
+      parking_payouts: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string | null
+          id: string
+          owner_id: string
+          paid_at: string | null
+          receipt_url: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string | null
+          id?: string
+          owner_id: string
+          paid_at?: string | null
+          receipt_url?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string | null
+          id?: string
+          owner_id?: string
+          paid_at?: string | null
+          receipt_url?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parking_payouts_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "parking_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parking_payouts_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parking_spots: {
         Row: {
           building_id: string

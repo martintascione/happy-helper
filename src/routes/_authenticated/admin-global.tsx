@@ -16,9 +16,11 @@ export const Route = createFileRoute("/_authenticated/admin-global")({
 
 function GlobalAdminPage() {
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"config" | "pagos">("config");
+  const [activeTab, setActiveTab] = useState<"config" | "pagos" | "liquidaciones" | "resumen">("config");
   const [settings, setSettings] = useState<any>(null);
   const [pendingPayments, setPendingPayments] = useState<any[]>([]);
+  const [pendingPayouts, setPendingPayouts] = useState<any[]>([]);
+  const [financialStats, setFinancialStats] = useState<any>(null);
 
   useEffect(() => {
     fetchData();
@@ -29,7 +31,7 @@ function GlobalAdminPage() {
     if (activeTab === "config") {
       const { data } = await supabase.from("platform_settings" as any).select("*").single();
       if (data) setSettings(data);
-    } else {
+    } else if (activeTab === "pagos") {
       const { data } = await supabase
         .from("parking_payments" as any)
         .select(`
@@ -44,6 +46,51 @@ function GlobalAdminPage() {
         .eq("status", "en_revision")
         .order("created_at", { ascending: true });
       setPendingPayments(data || []);
+    } else if (activeTab === "liquidaciones") {
+      const { data } = await supabase
+        .from("parking_payouts" as any)
+        .select(`
+          *,
+          booking:parking_bookings(
+            id,
+            total_price,
+            owner_amount,
+            platform_fee,
+            spot:parking_spots(identifier)
+          ),
+          owner:profiles!owner_id(
+            full_name,
+            payout_accounts:payout_accounts(holder_name, document_number, cbu_or_alias)
+          )
+        `)
+        .eq("status", "pendiente")
+        .order("created_at", { ascending: true });
+      setPendingPayouts(data || []);
+    } else if (activeTab === "resumen") {
+      const { data: bookings } = await supabase
+        .from("parking_bookings" as any)
+        .select("total_price, owner_amount, platform_fee, created_at")
+        .eq("status", "confirmada") // Solo las pagadas/confirmadas
+        .or("status.eq.finalizada");
+      
+      if (bookings) {
+        const stats = (bookings as any[]).reduce((acc, curr) => {
+          const date = new Date(curr.created_at);
+          const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+          
+          if (!acc[monthKey]) {
+            acc[monthKey] = { month: monthKey, total: 0, owner_sum: 0, profit: 0 };
+          }
+          
+          acc[monthKey].total += Number(curr.total_price);
+          acc[monthKey].owner_sum += Number(curr.owner_amount);
+          acc[monthKey].profit += Number(curr.platform_fee);
+          
+          return acc;
+        }, {} as Record<string, any>);
+        
+        setFinancialStats(Object.values(stats).sort((a, b) => b.month.localeCompare(a.month)));
+      }
     }
     setLoading(false);
   }
@@ -93,23 +140,30 @@ function GlobalAdminPage() {
         <p className="text-slate-500 font-medium">Configuración maestra de la plataforma</p>
       </div>
 
-      <div className="flex p-1 bg-gray-200 rounded-2xl mb-6">
+      <div className="flex p-1 bg-gray-200 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
         {[
           { id: "config", label: "Configuración", icon: Settings },
-          { id: "pagos", label: "Pagos en Revisión", icon: FileText }
+          { id: "pagos", label: "Pagos", icon: FileText },
+          { id: "liquidaciones", label: "Liquidaciones", icon: Landmark },
+          { id: "resumen", label: "Resumen", icon: DollarSign }
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex-1 py-3 flex items-center justify-center gap-2 text-sm font-bold rounded-xl transition-all ${
+            className={`flex-1 min-w-fit px-4 py-3 flex items-center justify-center gap-2 text-[10px] font-black uppercase rounded-xl transition-all whitespace-nowrap ${
               activeTab === tab.id ? "bg-white text-black shadow-sm" : "text-gray-500"
             }`}
           >
-            <tab.icon size={18} />
+            <tab.icon size={16} />
             {tab.label}
             {tab.id === 'pagos' && pendingPayments.length > 0 && (
               <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
                 {pendingPayments.length}
+              </span>
+            )}
+            {tab.id === 'liquidaciones' && pendingPayouts.length > 0 && (
+              <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                {pendingPayouts.length}
               </span>
             )}
           </button>
