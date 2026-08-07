@@ -21,22 +21,16 @@ export const InfoBanner = ({
 }: InfoBannerProps) => {
   const config = {
     info: {
-      bg: "bg-[#F8C8DC]/20",
-      border: "border-[#F8C8DC]/30",
-      text: "text-slate-700",
-      icon: <Info size={18} className="text-[#F8C8DC]" />,
+      className: "tint-info border-transparent",
+      icon: <Info size={18} />,
     },
     advertencia: {
-      bg: "bg-amber-50",
-      border: "border-amber-100",
-      text: "text-amber-800",
-      icon: <AlertTriangle size={18} className="text-amber-500" />,
+      className: "tint-warning border-transparent",
+      icon: <AlertTriangle size={18} />,
     },
     seguridad: {
-      bg: "bg-red-50",
-      border: "border-red-100",
-      text: "text-red-900",
-      icon: <ShieldAlert size={18} className="text-red-500" />,
+      className: "tint-error border-transparent",
+      icon: <ShieldAlert size={18} />,
     }
   };
 
@@ -45,14 +39,13 @@ export const InfoBanner = ({
   return (
     <div className={cn(
       "p-4 rounded-2xl border flex gap-3 items-start animate-in fade-in slide-in-from-top-1 duration-300",
-      current.bg,
-      current.border,
+      current.className,
       className
     )}>
-      <div className="shrink-0 mt-0.5">
+      <div className="shrink-0 mt-0.5 opacity-80">
         {current.icon}
       </div>
-      <p className={cn("text-xs font-medium leading-relaxed flex-1", current.text)}>
+      <p className="text-xs font-semibold leading-relaxed flex-1">
         {text}
       </p>
       {isClosable && variant !== "seguridad" && onClose && (
@@ -60,7 +53,7 @@ export const InfoBanner = ({
           onClick={onClose}
           className="shrink-0 p-1 hover:bg-black/5 rounded-full transition-colors"
         >
-          <X size={14} className="text-slate-400" />
+          <X size={14} className="opacity-40" />
         </button>
       )}
     </div>

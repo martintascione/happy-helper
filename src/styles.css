@@ -49,30 +49,36 @@
 
 :root {
   --radius: 1.5rem;
-  --background: #F2F2F2;
-  --foreground: #1A1A1A;
+  --background: #F7F5F1;
+  --foreground: #111111;
   --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
+  --card-foreground: #111111;
   --popover: #FFFFFF;
-  --popover-foreground: #1A1A1A;
-  --primary: #000000;
+  --popover-foreground: #111111;
+  --primary: #111111;
   --primary-foreground: #FFFFFF;
-  --secondary: #F8C8DC;
-  --secondary-foreground: #D44E7D;
-  --muted: #E5E5E5;
-  --muted-foreground: #737373;
-  --accent: #F8C8DC;
-  --accent-foreground: #D44E7D;
+  --secondary: #E5E5E5;
+  --secondary-foreground: #111111;
+  --muted: #EBE9E4;
+  --muted-foreground: #8A8A8E;
+  --accent: #22C55E;
+  --accent-foreground: #FFFFFF;
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
-  --border: #E5E5E5;
-  --input: #E5E5E5;
-  --ring: #F8C8DC;
-  --chart-1: #000000;
-  --chart-2: #F8C8DC;
-  --chart-3: #22C55E;
-  --chart-4: #EF4444;
-  --chart-5: #F59E0B;
+  --border: #EBE9E4;
+  --input: #EBE9E4;
+  --ring: #111111;
+  
+  --tint-positive: rgba(34, 197, 94, 0.10);
+  --tint-positive-text: #15803D;
+  --tint-insight: rgba(167, 139, 250, 0.14);
+  --tint-insight-text: #7C3AED;
+  --tint-warning: rgba(245, 158, 11, 0.12);
+  --tint-warning-text: #B45309;
+  --tint-error: rgba(239, 68, 68, 0.10);
+  --tint-error-text: #B91C1C;
+  --tint-info: rgba(59, 130, 246, 0.10);
+  --tint-info-text: #1D4ED8;
 }
 
 @layer base {
@@ -95,6 +101,32 @@
   }
   
   .card-rounded {
+    border-radius: 1.5rem;
+  }
+
+  .tint-positive {
+    background-color: var(--tint-positive);
+    color: var(--tint-positive-text);
+  }
+  .tint-insight {
+    background-color: var(--tint-insight);
+    color: var(--tint-insight-text);
+  }
+  .tint-warning {
+    background-color: var(--tint-warning);
+    color: var(--tint-warning-text);
+  }
+  .tint-error {
+    background-color: var(--tint-error);
+    color: var(--tint-error-text);
+  }
+  .tint-info {
+    background-color: var(--tint-info);
+    color: var(--tint-info-text);
+  }
+
+  .card-dashed {
+    border: 1.5px dashed currentColor;
     border-radius: 1.5rem;
   }
 }
