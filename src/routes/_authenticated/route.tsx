@@ -174,7 +174,7 @@ function AuthenticatedLayout() {
         <header className="flex justify-end p-6 lg:p-8 sticky top-0 z-[50]">
           <NotificationBell userId={userId} />
         </header>
-        <div className="flex-1 pb-32 md:pb-8">
+        <div className="flex-1 pb-32 lg:pb-8">
           <Outlet />
         </div>
 
