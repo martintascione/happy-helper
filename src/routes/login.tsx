@@ -47,11 +47,12 @@ function LoginPage() {
       } else {
         // If it's the specific super admin email, create the profile automatically if it doesn't exist
         if (session.user.email === 'tascione32@gmail.com') {
+          // Check if building exists first
           const { data: firstBuilding } = await supabase.from('buildings').select('id').limit(1).single();
           const { data: firstUnit } = await supabase.from('units').select('id').limit(1).single();
           
           if (firstBuilding && firstUnit) {
-            await supabase.from('profiles').insert({
+            const { error: insertError } = await supabase.from('profiles').insert({
               id: session.user.id,
               full_name: 'Super Admin',
               building_id: firstBuilding.id,
@@ -59,8 +60,11 @@ function LoginPage() {
               role: 'super_admin',
               status: 'aprobado'
             });
-            navigate({ to: "/_authenticated/muro" });
-            return;
+            
+            if (!insertError || insertError.code === '23505') { // Success or already exists
+              navigate({ to: "/_authenticated/muro" });
+              return;
+            }
           }
         }
         setStep(2); // Authenticated but no profile
