@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Settings, Landmark, Percent, DollarSign, Save } from "lucide-react";
+import { Settings, Landmark, Percent, DollarSign, Save, FileText, Check, X, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin-global")({
   beforeLoad: async ({ context }) => {
@@ -15,7 +15,9 @@ export const Route = createFileRoute("/_authenticated/admin-global")({
 
 function GlobalAdminPage() {
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"config" | "pagos">("config");
   const [settings, setSettings] = useState<any>(null);
+  const [pendingPayments, setPendingPayments] = useState<any[]>([]);
 
   useEffect(() => {
     fetchSettings();
@@ -53,7 +55,31 @@ function GlobalAdminPage() {
         <p className="text-slate-500 font-medium">Configuración maestra de la plataforma</p>
       </div>
 
-      <form onSubmit={handleSave} className="space-y-8">
+      <div className="flex p-1 bg-gray-200 rounded-2xl mb-6">
+        {[
+          { id: "config", label: "Configuración", icon: Settings },
+          { id: "pagos", label: "Pagos en Revisión", icon: FileText }
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            className={`flex-1 py-3 flex items-center justify-center gap-2 text-sm font-bold rounded-xl transition-all ${
+              activeTab === tab.id ? "bg-white text-black shadow-sm" : "text-gray-500"
+            }`}
+          >
+            <tab.icon size={18} />
+            {tab.label}
+            {tab.id === 'pagos' && pendingPayments.length > 0 && (
+              <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                {pendingPayments.length}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === "config" ? (
+        <form onSubmit={handleSave} className="space-y-8 animate-in fade-in duration-300">
         {/* Profit Margin Section */}
         <section className="space-y-4">
           <div className="flex items-center gap-2 px-1">
@@ -144,6 +170,60 @@ function GlobalAdminPage() {
           {loading ? "Guardando..." : "Guardar Configuración"}
         </button>
       </form>
+      ) : (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          {pendingPayments.length === 0 ? (
+            <div className="bg-white rounded-[2rem] p-12 text-center border border-dashed border-slate-200">
+              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                <Check size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">Todo al día</h3>
+              <p className="text-slate-500 font-medium">No hay comprobantes pendientes de revisión.</p>
+            </div>
+          ) : (
+            pendingPayments.map((payment) => (
+              <div key={payment.id} className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 space-y-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="font-black text-lg text-slate-900">{payment.booking?.renter?.full_name}</h4>
+                    <p className="text-sm font-medium text-slate-500">
+                      Reserva en {payment.booking?.spot?.identifier} • ${Number(payment.amount).toLocaleString('es-AR')}
+                    </p>
+                  </div>
+                  <a 
+                    href={supabase.storage.from('payment-receipts').getPublicUrl(payment.receipt_url).data.publicUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-3 bg-slate-50 rounded-xl text-black hover:bg-slate-100 transition-colors"
+                    title="Ver comprobante"
+                  >
+                    <ExternalLink size={20} />
+                  </a>
+                </div>
+                
+                <div className="flex gap-3">
+                  <Button 
+                    onClick={() => handleReviewPayment(payment.id, 'aprobado')}
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold h-12 flex items-center justify-center gap-2 shadow-lg shadow-green-500/20"
+                  >
+                    <Check size={18} /> Aprobar
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      const reason = window.prompt("Motivo del rechazo:");
+                      if (reason) handleReviewPayment(payment.id, 'rechazado', reason);
+                    }}
+                    variant="ghost" 
+                    className="flex-1 text-red-500 hover:bg-red-50 rounded-2xl font-bold h-12 flex items-center justify-center gap-2"
+                  >
+                    <X size={18} /> Rechazar
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }
