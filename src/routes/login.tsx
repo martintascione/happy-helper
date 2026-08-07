@@ -6,14 +6,25 @@ import { Mail, Lock, User, Key, Building2, DoorOpen, ArrowRight, ArrowLeft, Shie
 import { AgreementModal } from "@/components/AgreementModal";
 
 export const Route = createFileRoute("/login")({
+  validateSearch: (search: Record<string, unknown>): { mode?: "signup"; redirect?: string } => ({
+    ...(search['mode'] === "signup" ? { mode: "signup" as const } : {}),
+    ...(typeof search['redirect'] === "string" ? { redirect: search['redirect'] } : {}),
+  }),
   component: LoginPage,
 });
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { mode } = Route.useSearch();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1); // 1: Auth, 2: Invitation/Profile
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(mode === "signup");
+  const [existingSession, setExistingSession] = useState<string | null>(null);
+  const [signupNotice, setSignupNotice] = useState(false);
+
+  useEffect(() => {
+    if (mode === "signup") setIsSignUp(true);
+  }, [mode]);
   
   // Auth fields
   const [email, setEmail] = useState("");
@@ -37,7 +48,8 @@ function LoginPage() {
     const runCheck = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!isMounted) return;
-      if (session) checkSession();
+      // No redirigir automáticamente: mostrar la opción de continuar o cambiar de cuenta
+      if (session) setExistingSession(session.user.email ?? "tu cuenta");
     };
 
     runCheck();
@@ -94,10 +106,13 @@ function LoginPage() {
         toast.error(error.message);
         setLoading(false);
       } else {
-        toast.success("Cuenta creada.");
-        // Close modal if it was open
+        toast.success("Cuenta creada");
         setShowRegisterAgreement(false);
-        // The onAuthStateChange listener or handleAuth final setLoading will trigger
+        if (!data.session) {
+          // Supabase exige confirmar el email antes de iniciar sesión
+          setSignupNotice(true);
+        }
+        // Si hay sesión, onAuthStateChange dispara checkSession y sigue al paso del código
       }
     } else {
       try {
@@ -221,6 +236,42 @@ function LoginPage() {
 
         {step === 1 ? (
           <div className="space-y-6">
+            {existingSession && (
+              <div className="tint-info rounded-[20px] p-4 space-y-3">
+                <p className="text-[13px] font-medium leading-relaxed">
+                  Ya hay una sesión iniciada como <span className="font-semibold">{existingSession}</span>
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => checkSession()}
+                    className="flex-1 py-2.5 bg-black text-white rounded-full text-[13px] font-semibold active:scale-[0.98] transition-all"
+                  >
+                    Continuar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await supabase.auth.signOut();
+                      setExistingSession(null);
+                      toast.success("Sesión cerrada");
+                    }}
+                    className="flex-1 py-2.5 bg-white rounded-full text-[13px] font-semibold text-slate-600 shadow-subtle active:scale-[0.98] transition-all"
+                  >
+                    Usar otra cuenta
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {signupNotice && (
+              <div className="tint-warning rounded-[20px] p-4">
+                <p className="text-[13px] font-medium leading-relaxed">
+                  Te enviamos un correo para confirmar tu cuenta. Abrí el link y después ingresá con tu email y contraseña.
+                </p>
+              </div>
+            )}
+
             <div className="space-y-4">
               {isSignUp && (
                 <div className="space-y-1.5">

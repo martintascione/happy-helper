@@ -40,6 +40,7 @@ function Index() {
             </Link>
             <Link
               to="/login"
+              search={{ mode: "signup" }}
               className="w-full h-14 bg-white text-foreground rounded-full font-semibold active:scale-[0.98] transition-all flex items-center justify-center text-[16px] shadow-subtle"
             >
               Crear cuenta
