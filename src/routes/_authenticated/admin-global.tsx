@@ -115,6 +115,25 @@ function GlobalAdminPage() {
     setLoading(false);
   }
 
+  async function handleReviewPayout(payoutId: string, status: 'pagado') {
+    setLoading(true);
+    const { error } = await supabase
+      .from("parking_payouts" as any)
+      .update({ 
+        status, 
+        paid_at: new Date().toISOString()
+      })
+      .eq("id", payoutId);
+
+    if (error) {
+      toast.error("Error al procesar liquidación");
+    } else {
+      toast.success("Liquidación marcada como pagada");
+      fetchData();
+    }
+    setLoading(false);
+  }
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
