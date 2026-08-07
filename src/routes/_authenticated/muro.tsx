@@ -44,15 +44,9 @@ function MuroPage() {
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
 
-    if (user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role, building_id")
-        .eq("id", user.id)
-        .single();
-      
-      if (profile) {
-        setUserRole(profile.role);
+    if (user && profile) {
+      setUserRole(profile.role);
+      if (profile.building_id) {
         fetchPosts(profile.building_id);
       }
     }
