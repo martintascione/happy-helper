@@ -51,11 +51,30 @@ export const Route = createFileRoute("/_authenticated/cocheras")({
 function CocherasPage() {
   const [activeTab, setActiveTab] = useState<"disponibles" | "mi-cochera" | "mis-reservas" | "mis-cobros">("disponibles");
   const [mySpots, setMySpots] = useState<any[]>([]);
-  const [availableSpots, setAvailableSpots] = useState<any[]>([]);
+  const [availableSpots, setAvailableSpots] = useState<any[]>([
+    {
+      id: 'demo-1',
+      identifier: 'Cochera 18 • Subsuelo -2',
+      owner_price_per_day: 18000,
+      owner: { full_name: 'Admin Demo', avatar_url: null },
+      parking_availability: [
+        { start_date: new Date().toISOString(), end_date: addDays(new Date(), 7).toISOString() }
+      ]
+    },
+    {
+      id: 'demo-2',
+      identifier: 'Cochera 45 • Subsuelo -1',
+      owner_price_per_day: 15500,
+      owner: { full_name: 'Juan Perez', avatar_url: null },
+      parking_availability: [
+        { start_date: new Date().toISOString(), end_date: addDays(new Date(), 5).toISOString() }
+      ]
+    }
+  ]);
   const [myBookings, setMyBookings] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
-  const [platformSettings, setPlatformSettings] = useState<any>(null);
+  const [platformSettings, setPlatformSettings] = useState<any>({ margin_type: 'fijo', margin_value: 0 });
   const [payoutAccount, setPayoutAccount] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
 
@@ -64,7 +83,6 @@ function CocherasPage() {
   }, []);
 
   async function fetchData() {
-    setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -72,23 +90,15 @@ function CocherasPage() {
       .from("profiles")
       .select("*")
       .eq("id", user.id)
-      .single();
-    
-    setUserProfile(profile);
-
-    // Fetch platform settings
-    const { data: settings } = await supabase.from("platform_settings" as any).select("*").single();
-    setPlatformSettings(settings);
-
-    // Fetch payout account
-    const { data: payout } = await supabase
-      .from("payout_accounts" as any)
-      .select("*")
-      .eq("user_id", user.id)
       .maybeSingle();
-    setPayoutAccount(payout);
+    
+    if (profile) setUserProfile(profile);
+
+    const { data: settings } = await supabase.from("platform_settings" as any).select("*").maybeSingle();
+    if (settings) setPlatformSettings(settings);
 
     if (profile?.building_id) {
+      setLoading(true);
       const { data: spots } = await supabase
         .from("parking_spots")
         .select(`
@@ -101,7 +111,7 @@ function CocherasPage() {
         `)
         .eq("owner_id", user.id);
       
-      setMySpots(spots || []);
+      if (spots && spots.length > 0) setMySpots(spots);
 
       const { data: others } = await supabase
         .from("parking_spots")
@@ -114,7 +124,7 @@ function CocherasPage() {
         .eq("is_active", true)
         .neq("owner_id", user.id);
       
-      setAvailableSpots(others || []);
+      if (others && others.length > 0) setAvailableSpots(others);
 
       const { data: bookings } = await supabase
         .from("parking_bookings")
@@ -124,9 +134,9 @@ function CocherasPage() {
         `)
         .eq("renter_id", user.id);
       
-      setMyBookings(bookings || []);
+      if (bookings && bookings.length > 0) setMyBookings(bookings);
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   const nextBooking = useMemo(() => {
@@ -211,18 +221,20 @@ function CocherasPage() {
         </div>
       </div>
 
-      <div className="flex gap-2 mb-8 overflow-x-auto no-scrollbar">
+      <div className="grid grid-cols-4 gap-2 mb-8">
         {[
           { id: "disponibles", label: "Disponibles" },
-          { id: "mis-reservas", label: "Mis Reservas" },
-          { id: "mi-cochera", label: "Mi Cochera" },
-          { id: "mis-cobros", label: "Mis Cobros" }
+          { id: "mis-reservas", label: "Reservas" },
+          { id: "mi-cochera", label: "Mi Lugar" },
+          { id: "mis-cobros", label: "Cobros" }
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-6 py-3 text-[10px] font-black uppercase rounded-full transition-all whitespace-nowrap ${
-              activeTab === tab.id ? "bg-black text-white shadow-lg" : "bg-slate-100 text-slate-400 hover:bg-slate-200"
+            className={`px-1 py-3 text-[9px] font-black uppercase rounded-2xl transition-all text-center border ${
+              activeTab === tab.id 
+                ? "bg-black text-white shadow-lg border-black" 
+                : "bg-white text-slate-400 border-slate-100"
             }`}
           >
             {tab.label}
