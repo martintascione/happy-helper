@@ -696,27 +696,40 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
             <div className="mb-6">
               <h5 className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Solicitudes pendientes</h5>
               <div className="space-y-2">
-                {spot.bookings.filter((b: any) => b.status === 'solicitada').map((booking: any) => (
-                  <div key={booking.id} className="bg-blue-50 p-4 rounded-2xl">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <p className="font-black text-sm text-blue-900">{booking.renter?.full_name}</p>
-                        <p className="text-xs font-bold text-blue-700">
-                          {format(new Date(booking.start_date), "d MMM")} - {format(new Date(booking.end_date), "d MMM")}
-                        </p>
+                {spot.bookings.filter((b: any) => b.status === 'solicitada').map((booking: any) => {
+                  const payment = payments[booking.id];
+                  const isPaid = payment?.status === 'aprobado';
+                  const isReviewing = payment?.status === 'en_revision';
+
+                  return (
+                    <div key={booking.id} className="bg-blue-50 p-4 rounded-2xl space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-black text-sm text-blue-900">{booking.renter?.full_name}</p>
+                            {isPaid && <span className="text-[8px] bg-green-500 text-white px-1.5 py-0.5 rounded-full uppercase font-black">Pagado</span>}
+                            {isReviewing && <span className="text-[8px] bg-amber-500 text-white px-1.5 py-0.5 rounded-full uppercase font-black">Revisando Pago</span>}
+                          </div>
+                          <p className="text-xs font-bold text-blue-700">
+                            {format(new Date(booking.start_date), "d MMM")} - {format(new Date(booking.end_date), "d MMM")}
+                          </p>
+                        </div>
+                        <p className="font-black text-blue-900 text-sm">${Number(booking.total_price).toLocaleString('es-AR')}</p>
                       </div>
-                      <p className="font-black text-blue-900 text-sm">${booking.total_price}</p>
+                      <div className="flex gap-2">
+                        <Button 
+                          onClick={() => handleUpdateBookingStatus(booking.id, 'confirmada')} 
+                          className={`flex-1 ${isPaid ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'} text-white h-9 rounded-xl font-bold text-xs`}
+                        >
+                          {isPaid ? 'Aceptar Reserva (Pagada)' : 'Aceptar Reserva'}
+                        </Button>
+                        <Button onClick={() => handleUpdateBookingStatus(booking.id, 'cancelada')} variant="ghost" className="flex-1 text-blue-600 hover:bg-blue-100 h-9 rounded-xl font-bold text-xs">
+                          Rechazar
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button onClick={() => handleUpdateBookingStatus(booking.id, 'confirmada')} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white h-9 rounded-xl font-bold text-xs">
-                        Aceptar
-                      </Button>
-                      <Button onClick={() => handleUpdateBookingStatus(booking.id, 'cancelada')} variant="ghost" className="flex-1 text-blue-600 hover:bg-blue-100 h-9 rounded-xl font-bold text-xs">
-                        Rechazar
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
