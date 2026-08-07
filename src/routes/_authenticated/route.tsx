@@ -164,9 +164,8 @@ function AuthenticatedLayout() {
           <Outlet />
         </div>
 
-        {/* Floating Pill Navigation for Mobile */}
-        <div className="lg:hidden fixed bottom-10 left-0 right-0 px-8 z-[100]">
-          <nav className="h-16 glass-card rounded-full shadow-pill flex items-center justify-around px-3 relative border border-white/60 ring-1 ring-black/5 touch-none">
+        <div className="lg:hidden fixed bottom-12 left-0 right-0 px-10 z-[100]">
+          <nav className="h-[76px] glass rounded-[2.5rem] shadow-pill flex items-center justify-around px-4 relative border border-black/[0.03] ring-1 ring-black/[0.02] touch-none">
             {mobileNavItems.map((item) => {
               const isActive = location.pathname === item.to;
               return (
@@ -174,11 +173,11 @@ function AuthenticatedLayout() {
                   key={item.to}
                   to={item.to}
                   preload="intent"
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 ${
-                    isActive ? "bg-black text-white shadow-lg scale-110" : "text-slate-400 hover:text-slate-600"
+                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 ${
+                    isActive ? "bg-primary text-primary-foreground shadow-premium scale-110" : "text-muted-foreground/60 hover:text-foreground"
                   }`}
                 >
-                  <item.icon size={24} strokeWidth={2} />
+                  <item.icon size={26} strokeWidth={2.5} />
                 </Link>
               );
             })}
