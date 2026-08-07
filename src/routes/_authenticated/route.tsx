@@ -44,7 +44,8 @@ export const Route = createFileRoute("/_authenticated")({
 
     return { 
       userRole: (profile.role || (isSuperAdminEmail ? 'super_admin' : 'vecino')) as "admin" | "super_admin" | "vecino", 
-      userId: session.user.id 
+      userId: session.user.id,
+      isSuperAdmin: isSuperAdminEmail
     };
   },
   component: AuthenticatedLayout,
