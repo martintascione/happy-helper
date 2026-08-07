@@ -145,19 +145,14 @@ function AdminPage() {
 
         <div className="space-y-3">
           {profiles.map((p) => (
-            <div key={p.id} className="bg-white p-4 rounded-[1.5rem] shadow-soft flex items-center gap-4 border border-transparent hover:border-slate-100 transition-colors">
+            <div key={p.id} className="bg-white p-5 rounded-[24px] shadow-soft border border-slate-50 flex items-center gap-4">
               <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 shrink-0 overflow-hidden">
-                {p.avatar_url ? <img src={p.avatar_url} className="w-full h-full object-cover" /> : <User size={24} />}
+                {p.avatar_url ? <img src={p.avatar_url} className="w-full h-full object-cover" /> : <User size={20} />}
               </div>
               <div className="flex-1 min-w-0">
-                <button 
-                  onClick={() => Route.useNavigate()({ to: "/_authenticated/chat", search: { startDirect: p.id } } as any)}
-                  className="font-bold text-slate-900 truncate hover:text-accent transition-colors block text-left w-full"
-                >
-                  {p.full_name}
-                </button>
-                <p className="text-xs text-slate-500 font-medium">
-                  Piso {p.unit?.floor} - {p.unit?.apartment}
+                <p className="font-bold text-slate-900 truncate">{p.full_name}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
+                  Piso {p.unit?.floor} - Depto {p.unit?.apartment}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -165,20 +160,18 @@ function AdminPage() {
                   <>
                     <button 
                       onClick={() => handleUpdateStatus(p.id, "aprobado")}
-                      className="w-10 h-10 bg-green-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20 active:scale-90 transition-transform"
-                      title="Aprobar"
+                      className="px-5 py-2.5 bg-green-500 text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg shadow-green-500/20 active:scale-90 transition-all"
                     >
-                      <Check size={20} strokeWidth={3} />
+                      Aprobar
                     </button>
                     <button 
-                      className="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center active:scale-90 transition-transform"
-                      title="Rechazar"
+                      className="px-5 py-2.5 bg-red-50 text-red-500 rounded-full text-[10px] font-black uppercase tracking-wider active:scale-90 transition-all"
                     >
-                      <X size={20} strokeWidth={3} />
+                      Rechazar
                     </button>
                   </>
                 ) : (
-                  <span className="text-[10px] font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-full uppercase tracking-wider">
+                  <span className="text-[10px] font-black text-green-600 bg-green-50 px-4 py-2 rounded-full uppercase tracking-wider">
                     Aprobado
                   </span>
                 )}
@@ -186,7 +179,7 @@ function AdminPage() {
             </div>
           ))}
           {profiles.length === 0 && (
-            <div className="text-center py-12 bg-white rounded-[2rem] border border-dashed border-slate-200">
+            <div className="text-center py-12 bg-white rounded-[24px] border border-dashed border-slate-200">
               <p className="text-slate-400 font-medium">No hay vecinos registrados aún</p>
             </div>
           )}
