@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Settings, Landmark, Percent, DollarSign, Save, FileText, Check, X, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin-global")({
   beforeLoad: async ({ context }) => {
