@@ -56,13 +56,13 @@ function AuthenticatedLayout() {
   }, [userRole]);
   
   const navItems = [
-    { label: "Muro", icon: Home, to: "/_authenticated/muro" },
-    { label: "Cocheras", icon: Car, to: "/_authenticated/cocheras" },
-    { label: "Chat", icon: MessageSquare, to: "/_authenticated/chat" },
-    { label: "Reportes", icon: AlertCircle, to: "/_authenticated/reportes" },
-    { label: "Admin", icon: ShieldCheck, to: "/_authenticated/admin" },
-    { label: "Global", icon: Settings, to: "/_authenticated/admin-global" },
-    { label: "Perfil", icon: User, to: "/_authenticated/perfil" },
+    { label: "Muro", icon: Home, to: "/muro" },
+    { label: "Cocheras", icon: Car, to: "/cocheras" },
+    { label: "Chat", icon: MessageSquare, to: "/chat" },
+    { label: "Reportes", icon: AlertCircle, to: "/reportes" },
+    { label: "Admin", icon: ShieldCheck, to: "/admin" },
+    { label: "Global", icon: Settings, to: "/admin-global" },
+    { label: "Perfil", icon: User, to: "/perfil" },
   ];
 
   const filteredNavItems = navItems.filter(item => {

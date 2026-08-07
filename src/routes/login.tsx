@@ -74,7 +74,7 @@ function LoginPage() {
       // If already super_admin and approved, redirect immediately
       if (profile && profile.role === 'super_admin' && profile.status === 'aprobado' && profile.building_id && profile.unit_id) {
         console.log("Super admin fully set up, redirecting to muro");
-        navigate({ to: "/_authenticated/muro" });
+        navigate({ to: "/muro" });
         return;
       }
       console.log("Super admin profile incomplete, attempting auto-setup...", profile);
@@ -105,7 +105,7 @@ function LoginPage() {
         
         if (!upsertError) {
           console.log("Upsert success, redirecting to muro");
-          navigate({ to: "/_authenticated/muro" });
+          navigate({ to: "/muro" });
           return;
         } else {
           console.error("Upsert error for super admin:", upsertError);
@@ -124,7 +124,7 @@ function LoginPage() {
     
     if (profile) {
       if (profile.role === "super_admin" || profile.status === "aprobado") {
-        navigate({ to: "/_authenticated/muro" });
+        navigate({ to: "/muro" });
       } else if (profile.status === "pendiente") {
         setStep(3); // Pending screen
       } else {
