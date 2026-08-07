@@ -117,15 +117,17 @@ function MuroPage() {
         {data.loading ? (
           <div className="h-32 bg-slate-100 rounded-[2rem] animate-pulse" />
         ) : data.bookings.length > 0 ? (
-          <div className="bg-black text-white p-6 rounded-[2rem] shadow-xl relative overflow-hidden group active:scale-[0.98] transition-all">
-            <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-accent/10 rounded-full blur-2xl group-hover:scale-110 transition-transform" />
-            <h3 className="text-[10px] font-bold text-accent uppercase mb-3 flex items-center gap-2 tracking-widest">
-              <Calendar size={12} /> Próxima cochera
+          <div className="bg-black text-white p-7 rounded-[2.5rem] shadow-card relative overflow-hidden group active:scale-[0.98] transition-all border border-white/10">
+            <div className="absolute top-[-40px] right-[-40px] w-48 h-48 bg-white/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700" />
+            <h3 className="text-[11px] font-black text-accent uppercase mb-4 flex items-center gap-2 tracking-[0.2em]">
+              <Calendar size={12} strokeWidth={3} /> Próxima cochera
             </h3>
-            <p className="text-2xl font-black mb-1">{data.bookings[0].spot?.identifier}</p>
-            <p className="text-sm font-medium opacity-70">
-              {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
-            </p>
+            <div className="space-y-1 relative z-10">
+              <p className="text-3xl font-black tracking-tight">{data.bookings[0].spot?.identifier}</p>
+              <p className="text-sm font-bold text-white/50">
+                {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
+              </p>
+            </div>
           </div>
         ) : (
           <button 
