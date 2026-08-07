@@ -411,7 +411,7 @@ function ChatPage() {
               <button
                 key={conv.id}
                 onClick={() => setSelectedConversation(conv)}
-                className="w-full bg-white p-5 rounded-[24px] hover:bg-slate-50 flex items-center gap-4 transition-all text-left group"
+                className="w-full bg-white p-6 rounded-[2.5rem] hover:bg-black/[0.01] flex items-center gap-5 transition-all text-left group shadow-subtle border border-black/[0.02]"
               >
                 <div className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 shrink-0 relative overflow-hidden">
                   {conv.type === 'general' ? (
