@@ -7,7 +7,7 @@ import { User, Check, X, Share2, Copy, Building2, Users } from "lucide-react";
 export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async ({ context }) => {
     if (context.userRole !== "admin" && context.userRole !== "super_admin") {
-      throw redirect({ to: "/_authenticated/muro" });
+      throw redirect({ to: "/muro" });
     }
   },
   component: AdminPage,

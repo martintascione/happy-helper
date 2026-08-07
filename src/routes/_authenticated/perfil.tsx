@@ -106,11 +106,11 @@ function PerfilPage() {
       </header>
 
       <div className="bg-white rounded-[2.5rem] shadow-subtle overflow-hidden border border-black/[0.03]">
-        <Link to="/perfil/editar" className="flex items-center justify-between p-6 hover:bg-black/[0.01] transition-colors border-b border-black/[0.03]">
+        <Link to="/perfil" className="flex items-center justify-between p-6 hover:bg-black/[0.01] transition-colors border-b border-black/[0.03]">
           <span className="font-bold text-foreground text-[15px]">Mis Datos</span>
           <ChevronRight size={18} className="text-muted-foreground opacity-50" />
         </Link>
-        <Link to="/perfil/pagos" className="flex items-center justify-between p-6 hover:bg-black/[0.01] transition-colors border-b border-black/[0.03]">
+        <Link to="/cocheras" className="flex items-center justify-between p-6 hover:bg-black/[0.01] transition-colors border-b border-black/[0.03]">
           <span className="font-bold text-foreground text-[15px]">Mis Pagos</span>
           <ChevronRight size={18} className="text-muted-foreground opacity-50" />
         </Link>

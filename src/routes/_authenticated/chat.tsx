@@ -144,7 +144,7 @@ function ChatPage() {
       }
       
       // Clear search param to avoid re-creation
-      navigate({ to: "/_authenticated/chat", search: {} as any, replace: true });
+      navigate({ to: "/chat", search: {} as any, replace: true });
     }
 
     // Fetch conversations

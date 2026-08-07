@@ -10,7 +10,7 @@ import { es } from "date-fns/locale";
 export const Route = createFileRoute("/_authenticated/admin-global")({
   beforeLoad: async ({ context }) => {
     if (context.userRole !== "super_admin") {
-      throw redirect({ to: "/_authenticated/muro" });
+      throw redirect({ to: "/muro" });
     }
   },
   component: GlobalAdminPage,

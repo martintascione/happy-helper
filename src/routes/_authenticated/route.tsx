@@ -16,35 +16,11 @@ export const Route = createFileRoute("/_authenticated")({
       };
     }
 
-    // 1. Check local storage for super admin bypass (fastest)
-    const isSuperAdminFlag = localStorage.getItem('is_super_admin') === 'true';
-    const storedSessionStr = localStorage.getItem('sb-ufsowwvgbxfasucpvzkl-auth-token');
-    let userEmailFromStorage = '';
-    
-    if (storedSessionStr) {
-      try {
-        const session = JSON.parse(storedSessionStr);
-        userEmailFromStorage = session?.user?.email?.toLowerCase() || '';
-      } catch (e) {}
-    }
+    // Limpieza de flags viejos e inseguros
+    localStorage.removeItem('is_super_admin');
 
-    const isSuperAdminEmail = userEmailFromStorage === 'tascione32@gmail.com';
-
-    // Immediate bypass for Super Admin
-    if (isSuperAdminEmail || isSuperAdminFlag) {
-      console.log("Super Admin bypass confirmed via storage");
-      return { 
-        userRole: 'super_admin' as const, 
-        userId: 'super-admin-id',
-        isSuperAdmin: true,
-        userEmail: 'tascione32@gmail.com'
-      };
-    }
-
+    // 1. Sesión real de Supabase — única fuente de verdad
     const { data: { session } } = await supabase.auth.getSession();
-    const userEmail = session?.user?.email?.toLowerCase();
-
-    // 2. If no session AND not already identified as super admin -> login
     if (!session) {
       throw redirect({
         to: "/login",
@@ -52,17 +28,9 @@ export const Route = createFileRoute("/_authenticated")({
       });
     }
 
-    // Double check email from live session
-    if (userEmail === 'tascione32@gmail.com') {
-      return { 
-        userRole: 'super_admin' as const, 
-        userId: session.user.id,
-        isSuperAdmin: true,
-        userEmail: 'tascione32@gmail.com'
-      };
-    }
+    const userEmail = session.user.email?.toLowerCase() || '';
 
-    // 3. Regular users must have a profile and be approved
+    // 2. El rol y el estado salen SIEMPRE de la base (protegida por RLS)
     const { data: profile } = await supabase
       .from("profiles")
       .select("status, role")
@@ -73,11 +41,11 @@ export const Route = createFileRoute("/_authenticated")({
       throw redirect({ to: "/login" });
     }
 
-    return { 
-      userRole: (profile.role || 'vecino') as "admin" | "super_admin" | "vecino", 
+    return {
+      userRole: (profile.role || 'vecino') as "admin" | "super_admin" | "vecino",
       userId: session.user.id,
-      isSuperAdmin: false,
-      userEmail: userEmail || ''
+      isSuperAdmin: profile.role === 'super_admin',
+      userEmail
     };
   },
   component: AuthenticatedLayout,
