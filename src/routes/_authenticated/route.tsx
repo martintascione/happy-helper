@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, Link, useLocation, redirect } from "@tanstack/react-router";
-import { Home, Car, MessageSquare, AlertCircle, User, Plus, ShieldCheck, Settings } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { Home, Car, MessageSquare, AlertCircle, User, Plus, ShieldCheck, Settings, Shield } from "lucide-react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { NotificationBell } from "@/components/NotificationBell";
 
@@ -87,20 +87,31 @@ function AuthenticatedLayout() {
   const location = useLocation();
   const { userRole, userId, isSuperAdmin, userEmail } = Route.useRouteContext();
   const [activeRole, setActiveRole] = useState(userRole);
+  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
+  const adminMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log("AuthenticatedLayout mounted/updated", { userEmail, userRole, isSuperAdmin });
     setActiveRole(userRole);
-  }, [userRole, userEmail, isSuperAdmin]);
+  }, [userRole]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (adminMenuRef.current && !adminMenuRef.current.contains(event.target as Node)) {
+        setIsAdminMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   
   const navItems = useMemo(() => [
     { label: "Muro", icon: Home, to: "/muro" },
     { label: "Cocheras", icon: Car, to: "/cocheras" },
     { label: "Chat", icon: MessageSquare, to: "/chat" },
     { label: "Reportes", icon: AlertCircle, to: "/reportes" },
-    { label: "Admin", icon: ShieldCheck, to: "/admin" },
-    { label: "Global", icon: Settings, to: "/admin-global" },
     { label: "Perfil", icon: User, to: "/perfil" },
+    { label: "Admin", icon: ShieldCheck, to: "/admin", isAdmin: true },
+    { label: "Global", icon: Settings, to: "/admin-global", isAdmin: true },
   ], []);
 
   const filteredNavItems = useMemo(() => navItems.filter(item => {
@@ -109,29 +120,35 @@ function AuthenticatedLayout() {
     return true;
   }), [navItems, activeRole]);
 
+  // Mobile navigation items (limited to 5)
+  const mobileNavItems = useMemo(() => {
+    const mainItems = filteredNavItems.filter(item => !item.isAdmin);
+    const adminItems = filteredNavItems.filter(item => item.isAdmin);
+    
+    if (adminItems.length > 0) {
+      // Show first 4 main items + 1 Admin group if there are admin items
+      return [...mainItems.slice(0, 4), { label: "Admin Group", icon: Shield, isGroup: true, items: adminItems }];
+    }
+    return mainItems;
+  }, [filteredNavItems]);
+
   return (
     <div className="flex min-h-screen bg-background text-foreground font-sans">
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r p-8 gap-8">
+      <aside className="hidden md:flex flex-col w-64 bg-white p-8 gap-8">
         <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center shadow-xl shadow-black/10">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                  <polyline points="9 22 9 12 15 12 15 22" />
-                </svg>
-              </div>
-              <span className="font-extrabold text-slate-900 tracking-tight text-xl">Tower</span>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center shadow-xl shadow-black/10">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
             </div>
-          </div>
-          <div className="bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Avisos</span>
-            <NotificationBell userId={userId} />
+            <span className="font-extrabold text-slate-900 tracking-tight text-xl">Tower</span>
           </div>
         </div>
         
-        <nav className="flex flex-col gap-2">
+        <nav className="flex flex-col gap-1">
           {filteredNavItems.map((item) => {
             const isActive = location.pathname === item.to;
             return (
@@ -139,14 +156,14 @@ function AuthenticatedLayout() {
                 key={item.to}
                 to={item.to}
                 preload="intent"
-                className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl font-bold transition-all cursor-pointer ${
                   isActive 
-                    ? "bg-black text-white shadow-xl shadow-black/10 scale-[1.02]" 
-                    : "text-slate-400 hover:text-slate-900 hover:bg-slate-50"
+                    ? "bg-black text-white shadow-xl shadow-black/10" 
+                    : "text-slate-400 hover:text-slate-900"
                 }`}
               >
-                <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
-                {item.label}
+                <item.icon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
+                <span className="text-sm">{item.label}</span>
               </Link>
             );
           })}
@@ -154,38 +171,60 @@ function AuthenticatedLayout() {
       </aside>
 
       <main className="flex-1 flex flex-col relative min-h-screen">
-        <header className="md:hidden flex justify-end p-4 sticky top-0 z-[50]">
+        <header className="flex justify-end p-6 md:p-8 sticky top-0 z-[50]">
           <NotificationBell userId={userId} />
         </header>
-        <div className="flex-1 pb-32 md:pb-8 pt-4">
+        <div className="flex-1 pb-32 md:pb-8">
           <Outlet />
         </div>
 
-        {/* Floating Action Button - Only Mobile */}
-        <button className="md:hidden fixed bottom-28 right-6 w-14 h-14 bg-black text-white rounded-full shadow-2xl flex items-center justify-center z-50 active:scale-90 transition-transform">
-          <Plus size={32} strokeWidth={3} />
-        </button>
-
         {/* Floating Pill Navigation for Mobile */}
-        <div className="md:hidden fixed bottom-6 left-0 right-0 px-6 z-40">
-          <nav className="h-20 bg-white rounded-full shadow-2xl border border-slate-100 flex items-center justify-around px-2">
-            {filteredNavItems.map((item) => {
+        <div className="md:hidden fixed bottom-8 left-0 right-0 px-6 z-40">
+          <nav className="h-16 bg-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 flex items-center justify-around px-2 relative">
+            {mobileNavItems.map((item, idx) => {
+              if ('isGroup' in item) {
+                const anyAdminActive = item.items?.some(sub => location.pathname === sub.to);
+                return (
+                  <div key="admin-group" className="relative" ref={adminMenuRef}>
+                    <button
+                      onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
+                      className={`p-3 rounded-full transition-all ${
+                        anyAdminActive ? "bg-black text-white" : "text-slate-400"
+                      }`}
+                    >
+                      <item.icon size={22} strokeWidth={1.5} />
+                    </button>
+                    {isAdminMenuOpen && (
+                      <div className="absolute bottom-20 right-0 bg-white rounded-3xl shadow-2xl border border-slate-100 p-2 min-w-[140px] animate-in fade-in slide-in-from-bottom-4">
+                        {item.items?.map(sub => (
+                          <Link
+                            key={sub.to}
+                            to={sub.to}
+                            onClick={() => setIsAdminMenuOpen(false)}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold ${
+                              location.pathname === sub.to ? "bg-slate-50 text-black" : "text-slate-400"
+                            }`}
+                          >
+                            <sub.icon size={16} />
+                            {sub.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
               const isActive = location.pathname === item.to;
               return (
                 <Link
                   key={item.to}
                   to={item.to}
                   preload="intent"
-                  className={`flex flex-col items-center gap-1.5 p-2 transition-all cursor-pointer ${
-                    isActive ? "text-slate-900" : "text-slate-300"
+                  className={`p-3 rounded-full transition-all ${
+                    isActive ? "bg-black text-white" : "text-slate-400"
                   }`}
                 >
-                  <div className={`p-1.5 rounded-full transition-colors ${isActive ? "bg-accent/10" : ""}`}>
-                    <item.icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-                  </div>
-                  <span className={`text-[9px] font-extrabold uppercase tracking-widest ${isActive ? "opacity-100" : "opacity-0"}`}>
-                    {item.label}
-                  </span>
+                  <item.icon size={22} strokeWidth={1.5} />
                 </Link>
               );
             })}

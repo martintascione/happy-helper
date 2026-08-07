@@ -95,10 +95,10 @@ function AdminPage() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Administración</h1>
-        <p className="text-slate-500 font-medium">Gestioná tu edificio y vecinos</p>
-      </div>
+      <header className="px-1 space-y-1">
+        <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">Administración</h1>
+        <p className="text-slate-400 font-medium">Gestioná tu edificio y vecinos</p>
+      </header>
 
       {/* Building Card */}
       <div className="bg-black text-white p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
