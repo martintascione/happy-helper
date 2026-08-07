@@ -225,6 +225,18 @@ function LoginPage() {
               </div>
             </div>
 
+            <div className="flex items-center gap-2 py-2">
+              <input 
+                type="checkbox" 
+                id="terms" 
+                required 
+                className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary/20"
+              />
+              <label htmlFor="terms" className="text-xs text-slate-500 font-medium">
+                Acepto los <Link to="/terminos" className="text-primary font-bold">Términos</Link> y la <Link to="/privacidad" className="text-primary font-bold">Privacidad</Link>.
+              </label>
+            </div>
+
             <button
               type="submit"
               disabled={loading}

@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Settings, Landmark, Percent, DollarSign, Save, FileText, Check, X, ExternalLink, Plus } from "lucide-react";
+import { Settings, Landmark, Percent, DollarSign, Save, FileText, Check, X, ExternalLink, Plus, Building2, Users, Calendar, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/admin-global")({
 
 function GlobalAdminPage() {
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"config" | "pagos" | "liquidaciones" | "resumen">("config");
+  const [activeTab, setActiveTab] = useState<"config" | "pagos" | "liquidaciones" | "resumen" | "edificios">("config");
   const [settings, setSettings] = useState<any>(null);
   const [pendingPayments, setPendingPayments] = useState<any[]>([]);
   const [pendingPayouts, setPendingPayouts] = useState<any[]>([]);
@@ -27,6 +27,9 @@ function GlobalAdminPage() {
   useEffect(() => {
     fetchData();
   }, [activeTab]);
+
+  const [buildings, setBuildings] = useState<any[]>([]);
+  const [showNewBuildingModal, setShowNewBuildingModal] = useState(false);
 
   async function fetchData() {
     setLoading(true);
@@ -93,6 +96,16 @@ function GlobalAdminPage() {
         
         setFinancialStats(Object.values(stats).sort((a: any, b: any) => b.month.localeCompare(a.month)));
       }
+    } else if (activeTab === "edificios") {
+      const { data } = await supabase
+        .from("buildings")
+        .select(`
+          *,
+          neighbors:profiles(count),
+          reservas:parking_bookings(count),
+          publicaciones:posts(count)
+        `);
+      setBuildings(data || []);
     }
     setLoading(false);
   }
@@ -164,6 +177,7 @@ function GlobalAdminPage() {
       <div className="flex p-1 bg-gray-200 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
         {[
           { id: "config", label: "Configuración", icon: Settings },
+          { id: "edificios", label: "Edificios", icon: Building2 },
           { id: "pagos", label: "Pagos", icon: FileText },
           { id: "liquidaciones", label: "Liquidaciones", icon: Landmark },
           { id: "resumen", label: "Resumen", icon: DollarSign }
@@ -330,17 +344,7 @@ function GlobalAdminPage() {
             ))
           )}
         </div>
-      ) : activeTab === "liquidaciones" ? (
-        <div className="space-y-6 animate-in fade-in duration-300">
-          {pendingPayouts.length === 0 ? (
-            <EmptyState title="Sin pendientes" description="No hay liquidaciones por realizar." />
-          ) : (
-            pendingPayouts.map((payout) => (
-              <PayoutCard key={payout.id} payout={payout} onReview={handleReviewPayout} />
-            ))
-          )}
-        </div>
-      ) : (
+      ) : activeTab === "resumen" ? (
         <div className="space-y-6 animate-in fade-in duration-300">
           {(!financialStats || financialStats.length === 0) ? (
             <EmptyState title="Sin datos" description="Aún no hay reservas confirmadas para mostrar estadísticas." />
@@ -369,7 +373,169 @@ function GlobalAdminPage() {
             ))
           )}
         </div>
+      ) : (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          <div className="flex justify-between items-center px-1">
+            <h2 className="text-xl font-black text-slate-900">Edificios Registrados</h2>
+            <Button 
+              onClick={() => setShowNewBuildingModal(true)}
+              className="bg-black text-white rounded-2xl font-bold flex items-center gap-2 h-11 px-6 shadow-xl shadow-black/10"
+            >
+              <Plus size={18} /> Nuevo
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6">
+            {buildings.map((building) => (
+              <div key={building.id} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="font-black text-xl text-slate-900">{building.name}</h4>
+                    <p className="text-sm font-medium text-slate-500">{building.address}</p>
+                    <div className="mt-2 inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-black uppercase tracking-wider">
+                      Código: {building.invite_code}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="bg-slate-50 p-4 rounded-2xl flex flex-col items-center text-center space-y-1">
+                    <Users size={16} className="text-slate-400" />
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Vecinos</span>
+                    <span className="font-black text-lg text-slate-900">{building.neighbors?.[0]?.count || 0}</span>
+                  </div>
+                  <div className="bg-slate-50 p-4 rounded-2xl flex flex-col items-center text-center space-y-1">
+                    <Calendar size={16} className="text-slate-400" />
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Reservas</span>
+                    <span className="font-black text-lg text-slate-900">{building.reservas?.[0]?.count || 0}</span>
+                  </div>
+                  <div className="bg-slate-50 p-4 rounded-2xl flex flex-col items-center text-center space-y-1">
+                    <Megaphone size={16} className="text-slate-400" />
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Posts</span>
+                    <span className="font-black text-lg text-slate-900">{building.publicaciones?.[0]?.count || 0}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {showNewBuildingModal && (
+            <NewBuildingModal onClose={() => { setShowNewBuildingModal(false); fetchData(); }} />
+          )}
+        </div>
       )}
+    </div>
+  );
+}
+
+function NewBuildingModal({ onClose }: { onClose: () => void }) {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    address: "",
+    invite_code: "",
+    admin_email: ""
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // 1. Crear el edificio
+    const { data: building, error: bError } = await supabase
+      .from("buildings")
+      .insert({
+        name: formData.name,
+        address: formData.address,
+        invite_code: formData.invite_code.toUpperCase()
+      })
+      .select()
+      .single();
+
+    if (bError) {
+      toast.error("Error al crear edificio: " + bError.message);
+      setLoading(false);
+      return;
+    }
+
+    // 2. Crear unidades básicas (ej: 1A, 1B, 2A, 2B, 3A)
+    const unitsToInsert = [
+      { building_id: building.id, floor: "1", apartment: "A" },
+      { building_id: building.id, floor: "1", apartment: "B" },
+      { building_id: building.id, floor: "2", apartment: "A" },
+      { building_id: building.id, floor: "2", apartment: "B" },
+      { building_id: building.id, floor: "3", apartment: "A" }
+    ];
+    await supabase.from("units").insert(unitsToInsert);
+
+    toast.success("Edificio creado exitosamente. El primer admin debe registrarse con el email: " + formData.admin_email);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6 animate-in fade-in duration-200">
+      <div className="bg-[#F2F2F2] w-full max-w-[440px] rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+        <div className="p-8 space-y-6">
+          <div className="flex justify-between items-center">
+            <h3 className="text-2xl font-black text-slate-900 tracking-tight">Nuevo Edificio</h3>
+            <button onClick={onClose} className="p-2 bg-white rounded-xl text-slate-400"><X size={20} /></button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre</label>
+              <input
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full p-4 bg-white rounded-2xl border-none focus:ring-2 focus:ring-black/5 font-bold"
+                placeholder="Torre Palermo"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Dirección</label>
+              <input
+                required
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                className="w-full p-4 bg-white rounded-2xl border-none focus:ring-2 focus:ring-black/5 font-bold"
+                placeholder="Av. Santa Fe 3400"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Código Invitación</label>
+                <input
+                  required
+                  value={formData.invite_code}
+                  onChange={(e) => setFormData({ ...formData, invite_code: e.target.value })}
+                  className="w-full p-4 bg-white rounded-2xl border-none focus:ring-2 focus:ring-black/5 font-mono font-bold uppercase"
+                  placeholder="TORRE26"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Primer Admin</label>
+                <input
+                  required
+                  type="email"
+                  value={formData.admin_email}
+                  onChange={(e) => setFormData({ ...formData, admin_email: e.target.value })}
+                  className="w-full p-4 bg-white rounded-2xl border-none focus:ring-2 focus:ring-black/5 font-bold"
+                  placeholder="admin@torre.com"
+                />
+              </div>
+            </div>
+            
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-5 bg-black text-white rounded-2xl font-black shadow-xl shadow-black/20 active:scale-[0.98] transition-all mt-4"
+            >
+              {loading ? "CREANDO..." : "CREAR EDIFICIO"}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
