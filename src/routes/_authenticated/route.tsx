@@ -179,7 +179,7 @@ function AuthenticatedLayout() {
         </div>
 
         {/* Floating Pill Navigation for Mobile */}
-        <div className="md:hidden fixed bottom-8 left-0 right-0 px-6 z-40">
+        <div className="lg:hidden fixed bottom-8 left-0 right-0 px-6 z-40">
           <nav className="h-16 bg-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 flex items-center justify-around px-2 relative">
             {mobileNavItems.map((item, idx) => {
               if ('isGroup' in item) {
