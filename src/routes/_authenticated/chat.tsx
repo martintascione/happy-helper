@@ -373,10 +373,10 @@ function ChatPage() {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32 overflow-x-hidden">
-      <header className="px-1 space-y-1">
-        <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">Chat</h1>
-        <p className="text-slate-400 font-medium">Conversá con tus vecinos</p>
+    <div className="p-8 max-w-2xl mx-auto space-y-12 pb-32 overflow-x-hidden">
+      <header className="px-1">
+        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Chat</h1>
+        <p className="text-muted-foreground font-medium text-lg">Vecinos Libertador</p>
       </header>
 
       {/* Search/New Chat */}
