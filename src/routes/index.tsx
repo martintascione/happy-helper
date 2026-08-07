@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Car, MessageSquare, AlertCircle, ChevronRight, ArrowRight } from "lucide-react";
+import { Car, MessageSquare, AlertCircle, ArrowRight, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -7,107 +7,117 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="flex min-h-screen flex-col items-center bg-[#F7F5F1] selection:bg-black/10 overflow-x-hidden">
-      {/* Desktop/Landscape Block Overlay */}
-      <div className="hidden lg:flex fixed inset-0 z-[100] bg-[#F7F5F1] items-center justify-center p-10 text-center">
-        <div className="max-w-xs space-y-4">
-          <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-black">
-              <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+    <div className="flex min-h-screen flex-col items-center bg-background selection:bg-primary/10 overflow-x-hidden">
+      {/* Desktop Overlay - Premium Style */}
+      <div className="hidden lg:flex fixed inset-0 z-[100] bg-background items-center justify-center p-12 text-center">
+        <div className="max-w-md space-y-8 premium-card p-12">
+          <div className="w-20 h-20 bg-secondary rounded-3xl flex items-center justify-center mx-auto shadow-inner-glow">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-primary">
+              <rect x="5" y="2" width="14" height="20" rx="4" />
               <line x1="12" y1="18" x2="12.01" y2="18" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight">Acceso solo desde el celular</h2>
-          <p className="text-sm text-slate-500">Comunidad Tower está diseñada para una experiencia móvil. Por favor, ingresá desde tu dispositivo móvil.</p>
+          <div className="space-y-4">
+            <h2 className="text-3xl font-bold text-foreground tracking-tight">Experiencia Móvil</h2>
+            <p className="text-muted-foreground leading-relaxed text-lg">
+              Comunidad Tower es una herramienta de alta precisión diseñada exclusivamente para dispositivos móviles.
+            </p>
+          </div>
+          <div className="p-4 bg-muted/50 rounded-2xl text-sm font-medium text-muted-foreground border border-black/5">
+            Por favor, escaneá el código QR o ingresá desde tu smartphone.
+          </div>
         </div>
       </div>
 
-      <div className="w-full max-w-[480px] min-h-screen flex flex-col relative pb-12">
-        {/* Header */}
-        <header className="p-8 flex justify-between items-center bg-[#F7F5F1]/80 backdrop-blur-md sticky top-0 z-10">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center shadow-lg shadow-black/10">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+      <div className="w-full max-w-[480px] min-h-screen flex flex-col relative pb-20">
+        {/* Header - Minimalist */}
+        <header className="px-8 py-10 flex justify-between items-center sticky top-0 z-20 transition-all duration-300">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-premium">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
               </svg>
             </div>
-            <span className="font-bold text-slate-900 tracking-tighter text-2xl">Tower</span>
+            <span className="font-bold text-foreground tracking-tight text-3xl">Tower</span>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2 bg-secondary/80 backdrop-blur-md rounded-full border border-black/[0.03]">
+            <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+            <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/60">Live</span>
           </div>
         </header>
 
-        {/* Hero Section */}
-        <section className="px-8 pt-16 pb-16 space-y-12 relative overflow-hidden">
-          {/* Animated Background Blobs */}
-          <div className="absolute top-0 right-[-100px] w-64 h-64 bg-accent/10 rounded-full blur-[100px] animate-pulse" />
-          <div className="absolute bottom-[-100px] left-[-100px] w-64 h-64 bg-violet-500/10 rounded-full blur-[100px] animate-pulse delay-1000" />
-
-          <div className="space-y-6 relative z-10">
-            <h1 className="text-[64px] font-black leading-[0.9] tracking-tighter text-slate-900 animate-in fade-in slide-in-from-bottom-8 duration-1000 italic uppercase">
-              Vivir <br />mejor, <br /><span className="text-black/20 not-italic">juntos.</span>
+        {/* Hero Section - High End Typography */}
+        <section className="px-8 pt-12 pb-16 space-y-16">
+          <div className="space-y-8">
+            <div className="inline-block px-4 py-1.5 bg-secondary text-primary rounded-full text-[12px] font-bold uppercase tracking-[0.15em] border border-black/[0.02]">
+              Residential Platform v2.0
+            </div>
+            <h1 className="text-[52px] font-bold leading-[1.05] tracking-tight text-foreground">
+              Elevamos la <br />
+              <span className="text-muted-foreground/40 font-light italic">experiencia</span> <br />
+              de tu edificio.
             </h1>
-            <p className="text-slate-500 text-xl font-bold leading-relaxed max-w-[280px] animate-in fade-in slide-in-from-bottom-6 delay-300 duration-1000">
-              La plataforma exclusiva para la élite de tu edificio.
+            <p className="text-muted-foreground text-xl leading-relaxed max-w-[320px] font-medium">
+              Gestión inteligente de espacios, comunicación y finanzas en un solo lugar.
             </p>
           </div>
           
-          <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-6 delay-500 duration-1000 relative z-10">
+          <div className="flex flex-col gap-4">
             <Link 
               to="/login" 
-              preload="intent"
-              className="w-full h-[72px] bg-black text-white rounded-[2rem] font-black shadow-card active:scale-[0.96] hover:scale-[1.02] transition-all flex items-center justify-between px-8 text-xl uppercase tracking-widest group"
+              className="w-full h-[76px] bg-primary text-primary-foreground rounded-3xl font-bold shadow-premium active:scale-[0.98] transition-all flex items-center justify-between px-10 text-xl tracking-tight group"
             >
-              <span>Ingresar</span>
-              <ArrowRight className="group-hover:translate-x-2 transition-transform" strokeWidth={3} />
+              <span>Acceder</span>
+              <ArrowRight className="group-hover:translate-x-1.5 transition-transform" strokeWidth={2.5} />
             </Link>
             <Link 
               to="/login" 
-              preload="intent"
-              className="w-full h-[72px] glass-card text-black rounded-[2rem] font-black shadow-sm active:scale-[0.96] hover:bg-white transition-all flex items-center justify-center text-lg uppercase tracking-widest border border-slate-200/50"
+              className="w-full h-[76px] glass text-foreground rounded-3xl font-bold active:scale-[0.98] transition-all flex items-center justify-center text-lg tracking-tight border border-black/5"
             >
-              Registrar edificio
+              Registrar Edificio
             </Link>
           </div>
         </section>
 
-        {/* Benefits Cards Section */}
-        <section className="px-8 space-y-6">
-          <div className="grid gap-4">
-            <div className="tint-positive p-8 rounded-[28px] border border-green-200/20 space-y-3">
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                <Car className="text-green-600" size={24} strokeWidth={2.5} />
+        {/* Features - Grid without cards for a cleaner look */}
+        <section className="px-8 space-y-12">
+          <div className="space-y-10">
+            <div className="flex items-start gap-6">
+              <div className="w-16 h-16 shrink-0 bg-secondary rounded-3xl flex items-center justify-center shadow-subtle border border-black/[0.02]">
+                <Car className="text-primary" size={28} strokeWidth={2} />
               </div>
-              <div>
-                <h3 className="font-bold text-slate-900 text-lg tracking-tight">Alquiler de Cocheras</h3>
-                <p className="text-sm text-green-900/60 font-medium leading-relaxed">Gestioná espacios entre vecinos sin intermediarios.</p>
-              </div>
-            </div>
-
-            <div className="tint-insight p-8 rounded-[28px] border border-violet-200/20 space-y-3">
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                <MessageSquare className="text-violet-600" size={24} strokeWidth={2.5} />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-900 text-lg tracking-tight">Comunicación Directa</h3>
-                <p className="text-sm text-violet-900/60 font-medium leading-relaxed">Muro de avisos y chat privado para toda la comunidad.</p>
+              <div className="space-y-2 pt-1">
+                <h3 className="font-bold text-foreground text-xl tracking-tight">Cocheras</h3>
+                <p className="text-muted-foreground leading-relaxed font-medium">Marketplace privado para alquilar y reservar espacios libres.</p>
               </div>
             </div>
 
-            <div className="tint-info p-8 rounded-[28px] border border-blue-200/20 space-y-3">
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                <AlertCircle className="text-blue-600" size={24} strokeWidth={2.5} />
+            <div className="flex items-start gap-6">
+              <div className="w-16 h-16 shrink-0 bg-secondary rounded-3xl flex items-center justify-center shadow-subtle border border-black/[0.02]">
+                <MessageSquare className="text-primary" size={28} strokeWidth={2} />
               </div>
-              <div>
-                <h3 className="font-bold text-slate-900 text-lg tracking-tight">Reportes de Edificio</h3>
-                <p className="text-sm text-blue-900/60 font-medium leading-relaxed">Incidentes que se resuelven y quedan registrados.</p>
+              <div className="space-y-2 pt-1">
+                <h3 className="font-bold text-foreground text-xl tracking-tight">Comunidad</h3>
+                <p className="text-muted-foreground leading-relaxed font-medium">Conectá con tus vecinos y recibí avisos oficiales al instante.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-6">
+              <div className="w-16 h-16 shrink-0 bg-secondary rounded-3xl flex items-center justify-center shadow-subtle border border-black/[0.02]">
+                <ShieldCheck className="text-primary" size={28} strokeWidth={2} />
+              </div>
+              <div className="space-y-2 pt-1">
+                <h3 className="font-bold text-foreground text-xl tracking-tight">Transparencia</h3>
+                <p className="text-muted-foreground leading-relaxed font-medium">Reportes de incidentes y seguimiento de reparaciones en tiempo real.</p>
               </div>
             </div>
           </div>
         </section>
 
-        <footer className="p-12 text-center">
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
-            &copy; 2026 COMUNIDAD TOWER
+        <footer className="mt-auto px-8 py-16 text-center">
+          <div className="w-12 h-px bg-muted mx-auto mb-8 opacity-50" />
+          <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-[0.25em] opacity-40">
+            &copy; 2026 TOWER RESIDENCES
           </p>
         </footer>
       </div>
