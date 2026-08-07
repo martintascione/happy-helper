@@ -129,7 +129,7 @@ function MuroPage() {
           </div>
         ) : (
           <button 
-            onClick={() => navigate({ to: "/_authenticated/cocheras" as any })}
+            onClick={() => navigate({ to: "/_authenticated/cocheras" } as any)}
             className="w-full bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center justify-between shadow-soft hover:border-slate-200 active:scale-[0.98] transition-all"
           >
             <div className="flex items-center gap-4 text-left">
