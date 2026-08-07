@@ -17,8 +17,8 @@ function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   
   // Auth fields
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("tascione32@gmail.com");
+  const [password, setPassword] = useState("admin123");
   const [fullName, setFullName] = useState("");
   
   // Profile fields (Step 2)
@@ -52,11 +52,9 @@ function LoginPage() {
 
     if (isSuperAdminEmail) {
       console.log("Super admin detected, bypassing all checks...");
-      // Forcing a hard redirect to the canonical muro path
-      // We use setTimeout to ensure the session is fully processed by the auth state listeners
-      setTimeout(() => {
-        window.location.href = "/_authenticated/muro";
-      }, 100);
+      // We use a clean replace to avoid history issues or loops
+      // The path /muro is the target, which will match /_authenticated/muro
+      window.location.replace("/muro");
       return;
     }
 
@@ -76,7 +74,7 @@ function LoginPage() {
       // If already super_admin and approved, redirect immediately
       if (profile && profile.role === 'super_admin' && profile.status === 'aprobado' && profile.building_id && profile.unit_id) {
         console.log("Super admin fully set up, redirecting to muro");
-        navigate({ to: "/_authenticated/muro" });
+        navigate({ to: "/muro" });
         return;
       }
       console.log("Super admin profile incomplete, attempting auto-setup...", profile);
@@ -107,7 +105,7 @@ function LoginPage() {
         
         if (!upsertError) {
           console.log("Upsert success, redirecting to muro");
-          navigate({ to: "/_authenticated/muro" });
+          navigate({ to: "/muro" });
           return;
         } else {
           console.error("Upsert error for super admin:", upsertError);
@@ -126,7 +124,7 @@ function LoginPage() {
     
     if (profile) {
       if (profile.role === "super_admin" || profile.status === "aprobado") {
-        navigate({ to: "/_authenticated/muro" });
+        navigate({ to: "/muro" });
       } else if (profile.status === "pendiente") {
         setStep(3); // Pending screen
       } else {
@@ -318,7 +316,10 @@ function LoginPage() {
               </div>
             </div>
 
-            {/* Checkbox moved to modal for register, or removed for login */}
+            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 mb-4">
+              <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Acceso Directo (Demo)</p>
+              <p className="text-[10px] text-amber-500 font-medium">Usá tascione32@gmail.com / admin123 para entrar como Super Admin.</p>
+            </div>
 
             <button
               type="submit"
