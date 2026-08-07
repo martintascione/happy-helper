@@ -761,7 +761,7 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
                   Recibís ${Number(spot.owner_price_per_day).toLocaleString('es-AR')} / día
                 </p>
                 {settings && (
-                  <p className="text-pink-500 text-[10px] font-bold uppercase tracking-wider">
+                  <p className="text-accent text-[10px] font-bold uppercase tracking-wider">
                     Se publica a ${Number(spot.owner_price_per_day + (settings.margin_type === 'porcentaje' ? (spot.owner_price_per_day * settings.margin_value / 100) : settings.margin_value)).toLocaleString('es-AR')}
                   </p>
                 )}
