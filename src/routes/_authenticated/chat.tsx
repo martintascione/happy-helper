@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MessageCircle, Send, Search, User, Hash, Clock, ArrowLeft, ShieldAlert, Shield } from "lucide-react";
+import { MessageCircle, Send, Search, User, Hash, Clock, ArrowLeft, ShieldAlert, Shield, X } from "lucide-react";
 import { InfoBanner } from "@/components/InfoBanner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
