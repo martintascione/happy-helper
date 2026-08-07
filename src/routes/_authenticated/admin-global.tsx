@@ -2,8 +2,10 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Settings, Landmark, Percent, DollarSign, Save, FileText, Check, X, ExternalLink } from "lucide-react";
+import { Settings, Landmark, Percent, DollarSign, Save, FileText, Check, X, ExternalLink, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 export const Route = createFileRoute("/_authenticated/admin-global")({
   beforeLoad: async ({ context }) => {
@@ -16,9 +18,11 @@ export const Route = createFileRoute("/_authenticated/admin-global")({
 
 function GlobalAdminPage() {
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"config" | "pagos">("config");
+  const [activeTab, setActiveTab] = useState<"config" | "pagos" | "liquidaciones" | "resumen">("config");
   const [settings, setSettings] = useState<any>(null);
   const [pendingPayments, setPendingPayments] = useState<any[]>([]);
+  const [pendingPayouts, setPendingPayouts] = useState<any[]>([]);
+  const [financialStats, setFinancialStats] = useState<any>(null);
 
   useEffect(() => {
     fetchData();
@@ -29,7 +33,7 @@ function GlobalAdminPage() {
     if (activeTab === "config") {
       const { data } = await supabase.from("platform_settings" as any).select("*").single();
       if (data) setSettings(data);
-    } else {
+    } else if (activeTab === "pagos") {
       const { data } = await supabase
         .from("parking_payments" as any)
         .select(`
@@ -44,6 +48,51 @@ function GlobalAdminPage() {
         .eq("status", "en_revision")
         .order("created_at", { ascending: true });
       setPendingPayments(data || []);
+    } else if (activeTab === "liquidaciones") {
+      const { data } = await supabase
+        .from("parking_payouts" as any)
+        .select(`
+          *,
+          booking:parking_bookings(
+            id,
+            total_price,
+            owner_amount,
+            platform_fee,
+            spot:parking_spots(identifier)
+          ),
+          owner:profiles!owner_id(
+            full_name,
+            payout_accounts:payout_accounts(holder_name, document_number, cbu_or_alias)
+          )
+        `)
+        .eq("status", "pendiente")
+        .order("created_at", { ascending: true });
+      setPendingPayouts(data || []);
+    } else if (activeTab === "resumen") {
+      const { data: bookings } = await supabase
+        .from("parking_bookings" as any)
+        .select("total_price, owner_amount, platform_fee, created_at")
+        .eq("status", "confirmada") // Solo las pagadas/confirmadas
+        .or("status.eq.finalizada");
+      
+      if (bookings) {
+        const stats = (bookings as any[]).reduce((acc, curr) => {
+          const date = new Date(curr.created_at);
+          const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+          
+          if (!acc[monthKey]) {
+            acc[monthKey] = { month: monthKey, total: 0, owner_sum: 0, profit: 0 };
+          }
+          
+          acc[monthKey].total += Number(curr.total_price);
+          acc[monthKey].owner_sum += Number(curr.owner_amount);
+          acc[monthKey].profit += Number(curr.platform_fee);
+          
+          return acc;
+        }, {} as Record<string, any>);
+        
+        setFinancialStats(Object.values(stats).sort((a: any, b: any) => b.month.localeCompare(a.month)));
+      }
     }
     setLoading(false);
   }
@@ -63,6 +112,25 @@ function GlobalAdminPage() {
       toast.error("Error al procesar pago");
     } else {
       toast.success(status === 'aprobado' ? "Pago aprobado" : "Pago rechazado");
+      fetchData();
+    }
+    setLoading(false);
+  }
+
+  async function handleReviewPayout(payoutId: string, status: 'pagado') {
+    setLoading(true);
+    const { error } = await supabase
+      .from("parking_payouts" as any)
+      .update({ 
+        status, 
+        paid_at: new Date().toISOString()
+      })
+      .eq("id", payoutId);
+
+    if (error) {
+      toast.error("Error al procesar liquidación");
+    } else {
+      toast.success("Liquidación marcada como pagada");
       fetchData();
     }
     setLoading(false);
@@ -93,23 +161,30 @@ function GlobalAdminPage() {
         <p className="text-slate-500 font-medium">Configuración maestra de la plataforma</p>
       </div>
 
-      <div className="flex p-1 bg-gray-200 rounded-2xl mb-6">
+      <div className="flex p-1 bg-gray-200 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
         {[
           { id: "config", label: "Configuración", icon: Settings },
-          { id: "pagos", label: "Pagos en Revisión", icon: FileText }
+          { id: "pagos", label: "Pagos", icon: FileText },
+          { id: "liquidaciones", label: "Liquidaciones", icon: Landmark },
+          { id: "resumen", label: "Resumen", icon: DollarSign }
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex-1 py-3 flex items-center justify-center gap-2 text-sm font-bold rounded-xl transition-all ${
+            className={`flex-1 min-w-fit px-4 py-3 flex items-center justify-center gap-2 text-[10px] font-black uppercase rounded-xl transition-all whitespace-nowrap ${
               activeTab === tab.id ? "bg-white text-black shadow-sm" : "text-gray-500"
             }`}
           >
-            <tab.icon size={18} />
+            <tab.icon size={16} />
             {tab.label}
             {tab.id === 'pagos' && pendingPayments.length > 0 && (
               <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
                 {pendingPayments.length}
+              </span>
+            )}
+            {tab.id === 'liquidaciones' && pendingPayouts.length > 0 && (
+              <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                {pendingPayouts.length}
               </span>
             )}
           </button>
@@ -208,16 +283,10 @@ function GlobalAdminPage() {
           {loading ? "Guardando..." : "Guardar Configuración"}
         </button>
       </form>
-      ) : (
+      ) : activeTab === "pagos" ? (
         <div className="space-y-6 animate-in fade-in duration-300">
           {pendingPayments.length === 0 ? (
-            <div className="bg-white rounded-[2rem] p-12 text-center border border-dashed border-slate-200">
-              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                <Check size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Todo al día</h3>
-              <p className="text-slate-500 font-medium">No hay comprobantes pendientes de revisión.</p>
-            </div>
+            <EmptyState title="Todo al día" description="No hay comprobantes pendientes de revisión." />
           ) : (
             pendingPayments.map((payment) => (
               <div key={payment.id} className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 space-y-4">
@@ -261,7 +330,122 @@ function GlobalAdminPage() {
             ))
           )}
         </div>
+      ) : activeTab === "liquidaciones" ? (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          {pendingPayouts.length === 0 ? (
+            <EmptyState title="Sin pendientes" description="No hay liquidaciones por realizar." />
+          ) : (
+            pendingPayouts.map((payout) => (
+              <PayoutCard key={payout.id} payout={payout} onReview={handleReviewPayout} />
+            ))
+          )}
+        </div>
+      ) : (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          {(!financialStats || financialStats.length === 0) ? (
+            <EmptyState title="Sin datos" description="Aún no hay reservas confirmadas para mostrar estadísticas." />
+          ) : (
+            financialStats.map((stat: any) => (
+              <div key={stat.month} className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 space-y-6">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-black text-xl text-slate-900 capitalize">
+                    {format(new Date(stat.month + '-02'), 'MMMM yyyy', { locale: es })}
+                  </h4>
+                  <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                    Profit: ${stat.profit.toLocaleString('es-AR')}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-slate-50 p-5 rounded-[1.5rem] space-y-1">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cobrado Vecinos</p>
+                    <p className="font-black text-xl text-slate-900">${stat.total.toLocaleString('es-AR')}</p>
+                  </div>
+                  <div className="bg-slate-50 p-5 rounded-[1.5rem] space-y-1">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Dueños</p>
+                    <p className="font-black text-xl text-slate-900">${stat.owner_sum.toLocaleString('es-AR')}</p>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       )}
+    </div>
+  );
+}
+
+function EmptyState({ title, description }: { title: string, description: string }) {
+  return (
+    <div className="bg-white rounded-[2rem] p-12 text-center border border-dashed border-slate-200">
+      <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+        <Check size={32} />
+      </div>
+      <h3 className="text-xl font-bold text-slate-900 mb-2">{title}</h3>
+      <p className="text-slate-500 font-medium">{description}</p>
+    </div>
+  );
+}
+
+function PayoutCard({ payout, onReview }: { payout: any, onReview: any }) {
+  const account = payout.owner?.payout_accounts?.[0];
+  const copy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Copiado");
+  };
+
+  return (
+    <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 space-y-6">
+      <div className="flex justify-between items-start">
+        <div>
+          <h4 className="font-black text-lg text-slate-900">{payout.owner?.full_name}</h4>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            A liquidar: ${Number(payout.amount).toLocaleString('es-AR')}
+          </p>
+        </div>
+        <button 
+          onClick={() => copy(String(payout.amount))} 
+          className="p-3 bg-slate-50 rounded-xl text-black hover:bg-slate-100 transition-colors"
+          title="Copiar monto"
+        >
+          <DollarSign size={20} />
+        </button>
+      </div>
+
+      {account ? (
+        <div className="bg-slate-900 text-white p-6 rounded-[2rem] space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Titular</p>
+              <p className="font-bold text-sm">{account.holder_name}</p>
+            </div>
+            <p className="text-[10px] text-slate-500 font-bold uppercase">{account.document_number}</p>
+          </div>
+          <div className="flex items-center justify-between group">
+            <div>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">CBU / Alias</p>
+              <p className="font-mono text-xs">{account.cbu_or_alias}</p>
+            </div>
+            <button 
+              onClick={() => copy(account.cbu_or_alias)} 
+              className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+            >
+              <Plus size={16} className="text-slate-400" />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="p-4 bg-amber-50 rounded-2xl text-xs font-bold text-amber-800 border border-amber-100">
+          El dueño aún no ha configurado sus datos de cobro.
+        </div>
+      )}
+
+      <Button 
+        onClick={() => onReview(payout.id, 'pagado')} 
+        disabled={!account}
+        className="w-full bg-black text-white rounded-[2rem] font-bold h-14 shadow-lg shadow-black/10 active:scale-[0.98] transition-all"
+      >
+        Transferencia realizada
+      </Button>
     </div>
   );
 }
