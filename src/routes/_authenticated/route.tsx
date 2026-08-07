@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, Link, useLocation, redirect } from "@tanstack/react-router";
 import { Home, Car, MessageSquare, AlertCircle, User, Plus, ShieldCheck, Settings } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { NotificationBell } from "@/components/NotificationBell";
 
@@ -63,7 +63,7 @@ function AuthenticatedLayout() {
     setActiveRole(userRole);
   }, [userRole]);
   
-  const navItems = [
+  const navItems = useMemo(() => [
     { label: "Muro", icon: Home, to: "/muro" },
     { label: "Cocheras", icon: Car, to: "/cocheras" },
     { label: "Chat", icon: MessageSquare, to: "/chat" },
@@ -71,13 +71,13 @@ function AuthenticatedLayout() {
     { label: "Admin", icon: ShieldCheck, to: "/admin" },
     { label: "Global", icon: Settings, to: "/admin-global" },
     { label: "Perfil", icon: User, to: "/perfil" },
-  ];
+  ], []);
 
-  const filteredNavItems = navItems.filter(item => {
+  const filteredNavItems = useMemo(() => navItems.filter(item => {
     if (item.label === "Admin") return activeRole === "admin" || activeRole === "super_admin";
     if (item.label === "Global") return activeRole === "super_admin";
     return true;
-  });
+  }), [navItems, activeRole]);
 
   return (
     <div className="flex min-h-screen bg-[#F2F2F2] text-foreground font-sans">
