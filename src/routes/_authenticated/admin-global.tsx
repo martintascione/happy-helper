@@ -225,7 +225,7 @@ function GlobalAdminPage() {
       )}
 
       {/* Tabs */}
-      <div className="flex p-1.5 bg-slate-100 rounded-[22px] overflow-x-auto no-scrollbar">
+      <div className="flex p-2 bg-black/[0.03] rounded-[2rem] border border-black/[0.05] overflow-x-auto no-scrollbar">
         {[
           { id: "resumen", label: "Resumen" },
           { id: "pagos", label: "Pagos" },
@@ -237,8 +237,8 @@ function GlobalAdminPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex-1 min-w-fit px-5 py-3 text-[10px] font-black uppercase rounded-[16px] transition-all whitespace-nowrap ${
-              activeTab === tab.id ? "bg-white text-black shadow-sm" : "text-slate-400 hover:text-slate-600"
+            className={`flex-1 min-w-fit px-6 py-3.5 text-[11px] font-bold uppercase tracking-widest rounded-2xl transition-all whitespace-nowrap ${
+              activeTab === tab.id ? "bg-white text-primary shadow-subtle border border-black/[0.03]" : "text-muted-foreground hover:text-foreground"
             }`}
           >
             {tab.label}
