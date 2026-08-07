@@ -156,25 +156,24 @@ function MuroPage() {
         )}
       </div>
 
-      {/* Quick Access Grid */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-5">
         <button 
           onClick={() => navigate({ to: "/_authenticated/cocheras" } as any)}
-          className="glass-card p-6 rounded-[2.5rem] flex flex-col items-center gap-3 active:scale-95 transition-all border border-white/60"
+          className="premium-card p-8 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
         >
-          <div className="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center shadow-lg">
-            <Car size={24} strokeWidth={2.5} />
+          <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center shadow-inner-glow">
+            <Car size={28} strokeWidth={2.5} className="text-primary" />
           </div>
-          <span className="text-[11px] font-black uppercase tracking-widest text-slate-800">Cocheras</span>
+          <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-foreground">Cocheras</span>
         </button>
         <button 
           onClick={() => navigate({ to: "/_authenticated/chat" } as any)}
-          className="glass-card p-6 rounded-[2.5rem] flex flex-col items-center gap-3 active:scale-95 transition-all border border-white/60"
+          className="premium-card p-8 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
         >
-          <div className="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center shadow-lg">
-            <MessageSquare size={24} strokeWidth={2.5} />
+          <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center shadow-inner-glow">
+            <MessageSquare size={28} strokeWidth={2.5} className="text-primary" />
           </div>
-          <span className="text-[11px] font-black uppercase tracking-widest text-slate-800">Chat</span>
+          <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-foreground">Chat</span>
         </button>
       </div>
 
