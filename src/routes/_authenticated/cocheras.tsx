@@ -128,9 +128,9 @@ function CocherasPage() {
 
   return (
     <div className="pb-24 pt-4 px-4 min-h-screen bg-background">
-      <header className="mb-6">
-        <h1 className="text-3xl font-black text-black tracking-tight mb-2">Cocheras</h1>
-        <p className="text-gray-500 font-medium">Alquilá o publicá tu lugar</p>
+      <header className="px-1 space-y-1 mb-8">
+        <h1 className="text-3xl font-semibold text-black tracking-tight">Cocheras</h1>
+        <p className="text-slate-400 font-medium">Alquilá o publicá tu lugar</p>
       </header>
 
       <div className="flex p-1 bg-gray-200 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
