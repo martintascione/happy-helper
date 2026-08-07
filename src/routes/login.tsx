@@ -340,7 +340,7 @@ function LoginPage() {
                 console.log("Toggling signup mode to:", !isSignUp);
                 setIsSignUp(!isSignUp);
               }}
-              className="w-full text-sm text-slate-500 font-medium"
+              className="w-full py-2 text-sm text-slate-500 font-medium hover:text-primary transition-colors cursor-pointer"
             >
               {isSignUp ? "¿Ya tenés cuenta? Ingresá" : "¿No tenés cuenta? Registrate"}
             </button>
