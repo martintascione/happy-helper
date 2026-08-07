@@ -6,6 +6,16 @@ import { NotificationBell } from "@/components/NotificationBell";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
+    // SSR Guard: localStorage is not available on server
+    if (typeof window === 'undefined') {
+      return { 
+        userRole: 'vecino' as const, 
+        userId: '',
+        isSuperAdmin: false,
+        userEmail: ''
+      };
+    }
+
     // 1. Check local storage for super admin bypass (fastest)
     const isSuperAdminFlag = localStorage.getItem('is_super_admin') === 'true';
     const storedSessionStr = localStorage.getItem('sb-ufsowwvgbxfasucpvzkl-auth-token');

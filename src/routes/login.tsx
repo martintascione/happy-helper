@@ -29,6 +29,8 @@ function LoginPage() {
 
   useEffect(() => {
     console.log("LoginPage mounted");
+    if (typeof window === 'undefined') return;
+    
     let isMounted = true;
 
     const runCheck = async () => {
