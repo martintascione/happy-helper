@@ -83,118 +83,49 @@ function PerfilPage() {
   if (!profile) return <div className="p-8">Cargando...</div>;
 
   return (
-    <div className="p-6 max-w-md mx-auto space-y-8 pb-32">
-      <header className="px-1 space-y-1">
-        <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">Mi Perfil</h1>
-        <p className="text-slate-400 font-medium">Gestioná tu cuenta y datos</p>
-      </header>
-
-      <div className="flex flex-col items-center gap-4 pt-4">
-        <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center text-primary relative overflow-hidden border border-slate-100 shadow-sm">
+    <div className="p-6 max-w-sm mx-auto space-y-8 pb-32">
+      <header className="px-1 flex flex-col items-center text-center space-y-4 pt-4">
+        <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center relative overflow-hidden border border-slate-100 shadow-xl shadow-slate-200/50">
           {profile.avatar_url ? (
             <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
-            <User size={48} />
+            <User size={56} className="text-slate-300" />
           )}
         </div>
-        <div className="text-center">
-          <h1 className="text-xl font-bold text-slate-900">{profile.full_name}</h1>
-          <p className="text-sm text-slate-400 font-medium capitalize">{profile.role}</p>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm space-y-4">
-        <div className="flex items-center gap-4 text-slate-600">
-          <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center shrink-0">
-            <Building2 size={20} className="text-primary" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Edificio</p>
-            <p className="font-medium">{building?.name || "No asignado"}</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-4 text-slate-600">
-          <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center shrink-0">
-            <DoorOpen size={20} className="text-primary" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Unidad</p>
-            <p className="font-medium">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{profile.full_name}</h1>
+          <div className="flex items-center gap-2 justify-center">
+            <span className="px-3 py-1 bg-slate-100 text-[10px] font-bold text-slate-500 rounded-full uppercase tracking-wider">
+              {building?.name || "Sin edificio"}
+            </span>
+            <span className="px-3 py-1 bg-slate-100 text-[10px] font-bold text-slate-500 rounded-full uppercase tracking-wider">
               Piso {unit?.floor || "-"} - Depto {unit?.apartment || "-"}
-            </p>
+            </span>
           </div>
         </div>
-      </div>
+      </header>
 
-      <form onSubmit={handleUpdate} className="space-y-6">
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
-            <input
-              type="text"
-              value={profile.full_name}
-              onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-              className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Teléfono</label>
-            <input
-              type="tel"
-              value={profile.phone || ""}
-              onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-              placeholder="Ej: +54 9 11..."
-              className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-            />
-          </div>
-        </div>
-
+      <div className="bg-white rounded-[28px] shadow-soft overflow-hidden border border-slate-50">
+        <Link to="/perfil/editar" className="flex items-center justify-between p-5 hover:bg-slate-50/50 transition-colors border-b border-slate-50">
+          <span className="font-semibold text-slate-900">Mis Datos</span>
+          <ChevronRight size={20} className="text-slate-300" />
+        </Link>
+        <Link to="/perfil/pagos" className="flex items-center justify-between p-5 hover:bg-slate-50/50 transition-colors border-b border-slate-50">
+          <span className="font-semibold text-slate-900">Mis Pagos</span>
+          <ChevronRight size={20} className="text-slate-300" />
+        </Link>
+        <Link to="/terminos" className="flex items-center justify-between p-5 hover:bg-slate-50/50 transition-colors border-b border-slate-50">
+          <span className="font-semibold text-slate-900">Legales</span>
+          <ChevronRight size={20} className="text-slate-300" />
+        </Link>
         <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50"
+          onClick={handleSignOut}
+          className="w-full flex items-center justify-between p-5 hover:bg-red-50/50 transition-colors text-red-600"
         >
-          {loading ? "Guardando..." : "Guardar cambios"}
+          <span className="font-semibold">Cerrar sesión</span>
+          <ChevronRight size={20} className="text-red-300" />
         </button>
-      </form>
-
-      <div className="space-y-4">
-        <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Legales</h2>
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
-          <Link to="/terminos" className="flex items-center justify-between p-5 hover:bg-slate-50 transition-colors border-b border-slate-50">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
-                <FileText size={20} />
-              </div>
-              <span className="font-bold text-slate-700">Términos y Condiciones</span>
-            </div>
-            <ChevronRight size={18} className="text-slate-300" />
-          </Link>
-          <Link to="/privacidad" className="flex items-center justify-between p-5 hover:bg-slate-50 transition-colors">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
-                <Shield size={20} />
-              </div>
-              <span className="font-bold text-slate-700">Política de Privacidad</span>
-            </div>
-            <ChevronRight size={18} className="text-slate-300" />
-          </Link>
-        </div>
-        {agreement && (
-          <p className="text-[10px] font-bold text-slate-400 text-center px-4">
-            Aceptaste los términos el {format(new Date(agreement.accepted_at), "d 'de' MMMM 'de' yyyy", { locale: es })}
-          </p>
-        )}
       </div>
-
-      <button
-        onClick={handleSignOut}
-        className="w-full py-4 text-red-500 font-bold hover:bg-red-50 rounded-2xl transition-all"
-      >
-        Cerrar sesión
-      </button>
     </div>
   );
 }

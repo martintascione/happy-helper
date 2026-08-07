@@ -303,67 +303,60 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB] flex items-center justify-center p-6">
-      <div className="w-full max-w-[400px] bg-white rounded-[2.5rem] p-10 shadow-xl space-y-8 animate-in fade-in zoom-in-95 duration-500">
+    <div className="min-h-screen bg-[#F7F5F1] flex items-center justify-center p-6">
+      <div className="w-full max-w-[420px] bg-white rounded-[28px] p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-8 animate-in fade-in zoom-in-95 duration-500">
         <div className="flex flex-col items-center gap-2">
-          <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
-            <Building2 size={24} className="text-white" />
+          <div className="w-14 h-14 bg-black rounded-[18px] flex items-center justify-center shadow-lg shadow-black/10">
+            <Building2 size={28} className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mt-2">
             {step === 1 ? (isSignUp ? "Crear cuenta" : "Bienvenido") : "Vinculá tu edificio"}
           </h1>
         </div>
 
         {step === 1 ? (
-          <div className="space-y-4">
-            {isSignUp && (
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
-                <div className="relative">
-                  <User className="absolute left-4 top-4 text-slate-300" size={20} />
+          <div className="space-y-6">
+            <div className="space-y-4">
+              {isSignUp && (
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nombre Completo</label>
                   <input
                     type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Tu nombre"
-                    className="w-full p-4 pl-12 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all"
+                    placeholder="Tu nombre completo"
+                    className="w-full p-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
                   />
                 </div>
-              </div>
-            )}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-4 text-slate-300" size={20} />
+              )}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Email</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="ejemplo@correo.com"
-                  className="w-full p-4 pl-12 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full p-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
                 />
               </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Contraseña</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-4 text-slate-300" size={20} />
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Contraseña</label>
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full p-4 pl-12 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full p-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
                 />
               </div>
             </div>
 
-            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 mb-2">
-              <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1 text-center">Modo Demo Activado</p>
-              <p className="text-[10px] text-amber-500 font-medium text-center">Usá tascione32@gmail.com / admin123</p>
+            <div className="tint-warning p-4 rounded-[20px] border border-amber-200/20 text-center">
+              <p className="text-[9px] font-black uppercase tracking-widest mb-1">Modo Demo</p>
+              <p className="text-[10px] font-semibold">tascione32@gmail.com / admin123</p>
             </div>
 
             <button
@@ -372,19 +365,16 @@ function LoginPage() {
               type="button"
               onClick={handleRegisterClick}
               disabled={loading}
-              className="w-full py-5 bg-primary text-white rounded-2xl font-bold shadow-xl shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 relative z-10"
+              className="w-full py-4 bg-black text-white rounded-full font-bold shadow-xl shadow-black/10 active:scale-[0.98] transition-all disabled:opacity-50 text-sm"
             >
               {loading ? "Procesando..." : isSignUp ? "Registrarme" : "Ingresar"}
             </button>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 pt-2">
               <button
                 type="button"
-                onClick={() => {
-                  console.log("Toggling signup mode to:", !isSignUp);
-                  setIsSignUp(!isSignUp);
-                }}
-                className="w-full py-2 text-sm text-slate-500 font-medium hover:text-primary transition-colors cursor-pointer"
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="w-full py-2 text-[13px] text-slate-500 font-semibold hover:text-black transition-colors"
               >
                 {isSignUp ? "¿Ya tenés cuenta? Ingresá" : "¿No tenés cuenta? Registrate"}
               </button>
@@ -398,44 +388,43 @@ function LoginPage() {
             </div>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {!foundBuilding ? (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Código de invitación</label>
-                  <div className="relative">
-                    <Key className="absolute left-4 top-4 text-slate-300" size={20} />
-                    <input
-                      type="text"
-                      value={inviteCode}
-                      autoFocus
-                      onChange={(e) => setInviteCode(e.target.value)}
-                      placeholder="TORREXXXX"
-                      className="w-full p-4 pl-12 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-mono uppercase"
-                    />
-                  </div>
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center w-full block">Código de invitación</label>
+                  <input
+                    type="text"
+                    value={inviteCode}
+                    autoFocus
+                    inputMode="text"
+                    onChange={(e) => setInviteCode(e.target.value)}
+                    placeholder="TORREXXXX"
+                    className="w-full p-6 bg-[#F5F5F3] rounded-[24px] border-none focus:ring-2 focus:ring-black/5 transition-all text-2xl font-black text-center tracking-[0.2em] font-mono uppercase"
+                  />
+                  <p className="text-[10px] text-slate-400 text-center font-medium">El código fue enviado a tu correo o entregado por la administración.</p>
                 </div>
                 <button
                   onClick={handleCheckInvite}
                   disabled={loading || !inviteCode}
-                  className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-black text-white rounded-full font-bold flex items-center justify-center gap-2 shadow-xl shadow-black/10"
                 >
-                  Verificar código <ArrowRight size={18} />
+                  Verificar código <ArrowRight size={18} strokeWidth={2.5} />
                 </button>
               </div>
             ) : (
               <div className="space-y-6 animate-in slide-in-from-right duration-300">
-                <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10">
-                  <p className="text-xs font-bold text-primary uppercase tracking-wider">Edificio</p>
-                  <p className="font-bold text-slate-900">{foundBuilding.name}</p>
+                <div className="tint-positive p-5 rounded-[24px] border border-green-200/20 text-center">
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-70">Edificio encontrado</p>
+                  <p className="text-lg font-bold">{foundBuilding.name}</p>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Seleccioná tu unidad</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Seleccioná tu unidad</label>
                   <select
                     value={selectedUnitId}
                     onChange={(e) => setSelectedUnitId(e.target.value)}
-                    className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-medium appearance-none"
+                    className="w-full p-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-semibold appearance-none"
                   >
                     <option value="">Seleccionar Piso/Depto</option>
                     {units.map((u) => (
@@ -449,14 +438,14 @@ function LoginPage() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setFoundBuilding(null)}
-                    className="p-4 bg-slate-100 rounded-2xl text-slate-500"
+                    className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors"
                   >
-                    <ArrowLeft size={24} />
+                    <ArrowLeft size={20} strokeWidth={2.5} />
                   </button>
                   <button
                     onClick={handleCompleteProfile}
                     disabled={loading || !selectedUnitId}
-                    className="flex-1 py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20"
+                    className="flex-1 py-4 bg-black text-white rounded-full font-bold shadow-xl shadow-black/10 active:scale-[0.98] transition-all"
                   >
                     Confirmar vinculación
                   </button>
