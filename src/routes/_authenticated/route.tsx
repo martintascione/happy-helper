@@ -29,7 +29,8 @@ export const Route = createFileRoute("/_authenticated")({
       return { 
         userRole: 'super_admin' as const, 
         userId: session?.user?.id || 'super-admin-id',
-        isSuperAdmin: true
+        isSuperAdmin: true,
+        userEmail: userEmail || 'tascione32@gmail.com'
       };
     }
 
