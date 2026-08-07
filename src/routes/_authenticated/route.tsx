@@ -62,12 +62,13 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedLayout() {
   const location = useLocation();
-  const { userRole, userId, isSuperAdmin } = Route.useRouteContext();
+  const { userRole, userId, isSuperAdmin, userEmail } = Route.useRouteContext();
   const [activeRole, setActiveRole] = useState(userRole);
 
   useEffect(() => {
+    console.log("AuthenticatedLayout mounted/updated", { userEmail, userRole, isSuperAdmin });
     setActiveRole(userRole);
-  }, [userRole]);
+  }, [userRole, userEmail, isSuperAdmin]);
   
   const navItems = useMemo(() => [
     { label: "Muro", icon: Home, to: "/muro" },
