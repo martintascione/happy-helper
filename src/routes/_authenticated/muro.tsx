@@ -44,9 +44,15 @@ function MuroPage() {
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
 
-    if (user && profile) {
-      setUserRole(profile.role);
-      if (profile.building_id) {
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, building_id")
+        .eq("id", user.id)
+        .single();
+      
+      if (profile && profile.building_id) {
+        setUserRole(profile.role);
         fetchPosts(profile.building_id);
       }
     }
@@ -88,7 +94,7 @@ function MuroPage() {
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle || !newBody) return;
+    if (!newTitle || !newBody || !currentUser) return;
     
     setUploading(true);
     let imageUrl = "";
@@ -96,7 +102,7 @@ function MuroPage() {
     if (imageFile) {
       const fileExt = imageFile.name.split(".").pop();
       const fileName = `${Math.random()}.${fileExt}`;
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from("post-images")
         .upload(fileName, imageFile);
 
@@ -118,24 +124,26 @@ function MuroPage() {
       .eq("id", currentUser.id)
       .single();
 
-    const { error } = await supabase.from("posts").insert({
-      building_id: profile?.building_id,
-      author_id: currentUser.id,
-      title: newTitle,
-      body: newBody,
-      type: newType,
-      image_url: imageUrl || null
-    });
+    if (profile && profile.building_id) {
+      const { error } = await supabase.from("posts").insert({
+        building_id: profile.building_id,
+        author_id: currentUser.id,
+        title: newTitle,
+        body: newBody,
+        type: newType,
+        image_url: imageUrl || null
+      });
 
-    if (error) {
-      toast.error("Error al crear publicación");
-    } else {
-      toast.success("Publicación creada");
-      setIsModalOpen(false);
-      setNewTitle("");
-      setNewBody("");
-      setImageFile(null);
-      fetchPosts(profile?.building_id);
+      if (error) {
+        toast.error("Error al crear publicación");
+      } else {
+        toast.success("Publicación creada");
+        setIsModalOpen(false);
+        setNewTitle("");
+        setNewBody("");
+        setImageFile(null);
+        fetchPosts(profile.building_id);
+      }
     }
     setUploading(false);
   };
@@ -292,7 +300,7 @@ function PostCard({ post, currentUser, userRole, onDelete }: { post: any, curren
 
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!commentBody) return;
+    if (!commentBody || !currentUser) return;
 
     const { data, error } = await supabase.from("comments").insert({
       post_id: post.id,
@@ -310,6 +318,7 @@ function PostCard({ post, currentUser, userRole, onDelete }: { post: any, curren
   };
 
   const handleReaction = async (emoji: string) => {
+    if (!currentUser) return;
     const existing = reactions.find((r: any) => r.user_id === currentUser.id && r.emoji === emoji);
     
     if (existing) {
