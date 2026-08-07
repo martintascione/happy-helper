@@ -6,16 +6,21 @@ import { NotificationBell } from "@/components/NotificationBell";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
-    // 1. Check local storage for super admin bypass (fastest)
-    const isSuperAdminFlag = localStorage.getItem('is_super_admin') === 'true';
-    const storedSessionStr = localStorage.getItem('sb-ufsowwvgbxfasucpvzkl-auth-token');
+    // 1. Check local storage for super admin bypass (fastest) - only in browser
+    const isBrowser = typeof window !== 'undefined';
+    let isSuperAdminFlag = false;
     let userEmailFromStorage = '';
-    
-    if (storedSessionStr) {
-      try {
-        const session = JSON.parse(storedSessionStr);
-        userEmailFromStorage = session?.user?.email?.toLowerCase() || '';
-      } catch (e) {}
+
+    if (isBrowser) {
+      isSuperAdminFlag = localStorage.getItem('is_super_admin') === 'true';
+      const storedSessionStr = localStorage.getItem('sb-ufsowwvgbxfasucpvzkl-auth-token');
+      
+      if (storedSessionStr) {
+        try {
+          const session = JSON.parse(storedSessionStr);
+          userEmailFromStorage = session?.user?.email?.toLowerCase() || '';
+        } catch (e) {}
+      }
     }
 
     const isSuperAdminEmail = userEmailFromStorage === 'tascione32@gmail.com';
