@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminGlobalRouteImport } from './routes/_authenticated/admin-global'
 import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
 import { Route as AuthenticatedCocherasRouteImport } from './routes/_authenticated/cocheras'
 import { Route as AuthenticatedMuroRouteImport } from './routes/_authenticated/muro'
@@ -38,6 +39,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminGlobalRoute =
+  AuthenticatedAdminGlobalRouteImport.update({
+    id: '/admin-global',
+    path: '/admin-global',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -68,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/admin-global': typeof AuthenticatedAdminGlobalRoute
   '/chat': typeof AuthenticatedChatRoute
   '/cocheras': typeof AuthenticatedCocherasRoute
   '/muro': typeof AuthenticatedMuroRoute
@@ -78,6 +86,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/admin-global': typeof AuthenticatedAdminGlobalRoute
   '/chat': typeof AuthenticatedChatRoute
   '/cocheras': typeof AuthenticatedCocherasRoute
   '/muro': typeof AuthenticatedMuroRoute
@@ -90,6 +99,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin-global': typeof AuthenticatedAdminGlobalRoute
   '/_authenticated/chat': typeof AuthenticatedChatRoute
   '/_authenticated/cocheras': typeof AuthenticatedCocherasRoute
   '/_authenticated/muro': typeof AuthenticatedMuroRoute
@@ -102,6 +112,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/admin'
+    | '/admin-global'
     | '/chat'
     | '/cocheras'
     | '/muro'
@@ -112,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/admin'
+    | '/admin-global'
     | '/chat'
     | '/cocheras'
     | '/muro'
@@ -123,6 +135,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/_authenticated/admin'
+    | '/_authenticated/admin-global'
     | '/_authenticated/chat'
     | '/_authenticated/cocheras'
     | '/_authenticated/muro'
@@ -166,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin-global': {
+      id: '/_authenticated/admin-global'
+      path: '/admin-global'
+      fullPath: '/admin-global'
+      preLoaderRoute: typeof AuthenticatedAdminGlobalRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/chat': {
       id: '/_authenticated/chat'
       path: '/chat'
@@ -206,6 +226,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminGlobalRoute: typeof AuthenticatedAdminGlobalRoute
   AuthenticatedChatRoute: typeof AuthenticatedChatRoute
   AuthenticatedCocherasRoute: typeof AuthenticatedCocherasRoute
   AuthenticatedMuroRoute: typeof AuthenticatedMuroRoute
@@ -215,6 +236,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminGlobalRoute: AuthenticatedAdminGlobalRoute,
   AuthenticatedChatRoute: AuthenticatedChatRoute,
   AuthenticatedCocherasRoute: AuthenticatedCocherasRoute,
   AuthenticatedMuroRoute: AuthenticatedMuroRoute,
