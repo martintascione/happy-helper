@@ -52,11 +52,9 @@ function LoginPage() {
 
     if (isSuperAdminEmail) {
       console.log("Super admin detected, bypassing all checks...");
-      // Forcing a hard redirect to the canonical muro path
-      // We use setTimeout to ensure the session is fully processed by the auth state listeners
-      setTimeout(() => {
-        window.location.href = "/_authenticated/muro";
-      }, 100);
+      // We use a clean replace to avoid history issues or loops
+      // The path /muro is the target, which will match /_authenticated/muro
+      window.location.replace("/muro");
       return;
     }
 

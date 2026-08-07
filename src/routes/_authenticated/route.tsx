@@ -26,6 +26,7 @@ export const Route = createFileRoute("/_authenticated")({
     const isSuperAdminEmail = session.user.email?.toLowerCase() === 'tascione32@gmail.com';
 
     if (isSuperAdminEmail) {
+      console.log("Allowing super admin bypass in layout");
       return { userRole: 'super_admin' as const, userId: session.user.id };
     }
 
