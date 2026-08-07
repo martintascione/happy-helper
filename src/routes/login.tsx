@@ -310,7 +310,13 @@ function LoginPage() {
         </div>
 
         {step === 1 ? (
-          <form onSubmit={handleRegisterClick} className="space-y-4">
+          <form 
+            onSubmit={(e) => {
+              console.log("Form submitted event");
+              handleRegisterClick(e);
+            }} 
+            className="space-y-4"
+          >
             {isSignUp && (
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
