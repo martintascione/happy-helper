@@ -200,10 +200,10 @@ function CocherasPage() {
               <button
                 key={date.toISOString()}
                 onClick={() => setSelectedDate(date)}
-                className={`flex flex-col items-center justify-center min-w-[62px] h-[82px] rounded-full transition-all duration-500 relative ring-1 ${
+                className={`flex flex-col items-center justify-center min-w-[64px] h-[86px] rounded-[2rem] transition-all duration-300 relative border ${
                   isSelected 
-                    ? "bg-black text-white shadow-card ring-black scale-110 z-10" 
-                    : "bg-white text-slate-400 ring-slate-100 hover:ring-slate-300"
+                    ? "bg-primary text-primary-foreground shadow-premium border-primary scale-105 z-10" 
+                    : "bg-white text-muted-foreground border-black/[0.03] hover:border-black/10"
                 }`}
               >
                 <span className={`text-[11px] font-black uppercase tracking-tighter mb-1 ${isSelected ? "text-white/40" : "text-slate-300"}`}>
