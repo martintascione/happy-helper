@@ -49,16 +49,22 @@ function LoginPage() {
       }
 
       // Ensure at least one building and unit exist
-      const { data: building } = await supabase.from('buildings').select('id').limit(1).maybeSingle();
-      const { data: unit } = await supabase.from('units').select('id').limit(1).maybeSingle();
+      let buildingId = profile?.building_id;
+      let unitId = profile?.unit_id;
+
+      if (!buildingId || !unitId) {
+        const { data: building } = await supabase.from('buildings').select('id').limit(1).maybeSingle();
+        const { data: unit } = await supabase.from('units').select('id').eq('building_id', building?.id).limit(1).maybeSingle();
+        buildingId = building?.id;
+        unitId = unit?.id;
+      }
       
-      if (building && unit) {
-        // Upsert super admin profile: force role and status
+      if (buildingId && unitId) {
         const { error: upsertError } = await supabase.from('profiles').upsert({
           id: session.user.id,
           full_name: fullName || (session.user.user_metadata as any)?.['full_name'] || 'Super Admin',
-          building_id: building.id,
-          unit_id: unit.id,
+          building_id: buildingId,
+          unit_id: unitId,
           role: 'super_admin',
           status: 'aprobado'
         });
@@ -73,15 +79,17 @@ function LoginPage() {
     // 2. Standard user check
     const { data: profile } = await supabase
       .from("profiles")
-      .select("status")
+      .select("status, role")
       .eq("id", session.user.id)
       .maybeSingle();
     
     if (profile) {
-      if (profile.status === "pendiente") {
+      if (profile.role === "super_admin" || profile.status === "aprobado") {
+        navigate({ to: "/_authenticated/muro" });
+      } else if (profile.status === "pendiente") {
         setStep(3); // Pending screen
       } else {
-        navigate({ to: "/_authenticated/muro" });
+        setStep(2);
       }
     } else {
       setStep(2); // Authenticated but needs invitation
