@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_authenticated")({
       .maybeSingle();
 
     // Special bypass for super admin to avoid loops if profile is being created
-    const isSuperAdminEmail = session.user.email === 'tascione32@gmail.com';
+    const isSuperAdminEmail = session.user.email?.toLowerCase() === 'tascione32@gmail.com';
 
     if (!profile) {
       if (isSuperAdminEmail) {
