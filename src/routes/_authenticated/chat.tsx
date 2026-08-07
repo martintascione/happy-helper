@@ -330,16 +330,16 @@ function ChatPage() {
               new Date(messages[idx+1].created_at).getTime() - new Date(msg.created_at).getTime() > 300000;
 
             return (
-              <div key={msg.id} className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} space-y-1`}>
-                <div className={`max-w-[85%] px-5 py-3.5 rounded-[22px] ${
+              <div key={msg.id} className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} space-y-2`}>
+                <div className={`max-w-[85%] px-6 py-4 rounded-[1.75rem] ${
                   isMine 
-                    ? 'bg-black text-white shadow-xl shadow-black/5' 
-                    : 'bg-white text-slate-900 shadow-[0_4px_15px_rgba(0,0,0,0.04)] border border-slate-50'
+                    ? 'bg-primary text-primary-foreground shadow-premium' 
+                    : 'bg-white text-foreground shadow-subtle border border-black/[0.03]'
                 }`}>
-                  <p className="text-[15px] font-medium leading-relaxed">{msg.body}</p>
+                  <p className="text-[16px] font-medium leading-relaxed">{msg.body}</p>
                 </div>
                 {showTime && (
-                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-tighter px-2">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-2 opacity-50">
                     {format(new Date(msg.created_at), 'HH:mm')}
                   </span>
                 )}
