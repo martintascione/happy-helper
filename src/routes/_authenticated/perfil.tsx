@@ -83,23 +83,23 @@ function PerfilPage() {
   if (!profile) return <div className="p-8">Cargando...</div>;
 
   return (
-    <div className="p-6 max-w-sm mx-auto space-y-8 pb-32">
-      <header className="px-1 flex flex-col items-center text-center space-y-4 pt-4">
-        <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center relative overflow-hidden border border-slate-100 shadow-xl shadow-slate-200/50">
+    <div className="p-8 max-w-sm mx-auto space-y-12 pb-32">
+      <header className="px-1 flex flex-col items-center text-center space-y-6 pt-4">
+        <div className="w-32 h-32 bg-white rounded-[2.5rem] flex items-center justify-center relative overflow-hidden border border-black/[0.03] shadow-premium">
           {profile.avatar_url ? (
             <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
-            <User size={56} className="text-slate-300" />
+            <User size={64} className="text-muted-foreground/30" strokeWidth={1.5} />
           )}
         </div>
-        <div className="space-y-1">
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{profile.full_name}</h1>
-          <div className="flex items-center gap-2 justify-center">
-            <span className="px-3 py-1 bg-slate-100 text-[10px] font-bold text-slate-500 rounded-full uppercase tracking-wider">
+        <div className="space-y-3">
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">{profile.full_name}</h1>
+          <div className="flex flex-col items-center gap-2">
+            <span className="px-4 py-1.5 bg-black/[0.03] text-[11px] font-bold text-muted-foreground rounded-full uppercase tracking-widest border border-black/[0.05]">
               {building?.name || "Sin edificio"}
             </span>
-            <span className="px-3 py-1 bg-slate-100 text-[10px] font-bold text-slate-500 rounded-full uppercase tracking-wider">
-              Piso {unit?.floor || "-"} - Depto {unit?.apartment || "-"}
+            <span className="text-[13px] font-medium text-muted-foreground opacity-70">
+              Unidad {unit?.floor || "-"}{unit?.apartment || "-"}
             </span>
           </div>
         </div>
