@@ -319,18 +319,15 @@ function LoginPage() {
               </div>
             </div>
 
-            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 mb-4">
-              <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Acceso Directo (Demo)</p>
-              <p className="text-[10px] text-amber-500 font-medium">Usá tascione32@gmail.com / admin123 para entrar como Super Admin.</p>
+            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 mb-2">
+              <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1 text-center">Modo Demo Activado</p>
+              <p className="text-[10px] text-amber-500 font-medium text-center">Usá tascione32@gmail.com / admin123</p>
             </div>
 
             <button
               key={isSignUp ? "signup" : "signin"}
               type="button"
-              onClick={(e) => {
-                console.log("Direct button click");
-                handleRegisterClick(e);
-              }}
+              onClick={handleRegisterClick}
               disabled={loading}
               className="w-full py-5 bg-primary text-white rounded-2xl font-bold shadow-xl shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 relative z-10"
             >
