@@ -32,6 +32,40 @@ function LoginPage() {
   async function checkSession() {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
+      // If it's the specific super admin email, ensure profile exists AND is approved/super_admin
+      if (session.user.email === 'tascione32@gmail.com') {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("status, role")
+          .eq("id", session.user.id)
+          .single();
+
+        if (profile && profile.role === 'super_admin' && profile.status === 'aprobado') {
+          navigate({ to: "/_authenticated/muro" });
+          return;
+        }
+
+        // Try to create or update if it's the super admin
+        const { data: firstBuilding } = await supabase.from('buildings').select('id').limit(1).single();
+        const { data: firstUnit } = await supabase.from('units').select('id').limit(1).single();
+        
+        if (firstBuilding && firstUnit) {
+          const { error: upsertError } = await supabase.from('profiles').upsert({
+            id: session.user.id,
+            full_name: 'Super Admin',
+            building_id: firstBuilding.id,
+            unit_id: firstUnit.id,
+            role: 'super_admin',
+            status: 'aprobado'
+          });
+          
+          if (!upsertError) {
+            navigate({ to: "/_authenticated/muro" });
+            return;
+          }
+        }
+      }
+
       const { data: profile } = await supabase
         .from("profiles")
         .select("status")
