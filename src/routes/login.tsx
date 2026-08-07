@@ -29,11 +29,11 @@ function LoginPage() {
 
   useEffect(() => {
     console.log("LoginPage mounted");
+    if (typeof window === 'undefined') return;
+    
     let isMounted = true;
 
     const runCheck = async () => {
-      if (typeof window === 'undefined') return;
-
       // 1. Check direct localStorage (fastest)
       const isSuperAdminFlag = localStorage.getItem('is_super_admin') === 'true';
       const storedSessionStr = localStorage.getItem('sb-ufsowwvgbxfasucpvzkl-auth-token');

@@ -36,6 +36,16 @@ export const Route = createFileRoute("/_authenticated")({
       };
     }
 
+    // SSR Guard: Supabase auth requires window
+    if (!isBrowser) {
+      return {
+        userRole: 'vecino' as const,
+        userId: '',
+        isSuperAdmin: false,
+        userEmail: ''
+      };
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     const userEmail = session?.user?.email?.toLowerCase();
 
