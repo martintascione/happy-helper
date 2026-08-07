@@ -149,13 +149,19 @@ function LoginPage() {
 
   const handleCheckInvite = async () => {
     setLoading(true);
+    const code = inviteCode.trim().toUpperCase();
+    console.log("Verifying code:", code);
+    
     const { data: building, error } = await supabase
       .from("buildings")
       .select("*")
-      .eq("invite_code", inviteCode.toUpperCase())
-      .single();
+      .eq("invite_code", code)
+      .maybeSingle();
 
-    if (error || !building) {
+    if (error) {
+      console.error("Supabase error checking invite:", error);
+      toast.error("Error al verificar código");
+    } else if (!building) {
       toast.error("Código de invitación inválido");
     } else {
       setFoundBuilding(building);
