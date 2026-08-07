@@ -24,7 +24,8 @@ import {
   TrendingUp,
   DollarSign,
   ShieldCheck,
-  Circle
+  Circle,
+  User
 } from "lucide-react";
 import { AgreementModal } from "@/components/AgreementModal";
 import { format, isAfter, isBefore, startOfDay, addDays, differenceInDays, isSameDay, getDay } from "date-fns";
