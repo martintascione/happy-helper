@@ -32,11 +32,13 @@ function LoginPage() {
     
     // Check session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Current session in mount effect:", session?.user?.email);
       if (session) {
         const userEmail = session.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
-          console.log("Super admin session found on mount, redirecting...");
-          window.location.replace("/muro");
+          console.log("Super admin session found on mount, forcing redirect...");
+          // Try both router navigate and window location
+          window.location.href = "/muro";
         } else {
           checkSession();
         }
