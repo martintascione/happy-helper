@@ -115,7 +115,8 @@ function AuthenticatedLayout() {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all ${
+                preload="intent"
+                className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all cursor-pointer ${
                   isActive 
                     ? "bg-black text-white shadow-xl shadow-black/10 scale-[1.02]" 
                     : "text-slate-400 hover:text-slate-900 hover:bg-slate-50"
@@ -151,7 +152,8 @@ function AuthenticatedLayout() {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex flex-col items-center gap-1.5 p-2 transition-all ${
+                  preload="intent"
+                  className={`flex flex-col items-center gap-1.5 p-2 transition-all cursor-pointer ${
                     isActive ? "text-slate-900" : "text-slate-300"
                   }`}
                 >

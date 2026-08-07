@@ -334,16 +334,25 @@ function LoginPage() {
               {loading ? "Procesando..." : isSignUp ? "Registrarme" : "Ingresar"}
             </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                console.log("Toggling signup mode to:", !isSignUp);
-                setIsSignUp(!isSignUp);
-              }}
-              className="w-full py-2 text-sm text-slate-500 font-medium hover:text-primary transition-colors cursor-pointer"
-            >
-              {isSignUp ? "¿Ya tenés cuenta? Ingresá" : "¿No tenés cuenta? Registrate"}
-            </button>
+            <div className="flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  console.log("Toggling signup mode to:", !isSignUp);
+                  setIsSignUp(!isSignUp);
+                }}
+                className="w-full py-2 text-sm text-slate-500 font-medium hover:text-primary transition-colors cursor-pointer"
+              >
+                {isSignUp ? "¿Ya tenés cuenta? Ingresá" : "¿No tenés cuenta? Registrate"}
+              </button>
+              
+              <Link 
+                to="/" 
+                className="w-full py-2 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest hover:text-slate-600"
+              >
+                Volver al inicio
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="space-y-6">
