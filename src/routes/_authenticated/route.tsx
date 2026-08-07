@@ -37,9 +37,10 @@ export const Route = createFileRoute("/_authenticated")({
       throw redirect({ to: "/login" });
     }
 
-    return { userRole: profile.role || (isSuperAdminEmail ? 'super_admin' : 'vecino'), userId: session.user.id };
-
-    return { userRole: profile.role, userId: session.user.id };
+    return { 
+      userRole: (profile.role || (isSuperAdminEmail ? 'super_admin' : 'vecino')) as "admin" | "super_admin" | "vecino", 
+      userId: session.user.id 
+    };
   },
   component: AuthenticatedLayout,
 });
