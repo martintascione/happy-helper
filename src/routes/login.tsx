@@ -116,10 +116,13 @@ function LoginPage() {
     
     if (profile) {
       if (profile.role === "super_admin" || profile.status === "aprobado") {
+        console.log("Profile approved or admin, navigating to muro...");
         navigate({ to: "/muro" });
       } else if (profile.status === "pendiente") {
+        console.log("Profile pending, staying on step 3");
         setStep(3); // Pending screen
       } else {
+        console.log("Profile invalid status, moving to step 2");
         setStep(2);
       }
     } else {
@@ -151,11 +154,22 @@ function LoginPage() {
         // The onAuthStateChange listener or handleAuth final setLoading will trigger
       }
     } else {
+      console.log("Attempting sign in with password...");
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      console.log("Login attempt result:", { success: !!data?.user, error: error?.message });
+      console.log("Login attempt result:", { success: !!data?.user, email: data?.user?.email, error: error?.message });
+      
       if (error) {
         toast.error(error.message);
         setLoading(false);
+      } else if (data?.user) {
+        // If it's the super admin, force hard redirect immediately
+        if (data.user.email?.toLowerCase() === 'tascione32@gmail.com') {
+          console.log("Super admin signed in, performing hard redirect...");
+          window.location.replace("/muro");
+          return; // Stop execution
+        }
+        // For others, checkSession will be triggered by onAuthStateChange or we call it
+        await checkSession();
       }
     }
     setLoading(false);
