@@ -296,7 +296,7 @@ function MyBookingsList({ bookings, onRefresh, settings }: { bookings: any[], on
     
     if (data) {
       const pMap: Record<string, any> = {};
-      data.forEach(p => {
+      (data as any[]).forEach(p => {
         // If there are multiple, preferred order: aprobado > en_revision > rechazado > pendiente
         if (!pMap[p.booking_id] || p.status === 'aprobado' || (pMap[p.booking_id].status !== 'aprobado' && p.status === 'en_revision')) {
           pMap[p.booking_id] = p;
