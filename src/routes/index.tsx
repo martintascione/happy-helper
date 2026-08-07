@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Car, MessageSquare, AlertCircle, ChevronRight } from "lucide-react";
+import { Car, MessageSquare, AlertCircle, ChevronRight, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -37,30 +37,35 @@ function Index() {
         </header>
 
         {/* Hero Section */}
-        <section className="px-8 pt-10 pb-16 space-y-10">
-          <div className="space-y-6">
-            <h1 className="text-[56px] font-bold leading-[0.95] tracking-tight text-slate-900 animate-in fade-in slide-in-from-bottom-6 duration-700">
-              Vivir <br />mejor, <br /><span className="text-black/30">juntos.</span>
+        <section className="px-8 pt-16 pb-16 space-y-12 relative overflow-hidden">
+          {/* Animated Background Blobs */}
+          <div className="absolute top-0 right-[-100px] w-64 h-64 bg-accent/10 rounded-full blur-[100px] animate-pulse" />
+          <div className="absolute bottom-[-100px] left-[-100px] w-64 h-64 bg-violet-500/10 rounded-full blur-[100px] animate-pulse delay-1000" />
+
+          <div className="space-y-6 relative z-10">
+            <h1 className="text-[64px] font-black leading-[0.9] tracking-tighter text-slate-900 animate-in fade-in slide-in-from-bottom-8 duration-1000 italic uppercase">
+              Vivir <br />mejor, <br /><span className="text-black/20 not-italic">juntos.</span>
             </h1>
-            <p className="text-slate-500 text-lg font-medium leading-relaxed max-w-[280px] animate-in fade-in slide-in-from-bottom-4 delay-200 duration-700">
-              La plataforma exclusiva para la gestión y comunidad de tu edificio.
+            <p className="text-slate-500 text-xl font-bold leading-relaxed max-w-[280px] animate-in fade-in slide-in-from-bottom-6 delay-300 duration-1000">
+              La plataforma exclusiva para la élite de tu edificio.
             </p>
           </div>
           
-          <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 delay-300 duration-700">
+          <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-6 delay-500 duration-1000 relative z-10">
             <Link 
               to="/login" 
               preload="intent"
-              className="w-full py-5.5 bg-black text-white rounded-[24px] font-bold shadow-2xl shadow-black/20 active:scale-[0.98] hover:scale-[1.02] transition-all flex items-center justify-center gap-2 text-lg"
+              className="w-full h-[72px] bg-black text-white rounded-[2rem] font-black shadow-card active:scale-[0.96] hover:scale-[1.02] transition-all flex items-center justify-between px-8 text-xl uppercase tracking-widest group"
             >
-              Ingresar
+              <span>Ingresar</span>
+              <ArrowRight className="group-hover:translate-x-2 transition-transform" strokeWidth={3} />
             </Link>
             <Link 
               to="/login" 
               preload="intent"
-              className="w-full py-5.5 bg-white text-black border border-slate-200/60 rounded-[24px] font-bold shadow-sm active:scale-[0.98] hover:bg-slate-50 transition-all flex items-center justify-center text-lg"
+              className="w-full h-[72px] glass-card text-black rounded-[2rem] font-black shadow-sm active:scale-[0.96] hover:bg-white transition-all flex items-center justify-center text-lg uppercase tracking-widest border border-slate-200/50"
             >
-              Registrar mi edificio
+              Registrar edificio
             </Link>
           </div>
         </section>
