@@ -114,13 +114,23 @@ function MuroPage() {
         ) : data.posts.length > 0 ? (
           data.posts.map((post) => (
             <div key={post.id} className="bg-white p-6 rounded-[2rem] shadow-soft border border-white hover:border-slate-100 transition-colors">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="px-2 py-0.5 bg-pink-100 text-pink-600 text-[9px] font-black uppercase rounded-full tracking-wider">
-                  Oficial
-                </span>
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
-                  {format(new Date(post.created_at), "d MMM", { locale: es })}
-                </span>
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 bg-pink-100 text-pink-600 text-[9px] font-black uppercase rounded-full tracking-wider">
+                    Oficial
+                  </span>
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                    {format(new Date(post.created_at), "d MMM", { locale: es })}
+                  </span>
+                </div>
+                {post.author && (
+                  <button 
+                    onClick={() => navigate({ to: "/_authenticated/chat", search: { startDirect: post.author_id } } as any)}
+                    className="text-[9px] font-black text-slate-400 hover:text-slate-900 uppercase tracking-widest flex items-center gap-1"
+                  >
+                    Por {post.author.full_name} <MessageSquare size={10} />
+                  </button>
+                )}
               </div>
               <h3 className="font-black text-xl text-slate-900 mb-2 leading-tight">{post.title}</h3>
               <p className="text-sm text-slate-500 font-medium line-clamp-2 leading-relaxed">{post.body}</p>
