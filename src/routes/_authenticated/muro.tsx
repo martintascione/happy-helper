@@ -112,9 +112,23 @@ function MuroPage() {
 
   return (
     <div className="p-8 max-w-2xl mx-auto space-y-12 pb-32 bg-background overflow-x-hidden relative">
-      <header className="px-1">
-        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Comunidad</h1>
-        <p className="text-muted-foreground font-medium text-lg">Edificio Libertador</p>
+      <header className="px-1 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight mb-1">
+            Hola {profile?.full_name?.split(' ')[0] || 'Vecino'},
+          </h1>
+          <p className="text-muted-foreground font-medium text-lg italic">¡Bienvenido a tu edificio!</p>
+        </div>
+        <button 
+          onClick={() => navigate({ to: "/_authenticated/perfil" } as any)}
+          className="w-16 h-16 rounded-3xl overflow-hidden border-4 border-white shadow-premium active:scale-90 transition-all bg-secondary flex items-center justify-center group"
+        >
+          {profile?.avatar_url ? (
+            <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+          ) : (
+            <User size={32} className="text-primary group-hover:scale-110 transition-transform" />
+          )}
+        </button>
       </header>
 
       {/* Resumen */}
