@@ -127,7 +127,7 @@ function CocherasPage() {
   }
 
   return (
-    <div className="pb-24 pt-4 px-4 min-h-screen bg-[#F2F2F2]">
+    <div className="pb-24 pt-4 px-4 min-h-screen bg-background">
       <header className="mb-6">
         <h1 className="text-3xl font-black text-black tracking-tight mb-2">Cocheras</h1>
         <p className="text-gray-500 font-medium">Alquilá o publicá tu lugar</p>
@@ -247,7 +247,7 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
                 <h4 className="font-black text-lg leading-tight">{spot.identifier}</h4>
                 <p className="text-gray-500 text-sm font-medium">De {spot.owner?.full_name}</p>
               </div>
-              <div className="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-xs font-black">
+              <div className="tint-positive px-3 py-1 rounded-full text-xs font-black">
                 ${Number(finalPrice).toLocaleString('es-AR')} / día
               </div>
             </div>
@@ -441,7 +441,7 @@ function MyBookingsList({ bookings, onRefresh, settings }: { bookings: any[], on
               {isPendingPayment && (
                 <Button 
                   onClick={() => setSelectedBooking(booking)}
-                  className="w-full bg-pink-500 hover:bg-pink-600 text-white h-12 rounded-2xl font-black shadow-lg shadow-pink-500/20"
+                  className="w-full bg-accent hover:bg-green-600 text-white h-12 rounded-2xl font-black shadow-lg shadow-accent/20"
                 >
                   Pagar reserva (${Number(booking.total_price).toLocaleString('es-AR')})
                 </Button>
@@ -761,7 +761,7 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
                   Recibís ${Number(spot.owner_price_per_day).toLocaleString('es-AR')} / día
                 </p>
                 {settings && (
-                  <p className="text-pink-500 text-[10px] font-bold uppercase tracking-wider">
+                  <p className="text-accent text-[10px] font-bold uppercase tracking-wider">
                     Se publica a ${Number(spot.owner_price_per_day + (settings.margin_type === 'porcentaje' ? (spot.owner_price_per_day * settings.margin_value / 100) : settings.margin_value)).toLocaleString('es-AR')}
                   </p>
                 )}

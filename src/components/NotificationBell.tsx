@@ -112,7 +112,7 @@ export function NotificationBell({ userId }: { userId: string }) {
         return <XCircle size={16} className="text-red-500" />;
       case 'reserva_solicitada':
       case 'reserva_aceptada':
-        return <Calendar size={16} className="text-pink-500" />;
+        return <Calendar size={16} className="text-accent" />;
       case 'payout_liquidado':
         return <Wallet size={16} className="text-slate-900" />;
       default:
@@ -128,7 +128,7 @@ export function NotificationBell({ userId }: { userId: string }) {
       >
         <Bell size={20} className={unreadCount > 0 ? "text-slate-900" : "text-slate-400"} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-pink-500 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white animate-in zoom-in">
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white animate-in zoom-in">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -141,7 +141,7 @@ export function NotificationBell({ userId }: { userId: string }) {
             {unreadCount > 0 && (
               <button 
                 onClick={markAllAsRead}
-                className="text-[9px] font-black text-slate-400 hover:text-pink-500 uppercase tracking-widest flex items-center gap-1 transition-colors"
+                className="text-[9px] font-black text-slate-400 hover:text-accent uppercase tracking-widest flex items-center gap-1 transition-colors"
               >
                 <Check size={10} /> Marcar todo leido
               </button>
@@ -174,7 +174,7 @@ export function NotificationBell({ userId }: { userId: string }) {
                         <p className={`text-xs font-black truncate ${!n.read ? 'text-slate-900' : 'text-slate-600'}`}>
                           {n.title}
                         </p>
-                        {!n.read && <div className="w-1.5 h-1.5 bg-pink-500 rounded-full shrink-0 mt-1" />}
+                        {!n.read && <div className="w-1.5 h-1.5 bg-accent rounded-full shrink-0 mt-1" />}
                       </div>
                       <p className="text-[11px] font-medium text-slate-500 leading-relaxed line-clamp-2">
                         {n.body}

@@ -65,7 +65,7 @@ function MuroPage() {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32">
+    <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32 bg-background">
       <header className="px-1">
         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Comunidad</h1>
         <p className="text-slate-500 font-medium">Torre Libertador 1500</p>
@@ -79,8 +79,8 @@ function MuroPage() {
           <div className="h-32 bg-slate-100 rounded-[2rem] animate-pulse" />
         ) : data.bookings.length > 0 ? (
           <div className="bg-black text-white p-6 rounded-[2rem] shadow-xl relative overflow-hidden group active:scale-[0.98] transition-all">
-            <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-pink-500/20 rounded-full blur-2xl group-hover:scale-110 transition-transform" />
-            <h3 className="text-[10px] font-bold text-pink-300 uppercase mb-3 flex items-center gap-2 tracking-widest">
+            <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-accent/10 rounded-full blur-2xl group-hover:scale-110 transition-transform" />
+            <h3 className="text-[10px] font-bold text-accent uppercase mb-3 flex items-center gap-2 tracking-widest">
               <Calendar size={12} /> Próxima cochera
             </h3>
             <p className="text-2xl font-black mb-1">{data.bookings[0].spot?.identifier}</p>
@@ -122,7 +122,7 @@ function MuroPage() {
             <div key={post.id} className="bg-white p-6 rounded-[2rem] shadow-soft border border-white hover:border-slate-100 transition-colors">
               <div className="flex justify-between items-start mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 bg-pink-100 text-pink-600 text-[9px] font-black uppercase rounded-full tracking-wider">
+                  <span className="px-2 py-0.5 tint-insight text-[9px] font-black uppercase rounded-full tracking-wider">
                     Oficial
                   </span>
                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
@@ -132,7 +132,7 @@ function MuroPage() {
                 {post.author && (
                   <button 
                     onClick={() => navigate({ to: "/_authenticated/chat", search: { startDirect: post.author_id } } as any)}
-                    className="text-[9px] font-black text-slate-400 hover:text-slate-900 uppercase tracking-widest flex items-center gap-1"
+                    className="text-[9px] font-black text-slate-400 hover:text-accent uppercase tracking-widest flex items-center gap-1 transition-colors"
                   >
                     Por {post.author.full_name} <MessageSquare size={10} />
                   </button>

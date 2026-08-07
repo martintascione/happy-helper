@@ -85,7 +85,7 @@ function PerfilPage() {
   return (
     <div className="p-6 max-w-md mx-auto space-y-8 pb-32">
       <div className="flex flex-col items-center gap-4 pt-4">
-        <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center text-primary relative overflow-hidden">
+        <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center text-primary relative overflow-hidden border border-slate-100 shadow-sm">
           {profile.avatar_url ? (
             <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
