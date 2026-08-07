@@ -101,29 +101,29 @@ function AdminPage() {
       </header>
 
       {/* Wallet Style Building Card */}
-      <div className="bg-black text-white p-8 rounded-[28px] shadow-2xl shadow-black/20 relative overflow-hidden">
-        <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-accent/10 rounded-full blur-3xl" />
-        <div className="relative z-10 space-y-6">
-          <div className="space-y-1">
-            <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">{building?.name}</p>
-            <h2 className="text-4xl font-black tracking-tighter">{building?.invite_code}</h2>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-wider">
+      <div className="premium-card p-10 bg-primary text-primary-foreground shadow-premium relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-[100px]" />
+        <div className="relative z-10 space-y-8">
+          <div className="space-y-3">
+            <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[11px]">{building?.name}</p>
+            <h2 className="text-6xl font-bold tracking-tight">{building?.invite_code}</h2>
+            <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/10 rounded-full text-[12px] font-bold uppercase tracking-widest border border-white/10">
               Código de Invitación
             </div>
           </div>
           
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-4 pt-4 border-t border-white/10">
             <button 
               onClick={copyInviteCode}
-              className="flex-1 py-3.5 bg-white/10 hover:bg-white/20 rounded-full font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+              className="flex-1 py-4 bg-white/10 hover:bg-white/20 rounded-[1.5rem] font-bold text-[11px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 border border-white/10"
             >
-              <Copy size={14} /> Copiar
+              <Copy size={16} /> Copiar
             </button>
             <button 
               onClick={shareInvite}
-              className="flex-1 py-3.5 bg-accent text-white rounded-full font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/20"
+              className="flex-1 py-4 bg-accent text-white rounded-[1.5rem] font-bold text-[11px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/20"
             >
-              <Share2 size={14} /> Compartir
+              <Share2 size={16} /> Compartir
             </button>
           </div>
         </div>
