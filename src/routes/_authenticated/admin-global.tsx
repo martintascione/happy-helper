@@ -89,7 +89,7 @@ function GlobalAdminPage() {
           return acc;
         }, {} as Record<string, any>);
         
-        setFinancialStats(Object.values(stats).sort((a, b) => b.month.localeCompare(a.month)));
+        setFinancialStats(Object.values(stats).sort((a: any, b: any) => b.month.localeCompare(a.month)));
       }
     }
     setLoading(false);
