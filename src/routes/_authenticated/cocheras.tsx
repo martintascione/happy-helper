@@ -151,10 +151,10 @@ function CocherasPage() {
   }, []);
 
   return (
-    <div className="pb-24 pt-4 px-4 min-h-screen bg-background">
-      <header className="px-1 space-y-1 mb-8">
-        <h1 className="text-3xl font-semibold text-black tracking-tight">Cocheras</h1>
-        <p className="text-slate-400 font-medium">Alquilá o publicá tu lugar</p>
+    <div className="pb-32 pt-10 px-6 min-h-screen bg-background">
+      <header className="px-1 mb-10">
+        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Cocheras</h1>
+        <p className="text-muted-foreground font-medium text-lg">Marketplace residencial</p>
       </header>
 
       {/* Featured Next Booking */}
