@@ -133,9 +133,9 @@ function AuthenticatedLayout() {
   }, [filteredNavItems]);
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground font-sans">
+    <div className="flex min-h-screen bg-[#F7F5F1] text-foreground font-sans overflow-x-hidden relative">
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-background p-8 gap-8">
+      <aside className="hidden lg:flex flex-col w-64 bg-[#F7F5F1] p-8 gap-8 border-r border-slate-200/50">
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center shadow-xl shadow-black/10">
