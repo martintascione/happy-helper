@@ -30,8 +30,10 @@ function ChatPage() {
     if (selectedConversation) {
       fetchMessages(selectedConversation.id);
       
-      const channel = supabase
-        .channel(`chat:${selectedConversation.id}`)
+      const channelId = `chat:${selectedConversation.id}-${Math.random().toString(36).substring(2, 9)}`;
+      const channel = supabase.channel(channelId);
+      
+      channel
         .on(
           'postgres_changes',
           {
