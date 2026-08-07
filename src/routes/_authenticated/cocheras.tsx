@@ -51,26 +51,7 @@ export const Route = createFileRoute("/_authenticated/cocheras")({
 function CocherasPage() {
   const [activeTab, setActiveTab] = useState<"disponibles" | "mi-cochera" | "mis-reservas" | "mis-cobros">("disponibles");
   const [mySpots, setMySpots] = useState<any[]>([]);
-  const [availableSpots, setAvailableSpots] = useState<any[]>([
-    {
-      id: 'demo-1',
-      identifier: 'Cochera 18 • Subsuelo -2',
-      owner_price_per_day: 18000,
-      owner: { full_name: 'Admin Demo', avatar_url: null },
-      parking_availability: [
-        { start_date: new Date().toISOString(), end_date: addDays(new Date(), 7).toISOString() }
-      ]
-    },
-    {
-      id: 'demo-2',
-      identifier: 'Cochera 45 • Subsuelo -1',
-      owner_price_per_day: 15500,
-      owner: { full_name: 'Juan Perez', avatar_url: null },
-      parking_availability: [
-        { start_date: new Date().toISOString(), end_date: addDays(new Date(), 5).toISOString() }
-      ]
-    }
-  ]);
+  const [availableSpots, setAvailableSpots] = useState<any[]>([]);
   const [myBookings, setMyBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -151,44 +132,41 @@ function CocherasPage() {
   }, []);
 
   return (
-    <div className="pb-32 pt-10 px-6 min-h-screen bg-background">
-      <header className="px-1 mb-10">
-        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Cocheras</h1>
-        <p className="text-muted-foreground font-medium text-lg">Marketplace residencial</p>
+    <div className="pb-36 pt-6 px-5 min-h-screen bg-background max-w-2xl mx-auto">
+      <header className="px-1 mb-6">
+        <h1 className="text-[26px] font-bold text-foreground tracking-tight leading-tight">Cocheras</h1>
+        <p className="text-[15px] text-muted-foreground font-medium">Alquiler entre vecinos del edificio</p>
       </header>
 
       {/* Featured Next Booking */}
       {nextBooking && (
-        <div className="mb-12 premium-card p-8 bg-primary text-primary-foreground shadow-premium relative overflow-hidden group active:scale-[0.98] transition-all">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-accent/20 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-1000" />
-          <div className="relative z-10 flex justify-between items-center">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10">
-                <span className="w-1.5 h-1.5 bg-accent rounded-full" />
-                <span className="text-[10px] font-bold text-white uppercase tracking-[0.15em]">Próxima Reserva</span>
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-3xl font-bold tracking-tight">{nextBooking.spot?.identifier}</h3>
-                <p className="text-white/60 font-medium">
-                  {format(new Date(nextBooking.start_date), "d 'de' MMMM", { locale: es })}
-                </p>
-              </div>
+        <div
+          className="mb-7 rounded-[28px] p-6 active:scale-[0.99] transition-all"
+          style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.14) 0%, rgba(16,185,129,0.05) 100%)" }}
+        >
+          <div className="flex items-center gap-5">
+            <div className="w-14 h-14 rounded-full bg-white shadow-subtle flex items-center justify-center shrink-0">
+              <Car size={24} className="text-emerald-600" />
             </div>
-            <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-3xl flex items-center justify-center border border-white/20 shadow-inner-glow">
-              <Car className="text-accent" size={32} strokeWidth={2.5} />
+            <div className="min-w-0">
+              <p className="text-[13px] font-semibold text-emerald-800/70">Tu próxima reserva</p>
+              <h3 className="text-[22px] font-bold text-slate-900 tracking-tight truncate">{nextBooking.spot?.identifier}</h3>
+              <p className="text-[13px] font-medium text-emerald-800/60">
+                {format(new Date(nextBooking.start_date), "d 'de' MMMM", { locale: es })}
+              </p>
             </div>
           </div>
         </div>
       )}
 
       {/* Date Selector */}
-      <div className="mb-10 -mx-4">
-        <div className="flex gap-4 overflow-x-auto px-4 pb-4 no-scrollbar items-end h-[100px]">
+      <div className="mb-8 -mx-5">
+        <div className="flex gap-2.5 overflow-x-auto px-5 pb-3 no-scrollbar">
           {weekDays.map((date) => {
             const isSelected = isSameDay(date, selectedDate);
-            
+
             // Check availability for this specific day
-            const hasAvailability = availableSpots.some(spot => 
+            const hasAvailability = availableSpots.some(spot =>
               spot.parking_availability?.some((av: any) => {
                 const start = startOfDay(new Date(av.start_date));
                 const end = startOfDay(new Date(av.end_date));
@@ -200,16 +178,16 @@ function CocherasPage() {
               <button
                 key={date.toISOString()}
                 onClick={() => setSelectedDate(date)}
-                className={`flex flex-col items-center justify-center min-w-[64px] h-[86px] rounded-[2rem] transition-all duration-300 relative border ${
-                  isSelected 
-                    ? "bg-primary text-primary-foreground shadow-premium border-primary scale-105 z-10" 
-                    : "bg-white text-muted-foreground border-black/[0.03] hover:border-black/10"
+                className={`flex flex-col items-center justify-center min-w-[54px] h-[72px] rounded-full transition-all duration-300 relative shrink-0 ${
+                  isSelected
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-white text-muted-foreground shadow-subtle"
                 }`}
               >
-                <span className={`text-[11px] font-black uppercase tracking-tighter mb-1 ${isSelected ? "text-white/40" : "text-slate-300"}`}>
+                <span className={`text-[11px] font-semibold capitalize mb-0.5 ${isSelected ? "text-white/60" : "text-slate-400"}`}>
                   {format(date, "EEE", { locale: es }).substring(0, 3)}
                 </span>
-                <span className="text-xl font-black tracking-tighter">{format(date, "d")}</span>
+                <span className="text-[17px] font-bold">{format(date, "d")}</span>
                 {hasAvailability && !isSelected && (
                   <div className="absolute -bottom-1 w-1.5 h-1.5 bg-accent rounded-full shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
                 )}
@@ -222,20 +200,20 @@ function CocherasPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 mb-8">
+      <div className="flex gap-2 mb-7 -mx-5 px-5 overflow-x-auto no-scrollbar">
         {[
           { id: "disponibles", label: "Disponibles" },
-          { id: "mis-reservas", label: "Reservas" },
-          { id: "mi-cochera", label: "Mi Lugar" },
-          { id: "mis-cobros", label: "Cobros" }
+          { id: "mis-reservas", label: "Mis reservas" },
+          { id: "mi-cochera", label: "Mi cochera" },
+          { id: "mis-cobros", label: "Mis cobros" }
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-1 py-3 text-[10px] font-bold uppercase tracking-wider rounded-2xl transition-all text-center border ${
-              activeTab === tab.id 
-                ? "bg-primary text-primary-foreground shadow-pill border-primary" 
-                : "bg-white text-muted-foreground border-black/[0.03]"
+            className={`px-4 py-2.5 text-[13px] font-semibold rounded-full transition-all whitespace-nowrap shrink-0 ${
+              activeTab === tab.id
+                ? "bg-primary text-primary-foreground"
+                : "bg-white text-slate-500 shadow-subtle"
             }`}
           >
             {tab.label}
@@ -323,7 +301,18 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
+      {spots.length === 0 && (
+        <div className="bg-white p-10 rounded-[28px] shadow-subtle text-center space-y-3">
+          <div className="w-14 h-14 bg-[#F4F1EB] rounded-full flex items-center justify-center text-slate-300 mx-auto">
+            <Car size={26} />
+          </div>
+          <div className="space-y-0.5">
+            <p className="text-slate-600 font-semibold text-[14px]">No hay cocheras disponibles</p>
+            <p className="text-[12px] font-medium text-slate-400">Cuando un vecino publique la suya, la vas a ver acá</p>
+          </div>
+        </div>
+      )}
       {spots.map((spot) => {
         const ownerPrice = spot.owner_price_per_day;
         const margin = settings?.margin_type === 'porcentaje' 
@@ -332,39 +321,38 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
         const finalPrice = ownerPrice + margin;
 
         return (
-          <div key={spot.id} className="premium-card p-8 space-y-8 bg-white">
+          <div key={spot.id} className="bg-white rounded-[28px] p-6 space-y-5 shadow-subtle">
             <div className="flex justify-between items-start">
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center overflow-hidden border border-black/[0.03]">
-                    {spot.owner?.avatar_url ? (
-                      <img src={spot.owner.avatar_url} className="w-full h-full object-cover" />
-                    ) : (
-                      <User size={18} className="text-muted-foreground/40" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{spot.owner?.full_name}</p>
-                    <h4 className="font-bold text-2xl text-foreground tracking-tight">{spot.identifier}</h4>
-                  </div>
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full bg-[#F4F1EB] flex items-center justify-center overflow-hidden">
+                  {spot.owner?.avatar_url ? (
+                    <img src={spot.owner.avatar_url} className="w-full h-full object-cover" />
+                  ) : (
+                    <User size={18} className="text-slate-400" />
+                  )}
+                </div>
+                <div>
+                  <h4 className="font-bold text-[17px] text-foreground tracking-tight leading-tight">{spot.identifier}</h4>
+                  <p className="text-[13px] font-medium text-slate-400">{spot.owner?.full_name}</p>
                 </div>
               </div>
-              <div className="tint-positive px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-accent/10">
+              <div className="tint-positive px-3 py-1 rounded-full text-[12px] font-semibold">
                 Libre
               </div>
             </div>
 
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-4xl font-bold text-foreground tracking-tight">${Number(finalPrice).toLocaleString('es-AR')}</span>
-              <span className="text-muted-foreground text-sm font-medium">/ día</span>
+            <div className="flex items-end justify-between">
+              <div className="flex items-baseline gap-1">
+                <span className="text-[28px] font-bold text-foreground tracking-tight">${Number(finalPrice).toLocaleString('es-AR')}</span>
+                <span className="text-slate-400 text-[14px] font-medium">/día</span>
+              </div>
+              <Button
+                onClick={() => setSelectedSpot({...spot, finalPricePerDay: finalPrice})}
+                className="bg-primary text-primary-foreground rounded-full font-semibold h-11 px-6 active:scale-[0.97] transition-all text-[14px]"
+              >
+                Reservar
+              </Button>
             </div>
-
-            <Button 
-              onClick={() => setSelectedSpot({...spot, finalPricePerDay: finalPrice})}
-              className="w-full bg-primary text-primary-foreground rounded-2xl font-bold h-[64px] active:scale-[0.98] transition-all text-lg shadow-pill"
-            >
-              Reservar ahora
-            </Button>
           </div>
         );
       })}
@@ -386,7 +374,7 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
               />
             </div>
             {dateRange?.from && dateRange?.to && (
-              <div className="flex justify-between items-center font-black text-lg">
+              <div className="flex justify-between items-center font-bold text-lg">
                 <span>Total</span>
                 <span>${(differenceInDays(dateRange.to, dateRange.from) + 1) * (selectedSpot?.finalPricePerDay || 0)}</span>
               </div>
@@ -526,7 +514,7 @@ function MyBookingsList({ bookings, onRefresh, settings }: { bookings: any[], on
                   <h4 className="font-bold text-xl text-slate-900">{booking.spot?.identifier}</h4>
                   <p className="text-slate-400 text-xs font-medium">De {booking.spot?.owner?.full_name}</p>
                 </div>
-                <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                <div className={`px-3 py-1 rounded-full text-[12px] font-semibold ${
                   booking.status === 'confirmada' ? 'tint-positive' : 
                   booking.status === 'solicitada' ? 'tint-warning' :
                   booking.status === 'en_curso' ? 'tint-info' :
@@ -552,7 +540,7 @@ function MyBookingsList({ bookings, onRefresh, settings }: { bookings: any[], on
               {isPendingPayment && (
                 <Button 
                   onClick={() => setSelectedBooking(booking)}
-                  className="w-full bg-accent hover:bg-green-600 text-white h-12 rounded-2xl font-black shadow-lg shadow-accent/20"
+                  className="w-full bg-accent hover:bg-green-600 text-white h-12 rounded-2xl font-bold shadow-lg shadow-accent/20"
                 >
                   Pagar reserva (${Number(booking.total_price).toLocaleString('es-AR')})
                 </Button>
@@ -565,7 +553,7 @@ function MyBookingsList({ bookings, onRefresh, settings }: { bookings: any[], on
               )}
 
               {booking.status === 'solicitada' && !payment && (
-                <Button variant="ghost" onClick={() => handleCancel(booking.id)} className="w-full rounded-2xl font-black text-red-500 hover:text-red-600 hover:bg-red-50">
+                <Button variant="ghost" onClick={() => handleCancel(booking.id)} className="w-full rounded-2xl font-bold text-red-500 hover:text-red-600 hover:bg-red-50">
                   Cancelar reserva
                 </Button>
               )}
@@ -578,7 +566,7 @@ function MyBookingsList({ bookings, onRefresh, settings }: { bookings: any[], on
       <Dialog open={!!selectedBooking} onOpenChange={() => setSelectedBooking(null)}>
         <DialogContent className="rounded-[2.5rem] border-none sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-black">Pagar Reserva</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">Pagar Reserva</DialogTitle>
           </DialogHeader>
           
           <div className="py-4 space-y-6">
@@ -605,25 +593,25 @@ function MyBookingsList({ bookings, onRefresh, settings }: { bookings: any[], on
                 />
                 
                 <div className="bg-slate-900 text-white p-6 rounded-[2rem] space-y-4">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Datos para transferir</p>
+                  <p className="text-[12px] font-semibold text-slate-400">Datos para transferir</p>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between group">
                       <div>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase">Titular</p>
+                        <p className="text-[11px] text-slate-400 font-semibold">Titular</p>
                         <p className="font-bold text-sm">{settings?.transfer_holder_name}</p>
                       </div>
                       <button onClick={() => copyToClipboard(settings?.transfer_holder_name)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Plus size={16}/></button>
                     </div>
                     <div className="flex items-center justify-between group">
                       <div>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase">CBU</p>
+                        <p className="text-[11px] text-slate-400 font-semibold">CBU</p>
                         <p className="font-mono text-xs">{settings?.transfer_cbu}</p>
                       </div>
                       <button onClick={() => copyToClipboard(settings?.transfer_cbu)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Plus size={16}/></button>
                     </div>
                     <div className="flex items-center justify-between group">
                       <div>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase">Alias</p>
+                        <p className="text-[11px] text-slate-400 font-semibold">Alias</p>
                         <p className="font-bold text-sm">{settings?.transfer_alias}</p>
                       </div>
                       <button onClick={() => copyToClipboard(settings?.transfer_alias)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Plus size={16}/></button>
@@ -808,7 +796,7 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
             <Landmark size={24} />
           </div>
           <div className="flex-1 text-center sm:text-left">
-            <h4 className="font-black text-amber-900">Configurá tus datos de cobro</h4>
+            <h4 className="font-bold text-amber-900">Configurá tus datos de cobro</h4>
             <p className="text-xs font-medium text-amber-700">Necesitás cargar tu CBU o Alias para poder aceptar reservas y recibir pagos.</p>
           </div>
           <Button onClick={() => setIsAddingPayout(true)} className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold px-6">
@@ -822,8 +810,8 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
               <Check size={24} />
             </div>
             <div>
-              <h4 className="font-black text-slate-900">Datos de cobro listos</h4>
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">{payoutAccount.cbu_or_alias}</p>
+              <h4 className="font-bold text-slate-900">Datos de cobro listos</h4>
+              <p className="text-[12px] font-medium text-slate-500">{payoutAccount.cbu_or_alias}</p>
             </div>
           </div>
           <Button variant="ghost" onClick={() => setIsAddingPayout(true)} className="text-slate-400 font-bold hover:text-black">
@@ -835,7 +823,7 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
       {/* Payout Dialog */}
       <Dialog open={isAddingPayout} onOpenChange={setIsAddingPayout}>
         <DialogContent className="rounded-[2.5rem] border-none">
-          <DialogHeader><DialogTitle className="font-black text-2xl">Datos de Cobro</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="font-bold text-2xl">Datos de Cobro</DialogTitle></DialogHeader>
           <div className="space-y-6 py-4">
             <InfoBanner 
               variant="info" 
@@ -843,20 +831,20 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
             />
             <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Titular de la cuenta</label>
+              <label className="text-[12px] font-semibold text-slate-500 ml-1">Titular de la cuenta</label>
               <Input placeholder="Nombre completo" value={payoutForm.holder_name} onChange={(e) => setPayoutForm({...payoutForm, holder_name: e.target.value})} className="rounded-2xl h-12 bg-gray-50 border-none font-bold" />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">DNI o CUIT</label>
+              <label className="text-[12px] font-semibold text-slate-500 ml-1">DNI o CUIT</label>
               <Input placeholder="Número de documento" value={payoutForm.document_number} onChange={(e) => setPayoutForm({...payoutForm, document_number: e.target.value})} className="rounded-2xl h-12 bg-gray-50 border-none font-bold" />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">CBU o Alias</label>
+              <label className="text-[12px] font-semibold text-slate-500 ml-1">CBU o Alias</label>
               <Input placeholder="22 dígitos o alias" value={payoutForm.cbu_or_alias} onChange={(e) => setPayoutForm({...payoutForm, cbu_or_alias: e.target.value})} className="rounded-2xl h-12 bg-gray-50 border-none font-bold" />
             </div>
           </div>
           </div>
-          <DialogFooter><Button onClick={handleSavePayout} className="w-full bg-black text-white h-14 rounded-2xl font-black">Guardar datos</Button></DialogFooter>
+          <DialogFooter><Button onClick={handleSavePayout} className="w-full bg-black text-white h-14 rounded-2xl font-bold">Guardar datos</Button></DialogFooter>
         </DialogContent>
       </Dialog>
       {spots.map((spot) => (
@@ -867,12 +855,12 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
                 <Car className={`w-6 h-6 ${spot.is_active ? 'text-green-600' : 'text-gray-400'}`} />
               </div>
               <div>
-                <h4 className="font-black text-lg leading-tight">{spot.identifier}</h4>
+                <h4 className="font-bold text-lg leading-tight">{spot.identifier}</h4>
                 <p className="text-gray-500 text-xs font-medium">
                   Recibís ${Number(spot.owner_price_per_day).toLocaleString('es-AR')} / día
                 </p>
                 {settings && (
-                  <p className="text-accent text-[10px] font-bold uppercase tracking-wider">
+                  <p className="text-accent text-[12px] font-semibold">
                     Se publica a ${Number(spot.owner_price_per_day + (settings.margin_type === 'porcentaje' ? (spot.owner_price_per_day * settings.margin_value / 100) : settings.margin_value)).toLocaleString('es-AR')}
                   </p>
                 )}
@@ -886,7 +874,7 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
           {/* Pending Bookings */}
           {spot.bookings?.filter((b: any) => b.status === 'solicitada').length > 0 && (
             <div className="mb-6">
-              <h5 className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Solicitudes pendientes</h5>
+              <h5 className="text-[12px] font-semibold text-blue-600 mb-3">Solicitudes pendientes</h5>
               <div className="space-y-2">
                 {spot.bookings.filter((b: any) => b.status === 'solicitada').map((booking: any) => {
                   const payment = (payments as any)[booking.id];
@@ -898,15 +886,15 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="font-black text-sm text-blue-900">{booking.renter?.full_name}</p>
-                            {isPaid && <span className="text-[8px] bg-green-500 text-white px-1.5 py-0.5 rounded-full uppercase font-black">Pagado</span>}
-                            {isReviewing && <span className="text-[8px] bg-amber-500 text-white px-1.5 py-0.5 rounded-full uppercase font-black">Revisando Pago</span>}
+                            <p className="font-bold text-sm text-blue-900">{booking.renter?.full_name}</p>
+                            {isPaid && <span className="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-semibold">Pagado</span>}
+                            {isReviewing && <span className="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full font-semibold">Revisando Pago</span>}
                           </div>
                           <p className="text-xs font-bold text-blue-700">
                             {format(new Date(booking.start_date), "d MMM")} - {format(new Date(booking.end_date), "d MMM")}
                           </p>
                         </div>
-                        <p className="font-black text-blue-900 text-sm">${Number(booking.total_price).toLocaleString('es-AR')}</p>
+                        <p className="font-bold text-blue-900 text-sm">${Number(booking.total_price).toLocaleString('es-AR')}</p>
                       </div>
                       <div className="flex gap-2">
                         <Button 
@@ -929,8 +917,8 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
           {/* Availability */}
           <div>
             <div className="flex justify-between items-center mb-3">
-              <h5 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Disponibilidad</h5>
-              <Button variant="ghost" size="sm" onClick={() => setIsAddingAvailability(spot.id)} className="text-pink-500 font-black h-8 hover:bg-pink-50 rounded-xl">
+              <h5 className="text-[12px] font-semibold text-gray-400">Disponibilidad</h5>
+              <Button variant="ghost" size="sm" onClick={() => setIsAddingAvailability(spot.id)} className="text-pink-500 font-bold h-8 hover:bg-pink-50 rounded-xl">
                 <Plus className="w-4 h-4 mr-1" /> Agregar
               </Button>
             </div>
@@ -954,20 +942,20 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
         <DialogTrigger asChild>
           <button className="w-full py-8 border-2 border-dashed border-gray-300 rounded-[2rem] flex flex-col items-center justify-center gap-3 text-gray-400 hover:border-pink-300 hover:text-pink-500 transition-all bg-white/50">
             <Plus className="w-6 h-6" />
-            <span className="font-black">Registrar mi cochera</span>
+            <span className="font-bold">Registrar mi cochera</span>
           </button>
         </DialogTrigger>
         <DialogContent className="rounded-[2.5rem] border-none">
-          <DialogHeader><DialogTitle className="font-black">Nueva Cochera</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="font-bold">Nueva Cochera</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
             <Input placeholder="Identificador" value={newSpot.identifier} onChange={(e) => setNewSpot({...newSpot, identifier: e.target.value})} className="rounded-2xl h-12 bg-gray-50 border-none font-bold" />
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Lo que querés recibir ($)</label>
+              <label className="text-[12px] font-semibold text-slate-500 ml-1">Lo que querés recibir ($)</label>
               <Input type="number" placeholder="Precio por día" value={newSpot.owner_price_per_day} onChange={(e) => setNewSpot({...newSpot, owner_price_per_day: e.target.value})} className="rounded-2xl h-12 bg-gray-50 border-none font-bold" />
             </div>
             <Textarea placeholder="Descripción" value={newSpot.description} onChange={(e) => setNewSpot({...newSpot, description: e.target.value})} className="rounded-2xl bg-gray-50 border-none font-medium" />
           </div>
-          <DialogFooter><Button onClick={() => setShowPublishAgreement(true)} className="w-full bg-black text-white h-14 rounded-2xl font-black">Guardar</Button></DialogFooter>
+          <DialogFooter><Button onClick={() => setShowPublishAgreement(true)} className="w-full bg-black text-white h-14 rounded-2xl font-bold">Guardar</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -1026,12 +1014,12 @@ function MyPayoutsList({ userId }: { userId: string }) {
       <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl shadow-black/20 space-y-6">
         <div className="flex items-center gap-3 opacity-60">
           <Wallet size={20} />
-          <p className="text-xs font-bold uppercase tracking-widest">Pendiente de cobro</p>
+          <p className="text-[13px] font-semibold">Pendiente de cobro</p>
         </div>
-        <h2 className="text-4xl font-black">${pendingAmount.toLocaleString('es-AR')}</h2>
+        <h2 className="text-4xl font-bold">${pendingAmount.toLocaleString('es-AR')}</h2>
         <div className="pt-6 border-t border-white/10 flex justify-between items-center">
           <div>
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Total Cobrado</p>
+            <p className="text-[12px] font-semibold text-slate-500 mb-1">Total Cobrado</p>
             <p className="font-bold text-lg">${totalPaid.toLocaleString('es-AR')}</p>
           </div>
           <TrendingUp className="text-green-500" size={24} />
@@ -1041,7 +1029,7 @@ function MyPayoutsList({ userId }: { userId: string }) {
       <div className="space-y-4">
         <div className="flex items-center gap-2 px-2">
           <History size={18} className="text-gray-400" />
-          <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Historial</h3>
+          <h3 className="text-[13px] font-semibold text-gray-400">Historial</h3>
         </div>
         
         {payouts.length === 0 ? (
@@ -1053,19 +1041,19 @@ function MyPayoutsList({ userId }: { userId: string }) {
             <div key={payout.id} className="bg-white p-5 rounded-[2rem] shadow-soft border border-white space-y-3">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-black text-slate-900 text-sm">{payout.booking?.spot?.identifier}</h4>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase">
+                  <h4 className="font-bold text-slate-900 text-sm">{payout.booking?.spot?.identifier}</h4>
+                  <p className="text-[11px] font-medium text-gray-400">
                     {format(new Date(payout.booking?.start_date), "d MMM")} - {format(new Date(payout.booking?.end_date), "d MMM")}
                   </p>
                 </div>
-                <div className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${
+                <div className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
                   payout.status === 'pagado' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
                 }`}>
                   {payout.status}
                 </div>
               </div>
               <div className="flex justify-between items-end pt-1">
-                <p className="font-black text-lg text-slate-900">${Number(payout.amount).toLocaleString('es-AR')}</p>
+                <p className="font-bold text-lg text-slate-900">${Number(payout.amount).toLocaleString('es-AR')}</p>
                 {payout.paid_at && (
                   <p className="text-[8px] font-bold text-gray-400">Pagado el {format(new Date(payout.paid_at), "d/MM/yy")}</p>
                 )}

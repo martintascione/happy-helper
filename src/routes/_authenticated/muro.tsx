@@ -111,145 +111,127 @@ function MuroPage() {
   };
 
   return (
-    <div className="p-8 max-w-2xl mx-auto space-y-12 pb-32 bg-background overflow-x-hidden relative">
+    <div className="px-5 pt-6 max-w-2xl mx-auto space-y-8 pb-36 bg-background overflow-x-hidden relative">
       <header className="px-1 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight mb-1">
-            Hola {profile?.full_name?.split(' ')[0] || 'Vecino'},
+          <h1 className="text-[26px] font-bold text-foreground tracking-tight leading-tight">
+            Hola, {profile?.full_name?.split(' ')[0] || 'vecino'}
           </h1>
-          <p className="text-muted-foreground font-medium text-lg italic">¡Bienvenido a tu edificio!</p>
+          <p className="text-[15px] text-muted-foreground font-medium">
+            {(() => { const d = format(new Date(), "EEEE d 'de' MMMM", { locale: es }); return d.charAt(0).toUpperCase() + d.slice(1); })()}
+          </p>
         </div>
-        <button 
+        <button
           onClick={() => navigate({ to: "/_authenticated/perfil" } as any)}
-          className="w-16 h-16 rounded-3xl overflow-hidden border-4 border-white shadow-premium active:scale-90 transition-all bg-secondary flex items-center justify-center group"
+          className="w-11 h-11 rounded-full overflow-hidden active:scale-95 transition-all bg-white shadow-subtle flex items-center justify-center"
         >
           {profile?.avatar_url ? (
             <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
           ) : (
-            <User size={32} className="text-primary group-hover:scale-110 transition-transform" />
+            <User size={20} className="text-slate-400" />
           )}
         </button>
       </header>
 
       {/* Resumen */}
-      <div className="space-y-4">
-        <h2 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em] px-1 opacity-60">Tu resumen</h2>
-        
+      <div>
         {data.loading ? (
-          <div className="h-32 bg-slate-100 rounded-[2rem] animate-pulse" />
+          <div className="h-28 bg-white/60 rounded-[28px] animate-pulse" />
         ) : data.bookings.length > 0 ? (
-          <div className="premium-card p-10 bg-primary text-primary-foreground shadow-premium relative group active:scale-[0.99] transition-all">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-accent/20 rounded-full blur-[90px] group-hover:scale-125 transition-transform duration-1000" />
-            <div className="flex flex-col gap-6 relative z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 w-fit">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                <span className="text-[10px] font-bold text-white uppercase tracking-[0.15em]">Próxima cochera</span>
+          <button
+            onClick={() => navigate({ to: "/_authenticated/cocheras" } as any)}
+            className="w-full text-left rounded-[28px] p-6 active:scale-[0.99] transition-all"
+            style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.14) 0%, rgba(16,185,129,0.05) 100%)" }}
+          >
+            <div className="flex items-center gap-5">
+              <div className="w-14 h-14 rounded-full bg-white shadow-subtle flex items-center justify-center shrink-0">
+                <Car size={24} className="text-emerald-600" />
               </div>
-              <div className="space-y-2">
-                <p className="text-4xl font-bold tracking-tight uppercase">{data.bookings[0].spot?.identifier}</p>
-                <div className="flex items-center gap-2 text-white/50">
-                  <Calendar size={16} />
-                  <p className="text-sm font-bold uppercase tracking-widest">
-                    {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
-                  </p>
-                </div>
+              <div className="min-w-0">
+                <p className="text-[13px] font-semibold text-emerald-800/70">Tu próxima cochera</p>
+                <p className="text-[22px] font-bold text-slate-900 tracking-tight truncate">{data.bookings[0].spot?.identifier}</p>
+                <span className="inline-flex items-center gap-1.5 mt-1 px-2.5 py-0.5 bg-white/70 rounded-full text-[12px] font-semibold text-emerald-800">
+                  <Calendar size={12} />
+                  {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
+                </span>
               </div>
             </div>
-          </div>
+          </button>
         ) : (
-          <button 
+          <button
             onClick={() => navigate({ to: "/_authenticated/cocheras" } as any)}
-            className="w-full bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center justify-between shadow-soft hover:border-slate-200 active:scale-[0.98] transition-all"
+            className="w-full bg-white p-5 rounded-[28px] flex items-center justify-between shadow-subtle active:scale-[0.99] transition-all"
           >
             <div className="flex items-center gap-4 text-left">
-              <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400">
-                <Car size={24} />
+              <div className="w-12 h-12 bg-[#F4F1EB] rounded-full flex items-center justify-center text-slate-500">
+                <Car size={22} />
               </div>
               <div>
-                <p className="font-black text-slate-800">Sin reservas próximas</p>
-                <p className="text-xs font-medium text-slate-400">¡Alquilá una cochera ahora!</p>
+                <p className="font-semibold text-[15px] text-slate-900">Sin reservas próximas</p>
+                <p className="text-[13px] font-medium text-slate-400">Mirá las cocheras disponibles</p>
               </div>
             </div>
-            <div className="w-10 h-10 bg-slate-900 text-white rounded-full flex items-center justify-center">
-              <ArrowRight size={20} />
+            <div className="w-9 h-9 bg-slate-900 text-white rounded-full flex items-center justify-center shrink-0">
+              <ArrowRight size={18} />
             </div>
           </button>
         )}
       </div>
 
-      <div className="grid grid-cols-3 gap-5">
-        <button 
-          onClick={() => navigate({ to: "/_authenticated/cocheras" } as any)}
-          className="premium-card p-6 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
-        >
-          <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center shadow-inner-glow">
-            <Car size={28} strokeWidth={2.5} className="text-primary" />
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground">Cocheras</span>
-        </button>
-        <button 
-          onClick={() => navigate({ to: "/_authenticated/chat" } as any)}
-          className="premium-card p-6 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
-        >
-          <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center shadow-inner-glow">
-            <MessageSquare size={28} strokeWidth={2.5} className="text-primary" />
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground">Chat</span>
-        </button>
-        <button 
-          onClick={() => navigate({ to: "/_authenticated/reportes" } as any)}
-          className="premium-card p-6 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
-        >
-          <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center shadow-inner-glow">
-            <AlertTriangle size={28} strokeWidth={2.5} className="text-primary" />
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground">Reportes</span>
-        </button>
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: "Cocheras", icon: Car, to: "/_authenticated/cocheras" },
+          { label: "Chat", icon: MessageSquare, to: "/_authenticated/chat" },
+          { label: "Reportes", icon: AlertTriangle, to: "/_authenticated/reportes" },
+        ].map(({ label, icon: Icon, to }) => (
+          <button
+            key={label}
+            onClick={() => navigate({ to } as any)}
+            className="bg-white rounded-[24px] p-4 flex flex-col items-center gap-2.5 shadow-subtle active:scale-95 transition-all"
+          >
+            <div className="w-12 h-12 bg-[#F4F1EB] rounded-full flex items-center justify-center">
+              <Icon size={21} strokeWidth={2} className="text-slate-700" />
+            </div>
+            <span className="text-[12px] font-semibold text-slate-600">{label}</span>
+          </button>
+        ))}
       </div>
 
       {/* Comunicados Oficiales */}
-      <div className="space-y-4">
+      <div className="space-y-3">
+        <h2 className="text-[17px] font-bold text-slate-900 px-1">Comunicados</h2>
         {data.posts.length > 0 ? data.posts.map((post) => (
-          <div key={post.id} className="premium-card p-10 bg-white space-y-8 relative overflow-hidden group shadow-subtle border-black/[0.03]">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-tint-insight/40 rounded-full blur-[60px]" />
-            <div className="flex justify-between items-start relative z-10">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center text-primary shadow-inner-glow">
-                  <Bell size={26} strokeWidth={2.5} />
-                </div>
-                <div>
-                  <span className="text-[13px] font-bold text-foreground uppercase tracking-[0.2em] block">Comunicado Oficial</span>
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
-                    {format(new Date(post.created_at), "d MMM", { locale: es })}
-                  </span>
-                </div>
+          <div key={post.id} className="tint-insight card-dashed rounded-[24px] p-5 space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-white shadow-subtle flex items-center justify-center shrink-0">
+                <Bell size={16} className="text-violet-600" />
               </div>
+              <p className="text-[13px] font-semibold text-violet-700">
+                Comunicado oficial
+                <span className="text-violet-700/50 font-medium"> · {format(new Date(post.created_at), "d MMM", { locale: es })}</span>
+              </p>
             </div>
-            <div className="space-y-4 relative z-10">
-              <h3 className="font-bold text-3xl text-foreground tracking-tight leading-[1.1]">{post.title}</h3>
-              <p className="text-[17px] text-muted-foreground font-medium leading-relaxed">{post.body}</p>
+            <div className="space-y-1.5">
+              <h3 className="font-bold text-[18px] text-slate-900 tracking-tight leading-snug">{post.title}</h3>
+              <p className="text-[15px] text-slate-600 font-medium leading-relaxed">{post.body}</p>
             </div>
             {post.author && (
-              <div className="flex justify-between items-center pt-6 relative z-10 border-t border-black/[0.03]">
-                <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                  <ShieldCheck size={16} className="text-accent" /> {post.author.full_name}
-                </p>
-                <div className="px-4 py-1.5 bg-accent/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-accent border border-accent/10">
-                  Prioridad
-                </div>
-              </div>
+              <p className="text-[12px] font-semibold text-violet-700/60 flex items-center gap-1.5 pt-1">
+                <ShieldCheck size={14} /> {post.author.full_name} · Administración
+              </p>
             )}
           </div>
         )) : (
-          <div className="tint-insight card-dashed p-8 rounded-[2.8rem] text-center border-dashed">
-            <p className="text-violet-600 font-black uppercase tracking-widest text-xs">Sin comunicados nuevos</p>
+          <div className="tint-insight card-dashed rounded-[24px] p-6 text-center space-y-1">
+            <p className="text-[14px] font-semibold text-violet-700">Sin comunicados por ahora</p>
+            <p className="text-[12px] font-medium text-violet-700/50">Los avisos de la administración aparecen acá</p>
           </div>
         )}
       </div>
 
       {/* Muro Vecinal */}
-      <div className="space-y-6">
-        
+      <div className="space-y-3">
+        <h2 className="text-[17px] font-bold text-slate-900 px-1">Muro vecinal</h2>
         {neighborPosts.length > 0 ? (
           neighborPosts.map((post) => (
             <div key={post.id} className="bg-white p-6 rounded-[24px] shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-white space-y-4">
@@ -262,12 +244,12 @@ function MuroPage() {
                   )}
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-slate-900 leading-none">{post.author?.full_name}</h4>
-                  <p className="text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-wider">
-                    Piso {post.author?.unit?.floor || '-'} • {post.author?.unit?.apartment || '-'}
+                  <h4 className="font-semibold text-[14px] text-slate-900 leading-none">{post.author?.full_name}</h4>
+                  <p className="text-[12px] font-medium text-slate-400 mt-1">
+                    Piso {post.author?.unit?.floor || '-'} · {post.author?.unit?.apartment || '-'}
                   </p>
                 </div>
-                <span className="ml-auto text-[10px] font-medium text-slate-300">
+                <span className="ml-auto text-[12px] font-medium text-slate-300">
                   {format(new Date(post.created_at), "HH:mm", { locale: es })}
                 </span>
               </div>
@@ -281,37 +263,37 @@ function MuroPage() {
                 )}
               </div>
 
-              <div className="flex items-center gap-2 pt-2">
-                <button className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 rounded-full transition-colors">
-                  <Heart size={14} className="text-slate-400" />
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">2</span>
+              <div className="flex items-center gap-2 pt-1">
+                <button className="flex items-center gap-1.5 px-3.5 py-2 bg-[#F7F5F1] hover:bg-[#F0EDE6] rounded-full transition-colors">
+                  <Heart size={14} className="text-slate-500" />
+                  <span className="text-[12px] font-semibold text-slate-500">Me gusta</span>
                 </button>
-                <button className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 rounded-full transition-colors">
-                  <MessageSquare size={14} className="text-slate-400" />
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">Comentar</span>
+                <button className="flex items-center gap-1.5 px-3.5 py-2 bg-[#F7F5F1] hover:bg-[#F0EDE6] rounded-full transition-colors">
+                  <MessageSquare size={14} className="text-slate-500" />
+                  <span className="text-[12px] font-semibold text-slate-500">Comentar</span>
                 </button>
               </div>
             </div>
           ))
         ) : (
-          <div className="bg-white p-12 rounded-[24px] border border-white text-center space-y-4">
-            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-200 mx-auto">
-              <MessageSquare size={32} />
+          <div className="bg-white p-10 rounded-[24px] shadow-subtle text-center space-y-3">
+            <div className="w-14 h-14 bg-[#F4F1EB] rounded-full flex items-center justify-center text-slate-300 mx-auto">
+              <MessageSquare size={26} />
             </div>
-            <div className="space-y-1">
-              <p className="text-slate-400 font-bold">No hay avisos vecinales</p>
-              <p className="text-xs font-medium text-slate-300">Sé el primero en compartir algo.</p>
+            <div className="space-y-0.5">
+              <p className="text-slate-600 font-semibold text-[14px]">Todavía no hay avisos vecinales</p>
+              <p className="text-[12px] font-medium text-slate-400">Sé el primero en compartir algo</p>
             </div>
           </div>
         )}
       </div>
 
       {/* Floating Create Button */}
-      <div className="fixed bottom-28 right-6 z-[60]">
+      <div className="fixed bottom-28 right-5 z-40">
         <Dialog open={isComposerOpen} onOpenChange={setIsComposerOpen}>
           <DialogTrigger asChild>
-            <button className="w-16 h-16 bg-primary text-primary-foreground rounded-3xl shadow-premium flex items-center justify-center active:scale-90 transition-all border border-white/10">
-              <Plus size={32} strokeWidth={2.5} />
+            <button className="w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-premium flex items-center justify-center active:scale-90 transition-all">
+              <Plus size={26} strokeWidth={2.25} />
             </button>
           </DialogTrigger>
           <DialogContent className="rounded-t-[28px] rounded-b-none border-none sm:max-w-[425px] p-8 top-auto bottom-0 translate-y-0 duration-300">
@@ -325,19 +307,19 @@ function MuroPage() {
                 </div>
                 
                 <div className="flex gap-2">
-                  <button 
+                  <button
                     onClick={() => setPostType("vecinal")}
-                    className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${
-                      postType === "vecinal" ? "bg-black text-white" : "bg-slate-50 text-slate-400"
+                    className={`px-4 py-2 rounded-full text-[13px] font-semibold transition-all ${
+                      postType === "vecinal" ? "bg-black text-white" : "bg-[#F4F1EB] text-slate-500"
                     }`}
                   >
                     Aviso vecinal
                   </button>
                   {(userRole === 'admin' || userRole === 'super_admin') && (
-                    <button 
+                    <button
                       onClick={() => setPostType("oficial")}
-                      className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${
-                        postType === "oficial" ? "bg-black text-white" : "bg-slate-50 text-slate-400"
+                      className={`px-4 py-2 rounded-full text-[13px] font-semibold transition-all ${
+                        postType === "oficial" ? "bg-black text-white" : "bg-[#F4F1EB] text-slate-500"
                       }`}
                     >
                       Comunicado oficial
