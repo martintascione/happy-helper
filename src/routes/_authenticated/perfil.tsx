@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Building2, User, DoorOpen, Shield, FileText, ChevronRight, Settings } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Route as AuthRoute } from "./route";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_authenticated/perfil")({
   component: PerfilPage,
@@ -18,6 +19,7 @@ function PerfilPage() {
   const [building, setBuilding] = useState<any>(null);
   const [unit, setUnit] = useState<any>(null);
   const [agreement, setAgreement] = useState<any>(null);
+  const [showEdit, setShowEdit] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -76,6 +78,7 @@ function PerfilPage() {
       toast.error("Error al actualizar perfil");
     } else {
       toast.success("Perfil actualizado");
+      setShowEdit(false);
     }
     setLoading(false);
   };
@@ -114,10 +117,10 @@ function PerfilPage() {
       </header>
 
       <div className="bg-white rounded-[24px] shadow-subtle overflow-hidden">
-        <Link to="/perfil" className="flex items-center justify-between p-5 hover:bg-black/[0.01] transition-colors border-b border-black/[0.04]">
+        <button onClick={() => setShowEdit(true)} className="w-full flex items-center justify-between p-5 hover:bg-black/[0.01] transition-colors border-b border-black/[0.04] text-left">
           <span className="font-semibold text-foreground text-[15px]">Mis datos</span>
           <ChevronRight size={18} className="text-slate-300" />
-        </Link>
+        </button>
         <Link to="/cocheras" className="flex items-center justify-between p-5 hover:bg-black/[0.01] transition-colors border-b border-black/[0.04]">
           <span className="font-semibold text-foreground text-[15px]">Mis pagos</span>
           <ChevronRight size={18} className="text-slate-300" />
@@ -152,6 +155,42 @@ function PerfilPage() {
           <ChevronRight size={18} className="text-red-300" />
         </button>
       </div>
+
+      <Dialog open={showEdit} onOpenChange={setShowEdit}>
+        <DialogContent className="rounded-[28px] border-none sm:max-w-[400px] p-7">
+          <DialogHeader>
+            <DialogTitle className="text-[20px] font-bold tracking-tight">Mis datos</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdate} className="space-y-4 pt-2">
+            <div className="space-y-1.5">
+              <label className="text-[12px] font-semibold text-slate-500 ml-1">Nombre completo</label>
+              <input
+                type="text"
+                value={profile.full_name || ""}
+                onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
+                className="w-full p-4 bg-[#F5F5F3] rounded-[18px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[12px] font-semibold text-slate-500 ml-1">Teléfono</label>
+              <input
+                type="tel"
+                value={profile.phone || ""}
+                onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                placeholder="11 1234 5678"
+                className="w-full p-4 bg-[#F5F5F3] rounded-[18px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-4 bg-black text-white rounded-full font-semibold text-[15px] active:scale-[0.98] transition-all disabled:opacity-50"
+            >
+              {loading ? "Guardando..." : "Guardar cambios"}
+            </button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
