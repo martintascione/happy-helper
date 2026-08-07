@@ -14,7 +14,7 @@ function LoginPage() {
   console.log("LoginPage rendering");
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1); // 1: Auth, 2: Invitation/Profile
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(true);
   
   // Auth fields
   const [email, setEmail] = useState("");
