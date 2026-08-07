@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, Link, useLocation, redirect } from "@tanstack/react-router";
 import { Home, Car, MessageSquare, AlertCircle, User, Plus, ShieldCheck } from "lucide-react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -28,14 +29,19 @@ export const Route = createFileRoute("/_authenticated")({
       throw redirect({ to: "/login" });
     }
 
-    return { userRole: profile.role };
+    return { userRole: profile.role, userId: session.user.id };
   },
   component: AuthenticatedLayout,
 });
 
 function AuthenticatedLayout() {
   const location = useLocation();
-  const { userRole } = Route.useRouteContext();
+  const { userRole, userId } = Route.useRouteContext();
+  const [activeRole, setActiveRole] = useState(userRole);
+
+  useEffect(() => {
+    setActiveRole(userRole);
+  }, [userRole]);
   
   const navItems = [
     { label: "Muro", icon: Home, to: "/_authenticated/muro" },
@@ -47,7 +53,7 @@ function AuthenticatedLayout() {
   ];
 
   const filteredNavItems = navItems.filter(item => {
-    if (item.label === "Admin") return userRole === "admin" || userRole === "super_admin";
+    if (item.label === "Admin") return activeRole === "admin" || activeRole === "super_admin";
     return true;
   });
 
@@ -120,6 +126,25 @@ function AuthenticatedLayout() {
             })}
           </nav>
         </div>
+
+        {/* Role Switcher for Super Admin */}
+        {userRole === "super_admin" && (
+          <div className="fixed top-4 right-4 z-[60] flex gap-2 bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-lg border border-slate-200">
+            {["vecino", "admin", "super_admin"].map((role) => (
+              <button
+                key={role}
+                onClick={() => setActiveRole(role as any)}
+                className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all ${
+                  activeRole === role
+                    ? "bg-black text-white shadow-md shadow-black/10"
+                    : "text-slate-400 hover:text-slate-600"
+                }`}
+              >
+                {role.replace("_", " ")}
+              </button>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
