@@ -189,32 +189,36 @@ function GlobalAdminPage() {
 
       {activeTab === "resumen" && financialStats && (
         <section className="space-y-6 animate-in fade-in duration-300">
-          <div className="bg-black text-white p-8 rounded-[28px] shadow-2xl shadow-black/20 space-y-2 relative overflow-hidden">
-            <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-accent/10 rounded-full blur-3xl" />
-            <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px] relative z-10">Total cobrado este mes</p>
-            <h2 className="text-5xl font-black tracking-tight relative z-10">${financialStats[0]?.total.toLocaleString('es-AR') || 0}</h2>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider relative z-10">
-              Disponible: ${financialStats[0]?.profit.toLocaleString('es-AR') || 0}
-            </div>
+          <div className="premium-card p-10 bg-primary text-primary-foreground shadow-premium relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-[100px] animate-pulse" />
+            <div className="space-y-6 relative z-10">
+              <div className="space-y-2">
+                <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[11px]">Facturación Mensual</p>
+                <h2 className="text-6xl font-bold tracking-tight">${financialStats[0]?.total.toLocaleString('es-AR') || 0}</h2>
+              </div>
+              <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/10 rounded-full text-[12px] font-bold uppercase tracking-widest border border-white/10">
+                Ganancia Neta: ${financialStats[0]?.profit.toLocaleString('es-AR') || 0}
+              </div>
 
-            <div className="flex gap-4 mt-8 relative z-10">
-              {[
-                { label: "Pagos", icon: FileText, id: "pagos" },
-                { label: "Liquids", icon: Landmark, id: "liquidaciones" },
-                { label: "Edificios", icon: Building2, id: "edificios" },
-                { label: "Config", icon: Settings, id: "config" }
-              ].map((action) => (
-                <button 
-                  key={action.id}
-                  onClick={() => setActiveTab(action.id as any)}
-                  className="flex flex-col items-center gap-2 transition-transform active:scale-95"
-                >
-                  <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
-                    <action.icon size={20} />
-                  </div>
-                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">{action.label}</span>
-                </button>
-              ))}
+              <div className="flex justify-between items-center mt-10 border-t border-white/10 pt-8">
+                {[
+                  { label: "Pagos", icon: FileText, id: "pagos" },
+                  { label: "Liquids", icon: Landmark, id: "liquidaciones" },
+                  { label: "Edificios", icon: Building2, id: "edificios" },
+                  { label: "Config", icon: Settings, id: "config" }
+                ].map((action) => (
+                  <button 
+                    key={action.id}
+                    onClick={() => setActiveTab(action.id as any)}
+                    className="flex flex-col items-center gap-3 active:scale-95 transition-all group/btn"
+                  >
+                    <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-white border border-white/10 shadow-inner-glow group-hover/btn:bg-white/20 transition-all">
+                      <action.icon size={24} />
+                    </div>
+                    <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">{action.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </section>
