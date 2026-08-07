@@ -46,7 +46,7 @@ function LoginPage() {
         .maybeSingle();
 
       // If already super_admin and approved, redirect immediately
-      if (profile && profile.role === 'super_admin' && profile.status === 'aprobado') {
+      if (profile && profile.role === 'super_admin' && profile.status === 'aprobado' && profile.building_id && profile.unit_id) {
         navigate({ to: "/_authenticated/muro" });
         return;
       }
