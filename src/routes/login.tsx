@@ -213,7 +213,8 @@ function LoginPage() {
   ];
 
   const handleRegisterClick = (e: React.FormEvent) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    console.log("handleRegisterClick called, isSignUp:", isSignUp);
     if (!isSignUp) {
       handleAuth(e);
       return;
