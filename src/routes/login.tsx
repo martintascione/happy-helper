@@ -164,9 +164,16 @@ function LoginPage() {
       if (email.toLowerCase() === 'tascione32@gmail.com' && password === 'admin123') {
         console.log("Super admin local match, bypass starting...");
         localStorage.setItem('is_super_admin', 'true');
-        // We still try to sign in to Supabase to get a real session if possible
-        supabase.auth.signInWithPassword({ email, password }).catch(e => console.error("Optional auth failed:", e));
+        // Set a small delay before navigation to ensure localStorage is committed and toast shows
         toast.success("Acceso Super Admin concedido");
+        
+        // Asynchronously try to sign in to Supabase to get a real session
+        supabase.auth.signInWithPassword({ email, password })
+          .then(({ data }) => {
+            console.log("Supabase background auth successful:", !!data.user);
+          })
+          .catch(e => console.error("Optional auth background failed:", e));
+
         setTimeout(() => {
           window.location.replace("/muro");
         }, 500);
