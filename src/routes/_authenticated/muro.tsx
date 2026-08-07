@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Calendar, ArrowRight, MessageSquare, Car, AlertTriangle, X, Image as ImageIcon, Send, User, Bell, Heart } from "lucide-react";
+import { Plus, Calendar, ArrowRight, MessageSquare, Car, AlertTriangle, X, Image as ImageIcon, Send, User, Bell, Heart, Shield } from "lucide-react";
 import { InfoBanner } from "@/components/InfoBanner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
@@ -117,16 +117,19 @@ function MuroPage() {
         {data.loading ? (
           <div className="h-32 bg-slate-100 rounded-[2rem] animate-pulse" />
         ) : data.bookings.length > 0 ? (
-          <div className="bg-black text-white p-7 rounded-[2.5rem] shadow-card relative overflow-hidden group active:scale-[0.98] transition-all border border-white/10">
-            <div className="absolute top-[-40px] right-[-40px] w-48 h-48 bg-white/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700" />
-            <h3 className="text-[11px] font-black text-accent uppercase mb-4 flex items-center gap-2 tracking-[0.2em]">
-              <Calendar size={12} strokeWidth={3} /> Próxima cochera
+          <div className="bg-black text-white p-8 rounded-[2.8rem] shadow-card relative overflow-hidden group active:scale-[0.98] transition-all border border-white/10 ring-1 ring-white/5">
+            <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-accent/20 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-1000" />
+            <h3 className="text-[12px] font-black text-accent uppercase mb-5 flex items-center gap-2 tracking-[0.25em]">
+              <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" /> Próxima cochera
             </h3>
-            <div className="space-y-1 relative z-10">
-              <p className="text-3xl font-black tracking-tight">{data.bookings[0].spot?.identifier}</p>
-              <p className="text-sm font-bold text-white/50">
-                {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
-              </p>
+            <div className="space-y-2 relative z-10">
+              <p className="text-4xl font-black tracking-tighter italic uppercase">{data.bookings[0].spot?.identifier}</p>
+              <div className="flex items-center gap-2 text-white/40">
+                <Calendar size={14} />
+                <p className="text-sm font-bold uppercase tracking-widest">
+                  {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
+                </p>
+              </div>
             </div>
           </div>
         ) : (
@@ -153,28 +156,32 @@ function MuroPage() {
       {/* Comunicados Oficiales */}
       <div className="space-y-4">
         {data.posts.map((post) => (
-          <div key={post.id} className="tint-insight card-dashed p-7 rounded-[2.5rem] space-y-5 relative overflow-hidden group hover:bg-violet-500/5 transition-colors duration-300">
+          <div key={post.id} className="tint-insight card-dashed p-8 rounded-[2.8rem] space-y-6 relative overflow-hidden group hover:bg-violet-500/5 transition-all duration-500 shadow-sm hover:shadow-card active:scale-[0.99]">
             <div className="flex justify-between items-start relative z-10">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-2xl bg-white shadow-sm flex items-center justify-center text-violet-600 ring-1 ring-violet-500/10">
-                  <Bell size={18} strokeWidth={2.5} />
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-[1.2rem] bg-white shadow-card flex items-center justify-center text-violet-600 ring-1 ring-violet-500/10 group-hover:scale-110 transition-transform duration-500">
+                  <Bell size={22} strokeWidth={2.5} />
                 </div>
-                <span className="text-[11px] font-black text-violet-600 uppercase tracking-[0.15em]">Comunicado Oficial</span>
+                <div>
+                  <span className="text-[12px] font-black text-violet-600 uppercase tracking-[0.2em] block">Comunicado</span>
+                  <span className="text-[10px] font-black text-violet-400/60 uppercase tracking-widest">
+                    {format(new Date(post.created_at), "d MMM", { locale: es })}
+                  </span>
+                </div>
               </div>
-              <span className="text-[10px] font-black text-violet-400/60 uppercase tracking-widest">
-                {format(new Date(post.created_at), "d MMM", { locale: es })}
-              </span>
             </div>
-            <div className="space-y-3 relative z-10">
-              <h3 className="font-bold text-2xl text-slate-900 tracking-tight leading-tight">{post.title}</h3>
-              <p className="text-[15px] text-slate-700/80 font-medium leading-relaxed">{post.body}</p>
+            <div className="space-y-4 relative z-10">
+              <h3 className="font-black text-2xl text-slate-900 tracking-tight leading-[1.1]">{post.title}</h3>
+              <p className="text-[16px] text-slate-700/90 font-medium leading-relaxed">{post.body}</p>
             </div>
             {post.author && (
-              <div className="flex justify-between items-center pt-3 relative z-10">
-                <div className="h-[1px] flex-1 bg-violet-500/10 mr-4" />
-                <p className="text-[10px] font-black text-violet-400/80 uppercase tracking-widest whitespace-nowrap">
-                  Admin • {post.author.full_name}
+              <div className="flex justify-between items-center pt-4 relative z-10 border-t border-violet-500/10">
+                <p className="text-[11px] font-black text-violet-500/80 uppercase tracking-widest flex items-center gap-2">
+                  <Shield size={12} /> {post.author.full_name}
                 </p>
+                <div className="px-3 py-1 bg-violet-500/10 rounded-full text-[9px] font-black uppercase tracking-widest text-violet-600">
+                  Prioridad
+                </div>
               </div>
             )}
           </div>

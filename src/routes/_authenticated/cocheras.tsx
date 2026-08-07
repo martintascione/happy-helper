@@ -171,11 +171,10 @@ function CocherasPage() {
       )}
 
       {/* Date Selector */}
-      <div className="mb-8 -mx-4">
-        <div className="flex gap-4 overflow-x-auto px-4 pb-2 no-scrollbar">
+      <div className="mb-10 -mx-4">
+        <div className="flex gap-4 overflow-x-auto px-4 pb-4 no-scrollbar items-end h-[100px]">
           {weekDays.map((date) => {
             const isSelected = isSameDay(date, selectedDate);
-            const isToday = isSameDay(date, new Date());
             
             // Check availability for this specific day
             const hasAvailability = availableSpots.some(spot => 
@@ -190,16 +189,21 @@ function CocherasPage() {
               <button
                 key={date.toISOString()}
                 onClick={() => setSelectedDate(date)}
-                className={`flex flex-col items-center justify-center min-w-[50px] h-[70px] rounded-full transition-all relative ${
-                  isSelected ? "bg-black text-white shadow-xl" : "bg-white text-slate-400 border border-slate-100"
+                className={`flex flex-col items-center justify-center min-w-[62px] h-[82px] rounded-full transition-all duration-500 relative ring-1 ${
+                  isSelected 
+                    ? "bg-black text-white shadow-card ring-black scale-110 z-10" 
+                    : "bg-white text-slate-400 ring-slate-100 hover:ring-slate-300"
                 }`}
               >
-                <span className={`text-[10px] font-bold uppercase ${isSelected ? "text-slate-400" : "text-slate-300"}`}>
-                  {format(date, "EEE", { locale: es }).substring(0, 1)}
+                <span className={`text-[11px] font-black uppercase tracking-tighter mb-1 ${isSelected ? "text-white/40" : "text-slate-300"}`}>
+                  {format(date, "EEE", { locale: es }).substring(0, 3)}
                 </span>
-                <span className="text-lg font-bold">{format(date, "d")}</span>
+                <span className="text-xl font-black tracking-tighter">{format(date, "d")}</span>
                 {hasAvailability && !isSelected && (
-                  <div className="absolute bottom-2 w-1.5 h-1.5 bg-green-500 rounded-full" />
+                  <div className="absolute -bottom-1 w-1.5 h-1.5 bg-accent rounded-full shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
+                )}
+                {isSelected && (
+                  <div className="absolute -bottom-1 w-2 h-2 bg-white rounded-full" />
                 )}
               </button>
             );
