@@ -168,42 +168,7 @@ function AuthenticatedLayout() {
         {/* Floating Pill Navigation for Mobile */}
         <div className="lg:hidden fixed bottom-10 left-0 right-0 px-8 z-[100]">
           <nav className="h-16 glass-card rounded-full shadow-pill flex items-center justify-around px-3 relative border border-white/60 ring-1 ring-black/5 touch-none">
-            {mobileNavItems.map((item, idx) => {
-              if ('isGroup' in item) {
-                const anyAdminActive = item.items?.some(sub => location.pathname === sub.to);
-                return (
-                  <div key="admin-group" className="relative" ref={adminMenuRef}>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsAdminMenuOpen(!isAdminMenuOpen);
-                      }}
-                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 ${
-                        anyAdminActive ? "bg-black text-white shadow-lg scale-110" : "text-slate-400 hover:text-slate-600"
-                      }`}
-                    >
-                      <item.icon size={24} strokeWidth={2} />
-                    </button>
-                    {isAdminMenuOpen && (
-                      <div className="absolute bottom-20 right-0 glass-card rounded-[2rem] shadow-2xl border border-white/60 p-3 min-w-[180px] animate-in fade-in zoom-in-95 slide-in-from-bottom-6 duration-300 ring-1 ring-black/5 z-[110]">
-                        {item.items?.map(sub => (
-                          <Link
-                            key={sub.to}
-                            to={sub.to}
-                            onClick={() => setIsAdminMenuOpen(false)}
-                            className={`flex items-center gap-3 px-4 py-4 rounded-2xl text-[11px] font-black uppercase tracking-wider transition-all active:bg-black/10 ${
-                              location.pathname === sub.to ? "bg-black text-white shadow-md scale-[1.02]" : "text-slate-400"
-                            }`}
-                          >
-                            <sub.icon size={18} strokeWidth={2} />
-                            {sub.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              }
+            {mobileNavItems.map((item) => {
               const isActive = location.pathname === item.to;
               return (
                 <Link
