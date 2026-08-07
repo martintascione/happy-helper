@@ -62,7 +62,6 @@ function CocherasPage() {
     setUserProfile(profile);
 
     if (profile?.building_id) {
-      // Fetch my spots
       const { data: spots } = await supabase
         .from("parking_spots")
         .select(`
@@ -77,7 +76,6 @@ function CocherasPage() {
       
       setMySpots(spots || []);
 
-      // Fetch all available spots in building (excluding own)
       const { data: others } = await supabase
         .from("parking_spots")
         .select(`
@@ -91,7 +89,6 @@ function CocherasPage() {
       
       setAvailableSpots(others || []);
 
-      // Fetch my bookings
       const { data: bookings } = await supabase
         .from("parking_bookings")
         .select(`
@@ -112,7 +109,6 @@ function CocherasPage() {
         <p className="text-gray-500 font-medium">Alquilá o publicá tu lugar</p>
       </header>
 
-      {/* Tabs */}
       <div className="flex p-1 bg-gray-200 rounded-2xl mb-6 overflow-x-auto">
         {[
           { id: "disponibles", label: "Disponibles" },
@@ -136,7 +132,7 @@ function CocherasPage() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
         </div>
       ) : activeTab === "disponibles" ? (
-        <AvailableSpotsList spots={availableSpots} />
+        <AvailableSpotsList spots={availableSpots} userId={userProfile?.id} onRefresh={fetchData} />
       ) : activeTab === "mi-cochera" ? (
         <MySpotsManager 
           spots={mySpots} 
@@ -151,12 +147,12 @@ function CocherasPage() {
   );
 }
 
-function AvailableSpotsList({ spots }: { spots: any[] }) {
+function AvailableSpotsList({ spots, userId, onRefresh }: { spots: any[], userId: string, onRefresh: () => void }) {
   const [selectedSpot, setSelectedSpot] = useState<any>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
   async function handleBooking() {
-    if (!selectedSpot || !dateRange?.from || !dateRange?.to) return;
+    if (!selectedSpot || !dateRange?.from || !dateRange?.to || !userId) return;
 
     const days = differenceInDays(dateRange.to, dateRange.from) + 1;
     const totalPrice = days * selectedSpot.price_per_day;
@@ -165,9 +161,11 @@ function AvailableSpotsList({ spots }: { spots: any[] }) {
       .from("parking_bookings")
       .insert({
         spot_id: selectedSpot.id,
+        renter_id: userId,
         start_date: format(dateRange.from, "yyyy-MM-dd"),
         end_date: format(dateRange.to, "yyyy-MM-dd"),
-        total_price: totalPrice
+        total_price: totalPrice,
+        status: 'solicitada'
       });
 
     if (error) {
@@ -176,6 +174,7 @@ function AvailableSpotsList({ spots }: { spots: any[] }) {
       toast.success("Solicitud enviada");
       setSelectedSpot(null);
       setDateRange(undefined);
+      onRefresh();
     }
   }
 
@@ -249,32 +248,210 @@ function MyBookingsList({ bookings, onRefresh }: { bookings: any[], onRefresh: (
 
   return (
     <div className="space-y-4">
-      {bookings.map((booking) => (
-        <div key={booking.id} className="bg-white rounded-[2rem] p-5 shadow-soft">
-          <div className="flex justify-between items-center mb-2">
-            <h4 className="font-black">{booking.spot?.identifier}</h4>
-            <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase ${
-              booking.status === 'confirmada' ? 'bg-green-100 text-green-700' : 'bg-gray-100'
-            }`}>
-              {booking.status}
-            </span>
-          </div>
-          <p className="text-sm text-gray-500 mb-4">
-            {format(new Date(booking.start_date), "d MMM")} - {format(new Date(booking.end_date), "d MMM")}
-          </p>
-          {isAfter(new Date(booking.start_date), addDays(new Date(), 1)) && booking.status !== 'cancelada' && (
-            <Button variant="outline" onClick={() => handleCancel(booking.id)} className="w-full rounded-xl">Cancelar</Button>
-          )}
+      {bookings.length === 0 ? (
+        <div className="bg-white rounded-[2rem] p-8 text-center shadow-soft">
+          <Clock className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-black mb-2">Sin reservas</h3>
+          <p className="text-gray-500 font-medium">Todavía no realizaste ninguna reserva.</p>
         </div>
-      ))}
+      ) : (
+        bookings.map((booking) => (
+          <div key={booking.id} className="bg-white rounded-[2rem] p-5 shadow-soft border border-white">
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <h4 className="font-black text-lg">{booking.spot?.identifier}</h4>
+                <p className="text-gray-500 text-sm font-medium">De {booking.spot?.owner?.full_name}</p>
+              </div>
+              <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
+                booking.status === 'confirmada' ? 'bg-green-100 text-green-700' : 
+                booking.status === 'solicitada' ? 'bg-blue-100 text-blue-700' :
+                booking.status === 'cancelada' ? 'bg-red-100 text-red-700' : 'bg-gray-100'
+              }`}>
+                {booking.status}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 mb-4 text-gray-600 font-bold text-sm">
+              <CalendarIcon className="w-4 h-4" />
+              {format(new Date(booking.start_date), "d 'de' MMMM", { locale: es })} - {format(new Date(booking.end_date), "d 'de' MMMM", { locale: es })}
+            </div>
+            {isAfter(new Date(booking.start_date), addDays(new Date(), 1)) && booking.status === 'solicitada' && (
+              <Button variant="ghost" onClick={() => handleCancel(booking.id)} className="w-full rounded-2xl font-black text-red-500 hover:text-red-600 hover:bg-red-50">
+                Cancelar reserva
+              </Button>
+            )}
+            {booking.status === 'confirmada' && (
+              <div className="bg-green-50 p-3 rounded-2xl text-xs font-bold text-green-800 flex items-center gap-2">
+                <Check className="w-4 h-4" /> Coordiná el pago directamente con tu vecino
+              </div>
+            )}
+          </div>
+        ))
+      )}
     </div>
   );
 }
 
-// ... MySpotsManager remains (simplified context here for logic) ...
-// (Note: Add logic for owner to Approve/Reject bookings from mySpots props)
-function MySpotsManager({ spots, onRefresh }: { spots: any[], onRefresh: () => void, buildingId: string, userId: string }) {
-  // Add logic to map through spots.bookings and show requests
-  // ...
-  return <div className="text-sm text-gray-500">Gestión de cocheras y solicitudes de reserva aquí.</div>;
+function MySpotsManager({ spots, onRefresh, buildingId, userId }: { spots: any[], onRefresh: () => void, buildingId: string, userId: string }) {
+  const [isAddingSpot, setIsAddingSpot] = useState(false);
+  const [newSpot, setNewSpot] = useState({ identifier: "", description: "", price_per_day: "" });
+  const [isAddingAvailability, setIsAddingAvailability] = useState<string | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+
+  async function handleAddSpot() {
+    if (!newSpot.identifier || !newSpot.price_per_day) {
+      toast.error("Por favor completa los campos obligatorios");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("parking_spots")
+      .insert({
+        building_id: buildingId,
+        owner_id: userId,
+        identifier: newSpot.identifier,
+        description: newSpot.description,
+        price_per_day: parseFloat(newSpot.price_per_day),
+        is_active: true
+      });
+
+    if (error) {
+      toast.error("Error al registrar la cochera");
+    } else {
+      toast.success("Cochera registrada con éxito");
+      setIsAddingSpot(false);
+      setNewSpot({ identifier: "", description: "", price_per_day: "" });
+      onRefresh();
+    }
+  }
+
+  async function handleUpdateBookingStatus(bookingId: string, status: string) {
+    const { error } = await supabase
+      .from("parking_bookings")
+      .update({ status })
+      .eq("id", bookingId);
+
+    if (error) {
+      toast.error("Error al actualizar la reserva");
+    } else {
+      toast.success(status === 'confirmada' ? "Reserva aceptada" : "Reserva rechazada");
+      onRefresh();
+    }
+  }
+
+  async function handleAddAvailability(spotId: string) {
+    if (!dateRange?.from || !dateRange?.to) {
+      toast.error("Seleccioná un rango de fechas");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("parking_availability")
+      .insert({
+        spot_id: spotId,
+        start_date: format(dateRange.from, "yyyy-MM-dd"),
+        end_date: format(dateRange.to, "yyyy-MM-dd")
+      });
+
+    if (error) {
+      toast.error(error.message.includes("Overlap") ? "Ya existe disponibilidad en esas fechas" : "Error al agregar disponibilidad");
+    } else {
+      toast.success("Disponibilidad agregada");
+      setIsAddingAvailability(null);
+      setDateRange(undefined);
+      onRefresh();
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      {spots.map((spot) => (
+        <div key={spot.id} className="bg-white rounded-[2rem] p-6 shadow-soft border border-white">
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex items-center gap-3">
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${spot.is_active ? 'bg-green-100' : 'bg-gray-100'}`}>
+                <Car className={`w-6 h-6 ${spot.is_active ? 'text-green-600' : 'text-gray-400'}`} />
+              </div>
+              <div>
+                <h4 className="font-black text-lg leading-tight">{spot.identifier}</h4>
+                <p className="text-gray-500 text-sm font-medium">${spot.price_per_day} / día</p>
+              </div>
+            </div>
+            <Button variant="ghost" size="icon" onClick={() => {/* Toggle active logic */}} className="rounded-xl">
+              <Power className={`w-5 h-5 ${spot.is_active ? 'text-green-500' : 'text-gray-300'}`} />
+            </Button>
+          </div>
+
+          {/* Pending Bookings */}
+          {spot.bookings?.filter((b: any) => b.status === 'solicitada').length > 0 && (
+            <div className="mb-6">
+              <h5 className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Solicitudes pendientes</h5>
+              <div className="space-y-2">
+                {spot.bookings.filter((b: any) => b.status === 'solicitada').map((booking: any) => (
+                  <div key={booking.id} className="bg-blue-50 p-4 rounded-2xl">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <p className="font-black text-sm text-blue-900">{booking.renter?.full_name}</p>
+                        <p className="text-xs font-bold text-blue-700">
+                          {format(new Date(booking.start_date), "d MMM")} - {format(new Date(booking.end_date), "d MMM")}
+                        </p>
+                      </div>
+                      <p className="font-black text-blue-900 text-sm">${booking.total_price}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={() => handleUpdateBookingStatus(booking.id, 'confirmada')} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white h-9 rounded-xl font-bold text-xs">
+                        Aceptar
+                      </Button>
+                      <Button onClick={() => handleUpdateBookingStatus(booking.id, 'cancelada')} variant="ghost" className="flex-1 text-blue-600 hover:bg-blue-100 h-9 rounded-xl font-bold text-xs">
+                        Rechazar
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Availability */}
+          <div>
+            <div className="flex justify-between items-center mb-3">
+              <h5 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Disponibilidad</h5>
+              <Button variant="ghost" size="sm" onClick={() => setIsAddingAvailability(spot.id)} className="text-pink-500 font-black h-8 hover:bg-pink-50 rounded-xl">
+                <Plus className="w-4 h-4 mr-1" /> Agregar
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {spot.parking_availability?.map((a: any) => (
+                <div key={a.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-2xl">
+                  <div className="flex items-center gap-2">
+                    <CalendarIcon className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm font-bold text-gray-700">
+                      {format(new Date(a.start_date), "d MMM", { locale: es })} - {format(new Date(a.end_date), "d MMM", { locale: es })}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+
+      <Dialog open={isAddingSpot} onOpenChange={setIsAddingSpot}>
+        <DialogTrigger asChild>
+          <button className="w-full py-8 border-2 border-dashed border-gray-300 rounded-[2rem] flex flex-col items-center justify-center gap-3 text-gray-400 hover:border-pink-300 hover:text-pink-500 transition-all bg-white/50">
+            <Plus className="w-6 h-6" />
+            <span className="font-black">Registrar mi cochera</span>
+          </button>
+        </DialogTrigger>
+        <DialogContent className="rounded-[2.5rem] border-none">
+          <DialogHeader><DialogTitle className="font-black">Nueva Cochera</DialogTitle></DialogHeader>
+          <div className="space-y-4 py-4">
+            <Input placeholder="Identificador" value={newSpot.identifier} onChange={(e) => setNewSpot({...newSpot, identifier: e.target.value})} className="rounded-2xl h-12 bg-gray-50 border-none font-bold" />
+            <Input type="number" placeholder="Precio por día ($)" value={newSpot.price_per_day} onChange={(e) => setNewSpot({...newSpot, price_per_day: e.target.value})} className="rounded-2xl h-12 bg-gray-50 border-none font-bold" />
+            <Textarea placeholder="Descripción" value={newSpot.description} onChange={(e) => setNewSpot({...newSpot, description: e.target.value})} className="rounded-2xl bg-gray-50 border-none font-medium" />
+          </div>
+          <DialogFooter><Button onClick={handleAddSpot} className="w-full bg-black text-white h-14 rounded-2xl font-black">Guardar</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 }
