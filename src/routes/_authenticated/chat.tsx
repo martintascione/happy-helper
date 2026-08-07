@@ -323,7 +323,7 @@ function ChatPage() {
         )}
 
         {/* Messages List */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 no-scrollbar">
+        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 no-scrollbar overflow-x-hidden">
           {messages.map((msg, idx) => {
             const isMine = msg.sender_id === currentUserId;
             const showTime = idx === messages.length - 1 || 
