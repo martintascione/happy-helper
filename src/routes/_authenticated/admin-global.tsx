@@ -434,43 +434,30 @@ function GlobalAdminPage() {
           )}
         </div>
       ) : activeTab === "vecinos" ? (
-        <div className="space-y-6 animate-in fade-in duration-300">
+        <div className="space-y-4 animate-in fade-in duration-300">
           <div className="flex justify-between items-center px-1">
-            <h2 className="text-xl font-black text-slate-900">Auditoría de Vecinos</h2>
-            <span className="text-xs font-bold bg-slate-200 text-slate-600 px-3 py-1 rounded-full">
-              {globalNeighbors.length} total
-            </span>
+            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Auditoría de Vecinos ({globalNeighbors.length})</h2>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {globalNeighbors.map((n) => (
-              <div key={n.id} className="bg-white p-5 rounded-[2rem] shadow-soft border border-white flex items-center gap-4">
-                <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 shrink-0">
-                  <User size={24} />
+              <div key={n.id} className="bg-white p-5 rounded-[24px] shadow-soft border border-slate-50 flex items-center gap-4 group">
+                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 shrink-0 overflow-hidden">
+                  {n.avatar_url ? <img src={n.avatar_url} className="w-full h-full object-cover" /> : <User size={20} />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-black text-slate-900 truncate">{n.full_name}</h4>
+                  <h4 className="font-bold text-slate-900 truncate leading-none mb-1">{n.full_name}</h4>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
-                    {n.building?.name} • Piso {n.unit?.floor} - {n.unit?.apartment}
+                    {n.building?.name} • {n.unit?.floor}-{n.unit?.apartment}
                   </p>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={async () => {
-                    const { data } = await supabase
-                      .from("user_agreements" as any)
-                      .select("*")
-                      .eq("user_id", n.id)
-                      .order("accepted_at", { ascending: false });
-                    setSelectedNeighborAgreements(data || []);
-                    setShowAgreementsModal(true);
-                  }}
-                  className="text-primary font-black text-[10px] uppercase tracking-wider"
-                >
-                  Acuerdos
-                </Button>
+                <span className="px-3 py-1 bg-slate-50 text-[9px] font-black text-slate-500 uppercase rounded-full tracking-wider group-hover:bg-black group-hover:text-white transition-all cursor-default">
+                  {n.role}
+                </span>
               </div>
+            ))}
+          </div>
+        </div>
             ))}
           </div>
 
