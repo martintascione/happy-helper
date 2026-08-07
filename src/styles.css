@@ -107,6 +107,14 @@
   .shadow-soft {
     box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
   }
+
+  .shadow-card {
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+  }
+
+  .shadow-pill {
+    box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.12);
+  }
   
   .card-rounded {
     border-radius: 1.5rem;
@@ -134,7 +142,22 @@
   }
 
   .card-dashed {
-    border: 1.5px dashed currentColor;
+    border: 1.5px dashed color-mix(in srgb, currentColor 30%, transparent);
     border-radius: 1.5rem;
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
