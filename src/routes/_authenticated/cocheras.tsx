@@ -813,3 +813,98 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
     </div>
   );
 }
+
+function MyPayoutsList({ userId }: { userId: string }) {
+  const [payouts, setPayouts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPayouts();
+  }, [userId]);
+
+  async function fetchPayouts() {
+    setLoading(true);
+    const { data } = await supabase
+      .from("parking_payouts" as any)
+      .select(`
+        *,
+        booking:parking_bookings(
+          id,
+          start_date,
+          end_date,
+          spot:parking_spots(identifier)
+        )
+      `)
+      .eq("owner_id", userId)
+      .order("created_at", { ascending: false });
+    
+    if (data) setPayouts(data);
+    setLoading(false);
+  }
+
+  const pendingAmount = payouts
+    .filter(p => p.status === 'pendiente')
+    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+  const totalPaid = payouts
+    .filter(p => p.status === 'pagado')
+    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+  if (loading) return <div className="p-8 text-center font-bold text-gray-400">Cargando...</div>;
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl shadow-black/20 space-y-6">
+        <div className="flex items-center gap-3 opacity-60">
+          <Wallet size={20} />
+          <p className="text-xs font-bold uppercase tracking-widest">Pendiente de cobro</p>
+        </div>
+        <h2 className="text-4xl font-black">${pendingAmount.toLocaleString('es-AR')}</h2>
+        <div className="pt-6 border-t border-white/10 flex justify-between items-center">
+          <div>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Total Cobrado</p>
+            <p className="font-bold text-lg">${totalPaid.toLocaleString('es-AR')}</p>
+          </div>
+          <TrendingUp className="text-green-500" size={24} />
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex items-center gap-2 px-2">
+          <History size={18} className="text-gray-400" />
+          <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Historial</h3>
+        </div>
+        
+        {payouts.length === 0 ? (
+          <div className="bg-white rounded-[2rem] p-12 text-center border border-dashed border-gray-200">
+            <p className="text-gray-500 font-medium">Aún no tenés cobros registrados.</p>
+          </div>
+        ) : (
+          payouts.map((payout) => (
+            <div key={payout.id} className="bg-white p-5 rounded-[2rem] shadow-soft border border-white space-y-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-black text-slate-900 text-sm">{payout.booking?.spot?.identifier}</h4>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase">
+                    {format(new Date(payout.booking?.start_date), "d MMM")} - {format(new Date(payout.booking?.end_date), "d MMM")}
+                  </p>
+                </div>
+                <div className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${
+                  payout.status === 'pagado' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                }`}>
+                  {payout.status}
+                </div>
+              </div>
+              <div className="flex justify-between items-end pt-1">
+                <p className="font-black text-lg text-slate-900">${Number(payout.amount).toLocaleString('es-AR')}</p>
+                {payout.paid_at && (
+                  <p className="text-[8px] font-bold text-gray-400">Pagado el {format(new Date(payout.paid_at), "d/MM/yy")}</p>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
