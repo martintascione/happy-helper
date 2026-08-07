@@ -310,7 +310,7 @@ function LoginPage() {
           </h1>
         </div>
 
-        {true ? (
+        {step === 1 ? (
           <div className="space-y-4">
             {isSignUp && (
               <div className="space-y-2">
