@@ -35,7 +35,7 @@ function Index() {
             <span className="font-bold text-slate-900 tracking-tight text-lg">Tower</span>
           </div>
           <div className="flex gap-2">
-            <Link to="/_authenticated/muro" className="px-4 py-2 text-sm font-bold text-primary hover:bg-primary/5 rounded-xl transition-all">Ingresar</Link>
+            <Link to="/login" className="px-4 py-2 text-sm font-bold text-primary hover:bg-primary/5 rounded-xl transition-all">Ingresar</Link>
           </div>
         </header>
 
@@ -48,7 +48,7 @@ function Index() {
             Conectate con tus vecinos de forma simple y profesional.
           </p>
           <div className="pt-6 w-full">
-            <Link to="/_authenticated/muro" className="block w-full py-5 bg-primary rounded-2xl font-bold text-white shadow-xl shadow-primary/20 active:scale-[0.98] transition-all">
+            <Link to="/login" className="block w-full py-5 bg-primary rounded-2xl font-bold text-white shadow-xl shadow-primary/20 active:scale-[0.98] transition-all">
               Registrarme ahora
             </Link>
           </div>

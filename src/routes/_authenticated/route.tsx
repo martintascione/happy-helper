@@ -1,7 +1,33 @@
-import { createFileRoute, Outlet, Link, useLocation } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useLocation, redirect } from "@tanstack/react-router";
 import { Home, Car, MessageSquare, AlertCircle, User } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
+  beforeLoad: async ({ location }) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw redirect({
+        to: "/login",
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("status")
+      .eq("id", session.user.id)
+      .single();
+
+    if (!profile) {
+      throw redirect({ to: "/login" });
+    }
+
+    if (profile.status === "pendiente") {
+      throw redirect({ to: "/login" });
+    }
+  },
   component: AuthenticatedLayout,
 });
 
