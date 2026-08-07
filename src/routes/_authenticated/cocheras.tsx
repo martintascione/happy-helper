@@ -487,7 +487,12 @@ function MyBookingsList({ bookings, onRefresh, settings }: { bookings: any[], on
             </div>
 
             {paymentMethod === 'transferencia' ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
+                <InfoBanner 
+                  variant="seguridad" 
+                  text="Transferí únicamente a la cuenta oficial que ves en esta pantalla. Nadie de Comunidad Tower te va a pedir por chat ni por ningún otro medio que transfieras a otra cuenta. Subir un comprobante adulterado implica la baja de la cuenta." 
+                />
+                
                 <div className="bg-slate-900 text-white p-6 rounded-[2rem] space-y-4">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Datos para transferir</p>
                   <div className="space-y-3">

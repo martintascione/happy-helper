@@ -154,6 +154,42 @@ function MuroPage() {
           </div>
         )}
       </div>
+
+      {/* Action Button for Neighbor Posts */}
+      <div className="fixed bottom-24 right-6 z-20">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="w-14 h-14 rounded-full bg-black text-white shadow-xl shadow-black/20 hover:scale-105 active:scale-95 transition-all">
+              <Plus size={24} />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="rounded-[2.5rem] border-none sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black">Nueva publicación</DialogTitle>
+            </DialogHeader>
+            <div className="py-4 space-y-6">
+              <InfoBanner 
+                variant="info" 
+                text="Tu publicación la van a ver todos los vecinos del edificio. No está permitido contenido ofensivo o discriminatorio, ni publicidad de negocios ajenos al edificio. La administración puede quitar publicaciones que incumplan las normas." 
+              />
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Título</label>
+                  <Input placeholder="¿De qué trata tu aviso?" className="rounded-2xl h-12 bg-slate-50 border-none font-bold" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Mensaje</label>
+                  <Textarea placeholder="Escribí acá los detalles..." className="rounded-2xl min-h-[120px] bg-slate-50 border-none font-medium p-4" />
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button className="w-full bg-black text-white h-14 rounded-2xl font-black">Publicar aviso</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
