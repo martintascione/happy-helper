@@ -383,7 +383,10 @@ function LoginPage() {
 
             <button
               type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
+              onClick={() => {
+                console.log("Toggling signup mode to:", !isSignUp);
+                setIsSignUp(!isSignUp);
+              }}
               className="w-full text-sm text-slate-500 font-medium"
             >
               {isSignUp ? "¿Ya tenés cuenta? Ingresá" : "¿No tenés cuenta? Registrate"}
