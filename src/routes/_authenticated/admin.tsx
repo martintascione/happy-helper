@@ -96,68 +96,81 @@ function AdminPage() {
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32">
       <header className="px-1 space-y-1">
-        <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">Administración</h1>
-        <p className="text-slate-400 font-medium">Gestioná tu edificio y vecinos</p>
+        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Administración</h1>
+        <p className="text-slate-500 font-medium">Gestión de edificio y vecinos</p>
       </header>
 
-      {/* Building Card */}
-      <div className="bg-black text-white p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
-        <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-accent/20 rounded-full blur-2xl" />
+      {/* Wallet Style Building Card */}
+      <div className="bg-black text-white p-8 rounded-[28px] shadow-2xl shadow-black/20 relative overflow-hidden">
+        <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-accent/10 rounded-full blur-3xl" />
         <div className="relative z-10 space-y-6">
-          <div className="flex items-center gap-3">
-            <Building2 className="text-accent" size={24} />
-            <h2 className="text-xl font-bold">{building?.name}</h2>
+          <div className="space-y-1">
+            <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">{building?.name}</p>
+            <h2 className="text-4xl font-black tracking-tighter">{building?.invite_code}</h2>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-wider">
+              Código de Invitación
+            </div>
           </div>
           
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white/10 p-4 rounded-2xl border border-white/10">
-            <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Código de invitación</p>
-              <p className="text-2xl font-mono font-bold tracking-tighter">{building?.invite_code}</p>
-            </div>
-            <div className="flex gap-2">
-              <button 
-                onClick={copyInviteCode}
-                className="flex-1 sm:flex-none p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors"
-                title="Copiar código"
-              >
-                <Copy size={20} />
-              </button>
-              <button 
-                onClick={shareInvite}
-                className="flex-1 sm:flex-none px-4 py-3 bg-accent text-accent-foreground rounded-xl font-bold text-sm flex items-center justify-center gap-2"
-              >
-                <Share2 size={18} /> Compartir
-              </button>
-            </div>
+          <div className="flex gap-3 pt-2">
+            <button 
+              onClick={copyInviteCode}
+              className="flex-1 py-3.5 bg-white/10 hover:bg-white/20 rounded-full font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+            >
+              <Copy size={14} /> Copiar
+            </button>
+            <button 
+              onClick={shareInvite}
+              className="flex-1 py-3.5 bg-accent text-white rounded-full font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/20"
+            >
+              <Share2 size={14} /> Compartir
+            </button>
           </div>
         </div>
       </div>
 
+      {/* Section Pending (Wallet Logic) */}
+      {profiles.some(p => p.status === 'pendiente') && (
+        <div className="space-y-4">
+          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Pendientes de aprobación</h3>
+          <div className="space-y-2">
+            {profiles.filter(p => p.status === 'pendiente').map((p) => (
+              <div key={p.id} className="bg-white p-5 rounded-[24px] shadow-soft border border-slate-50 flex items-center justify-between gap-4 animate-in slide-in-from-right duration-300">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 shrink-0 overflow-hidden">
+                    {p.avatar_url ? <img src={p.avatar_url} className="w-full h-full object-cover" /> : <User size={20} />}
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900 leading-none mb-1">{p.full_name}</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{p.unit?.floor}-{p.unit?.apartment}</p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => handleUpdateStatus(p.id, "aprobado")} className="px-4 py-2 bg-green-500 text-white rounded-full text-[10px] font-black uppercase tracking-wider active:scale-95">Aprobar</button>
+                  <button className="px-4 py-2 border border-red-100 text-red-400 rounded-full text-[10px] font-black uppercase tracking-wider active:scale-95">X</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Neighbors List */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2 px-1">
-          <Users className="text-slate-400" size={20} />
-          <h2 className="text-lg font-extrabold text-slate-900">Vecinos</h2>
-          <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full ml-auto">
-            {profiles.length} total
-          </span>
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Comunidad ({profiles.length})</h3>
         </div>
 
         <div className="space-y-3">
           {profiles.map((p) => (
-            <div key={p.id} className="bg-white p-4 rounded-[1.5rem] shadow-soft flex items-center gap-4 border border-transparent hover:border-slate-100 transition-colors">
+            <div key={p.id} className="bg-white p-5 rounded-[24px] shadow-soft border border-slate-50 flex items-center gap-4">
               <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 shrink-0 overflow-hidden">
-                {p.avatar_url ? <img src={p.avatar_url} className="w-full h-full object-cover" /> : <User size={24} />}
+                {p.avatar_url ? <img src={p.avatar_url} className="w-full h-full object-cover" /> : <User size={20} />}
               </div>
               <div className="flex-1 min-w-0">
-                <button 
-                  onClick={() => Route.useNavigate()({ to: "/_authenticated/chat", search: { startDirect: p.id } } as any)}
-                  className="font-bold text-slate-900 truncate hover:text-accent transition-colors block text-left w-full"
-                >
-                  {p.full_name}
-                </button>
-                <p className="text-xs text-slate-500 font-medium">
-                  Piso {p.unit?.floor} - {p.unit?.apartment}
+                <p className="font-bold text-slate-900 truncate">{p.full_name}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
+                  Piso {p.unit?.floor} - Depto {p.unit?.apartment}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -165,20 +178,18 @@ function AdminPage() {
                   <>
                     <button 
                       onClick={() => handleUpdateStatus(p.id, "aprobado")}
-                      className="w-10 h-10 bg-green-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20 active:scale-90 transition-transform"
-                      title="Aprobar"
+                      className="px-5 py-2.5 bg-green-500 text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg shadow-green-500/20 active:scale-90 transition-all"
                     >
-                      <Check size={20} strokeWidth={3} />
+                      Aprobar
                     </button>
                     <button 
-                      className="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center active:scale-90 transition-transform"
-                      title="Rechazar"
+                      className="px-5 py-2.5 bg-red-50 text-red-500 rounded-full text-[10px] font-black uppercase tracking-wider active:scale-90 transition-all"
                     >
-                      <X size={20} strokeWidth={3} />
+                      Rechazar
                     </button>
                   </>
                 ) : (
-                  <span className="text-[10px] font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-full uppercase tracking-wider">
+                  <span className="text-[10px] font-black text-green-600 bg-green-50 px-4 py-2 rounded-full uppercase tracking-wider">
                     Aprobado
                   </span>
                 )}
@@ -186,7 +197,7 @@ function AdminPage() {
             </div>
           ))}
           {profiles.length === 0 && (
-            <div className="text-center py-12 bg-white rounded-[2rem] border border-dashed border-slate-200">
+            <div className="text-center py-12 bg-white rounded-[24px] border border-dashed border-slate-200">
               <p className="text-slate-400 font-medium">No hay vecinos registrados aún</p>
             </div>
           )}

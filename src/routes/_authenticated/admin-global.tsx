@@ -182,39 +182,62 @@ function GlobalAdminPage() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Panel Global</h1>
-        <p className="text-slate-500 font-medium">Configuración maestra de la plataforma</p>
+      <div className="space-y-1 px-1">
+        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Panel Global</h1>
+        <p className="text-slate-500 font-medium">Configuración y auditoría</p>
       </div>
 
-      <div className="flex p-1 bg-gray-200 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
+      {activeTab === "resumen" && financialStats && (
+        <section className="space-y-6 animate-in fade-in duration-300">
+          <div className="bg-black text-white p-8 rounded-[28px] shadow-2xl shadow-black/20 space-y-2 relative overflow-hidden">
+            <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-accent/10 rounded-full blur-3xl" />
+            <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px] relative z-10">Total cobrado este mes</p>
+            <h2 className="text-5xl font-black tracking-tight relative z-10">${financialStats[0]?.total.toLocaleString('es-AR') || 0}</h2>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider relative z-10">
+              Disponible: ${financialStats[0]?.profit.toLocaleString('es-AR') || 0}
+            </div>
+
+            <div className="flex gap-4 mt-8 relative z-10">
+              {[
+                { label: "Pagos", icon: FileText, id: "pagos" },
+                { label: "Liquids", icon: Landmark, id: "liquidaciones" },
+                { label: "Edificios", icon: Building2, id: "edificios" },
+                { label: "Config", icon: Settings, id: "config" }
+              ].map((action) => (
+                <button 
+                  key={action.id}
+                  onClick={() => setActiveTab(action.id as any)}
+                  className="flex flex-col items-center gap-2 transition-transform active:scale-95"
+                >
+                  <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+                    <action.icon size={20} />
+                  </div>
+                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">{action.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Tabs */}
+      <div className="flex p-1.5 bg-slate-100 rounded-[22px] overflow-x-auto no-scrollbar">
         {[
-          { id: "config", label: "Configuración", icon: Settings },
-          { id: "edificios", label: "Edificios", icon: Building2 },
-          { id: "vecinos", label: "Vecinos", icon: Users },
-          { id: "pagos", label: "Pagos", icon: FileText },
-          { id: "liquidaciones", label: "Liquidaciones", icon: Landmark },
-          { id: "resumen", label: "Resumen", icon: DollarSign }
+          { id: "resumen", label: "Resumen" },
+          { id: "pagos", label: "Pagos" },
+          { id: "liquidaciones", label: "Liquids" },
+          { id: "edificios", label: "Edificios" },
+          { id: "vecinos", label: "Vecinos" },
+          { id: "config", label: "Config" }
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex-1 min-w-fit px-4 py-3 flex items-center justify-center gap-2 text-[10px] font-black uppercase rounded-xl transition-all whitespace-nowrap ${
-              activeTab === tab.id ? "bg-white text-black shadow-sm" : "text-gray-500"
+            className={`flex-1 min-w-fit px-5 py-3 text-[10px] font-black uppercase rounded-[16px] transition-all whitespace-nowrap ${
+              activeTab === tab.id ? "bg-white text-black shadow-sm" : "text-slate-400 hover:text-slate-600"
             }`}
           >
-            <tab.icon size={16} />
             {tab.label}
-            {tab.id === 'pagos' && pendingPayments.length > 0 && (
-              <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                {pendingPayments.length}
-              </span>
-            )}
-            {tab.id === 'liquidaciones' && pendingPayouts.length > 0 && (
-              <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                {pendingPayouts.length}
-              </span>
-            )}
           </button>
         ))}
       </div>
@@ -312,118 +335,125 @@ function GlobalAdminPage() {
         </button>
       </form>
       ) : activeTab === "pagos" ? (
-        <div className="space-y-6 animate-in fade-in duration-300">
-          {pendingPayments.length === 0 ? (
-            <EmptyState title="Todo al día" description="No hay comprobantes pendientes de revisión." />
-          ) : (
-            pendingPayments.map((payment) => (
-              <div key={payment.id} className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 space-y-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-black text-lg text-slate-900">{payment.booking?.renter?.full_name}</h4>
-                    <p className="text-sm font-medium text-slate-500">
-                      Reserva en {payment.booking?.spot?.identifier} • ${Number(payment.amount).toLocaleString('es-AR')}
-                    </p>
-                  </div>
-                  <a 
-                    href={supabase.storage.from('payment-receipts').getPublicUrl(payment.receipt_url).data.publicUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-3 bg-slate-50 rounded-xl text-black hover:bg-slate-100 transition-colors"
-                    title="Ver comprobante"
-                  >
-                    <ExternalLink size={20} />
-                  </a>
+        <div className="space-y-3 animate-in fade-in duration-300">
+          {pendingPayments.map((payment) => (
+            <div key={payment.id} className="bg-white p-5 rounded-[24px] shadow-soft border border-slate-50 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold overflow-hidden">
+                  {payment.booking?.renter?.full_name?.charAt(0)}
                 </div>
-                
-                <div className="flex gap-3">
-                  <Button 
-                    onClick={() => handleReviewPayment(payment.id, 'aprobado')}
-                    className="flex-1 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold h-12 flex items-center justify-center gap-2 shadow-lg shadow-green-500/20"
-                  >
-                    <Check size={18} /> Aprobar
-                  </Button>
-                  <Button 
-                    onClick={() => {
-                      const reason = window.prompt("Motivo del rechazo:");
-                      if (reason) handleReviewPayment(payment.id, 'rechazado', reason);
-                    }}
-                    variant="ghost" 
-                    className="flex-1 text-red-500 hover:bg-red-50 rounded-2xl font-bold h-12 flex items-center justify-center gap-2"
-                  >
-                    <X size={18} /> Rechazar
-                  </Button>
+                <div>
+                  <h4 className="font-bold text-slate-900 leading-none mb-1">{payment.booking?.renter?.full_name}</h4>
+                  <div className="flex items-center gap-2">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${Number(payment.amount).toLocaleString('es-AR')}</p>
+                    <span className="w-1 h-1 bg-slate-300 rounded-full" />
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">REVISIÓN</p>
+                  </div>
                 </div>
               </div>
-            ))
+              <div className="flex gap-2 shrink-0">
+                <button 
+                  onClick={() => handleReviewPayment(payment.id, 'aprobado')} 
+                  className="px-5 py-2.5 bg-accent text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg shadow-accent/20 active:scale-95 transition-all"
+                >
+                  Aprobar
+                </button>
+                <button 
+                  onClick={() => {
+                    const reason = window.prompt("Motivo del rechazo:");
+                    if (reason) handleReviewPayment(payment.id, 'rechazado', reason);
+                  }} 
+                  className="px-5 py-2.5 border border-red-200 text-red-500 rounded-full text-[10px] font-black uppercase tracking-wider active:scale-95 transition-all"
+                >
+                  Rechazar
+                </button>
+              </div>
+            </div>
+          ))}
+          {pendingPayments.length === 0 && (
+            <div className="text-center py-12 bg-white rounded-[24px] border border-dashed border-slate-200">
+              <p className="text-slate-400 font-medium">No hay comprobantes pendientes</p>
+            </div>
+          )}
+        </div>
+      ) : activeTab === "liquidaciones" ? (
+        <div className="space-y-3 animate-in fade-in duration-300">
+          {pendingPayouts.map((payout) => (
+            <div key={payout.id} className="bg-white p-5 rounded-[24px] shadow-soft border border-slate-50 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold overflow-hidden">
+                  {payout.owner?.full_name?.charAt(0)}
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 leading-none mb-1">{payout.owner?.full_name}</h4>
+                  <div className="flex items-center gap-2">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${Number(payout.amount).toLocaleString('es-AR')}</p>
+                    <span className="w-1 h-1 bg-slate-300 rounded-full" />
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">PENDIENTE</p>
+                  </div>
+                </div>
+              </div>
+              <button 
+                onClick={() => handleReviewPayout(payout.id, 'pagado')} 
+                className="px-5 py-2.5 bg-black text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg shadow-black/10 active:scale-95 transition-all shrink-0"
+              >
+                Marcar Pagado
+              </button>
+            </div>
+          ))}
+          {pendingPayouts.length === 0 && (
+            <div className="text-center py-12 bg-white rounded-[24px] border border-dashed border-slate-200">
+              <p className="text-slate-400 font-medium">No hay liquidaciones pendientes</p>
+            </div>
           )}
         </div>
       ) : activeTab === "resumen" ? (
         <div className="space-y-6 animate-in fade-in duration-300">
-          {(!financialStats || financialStats.length === 0) ? (
-            <EmptyState title="Sin datos" description="Aún no hay reservas confirmadas para mostrar estadísticas." />
-          ) : (
-            financialStats.map((stat: any) => (
-              <div key={stat.month} className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 space-y-6">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-black text-xl text-slate-900 capitalize">
-                    {format(new Date(stat.month + '-02'), 'MMMM yyyy', { locale: es })}
-                  </h4>
-                  <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
-                    Profit: ${stat.profit.toLocaleString('es-AR')}
-                  </div>
+          {financialStats.map((stat: any) => (
+            <div key={stat.month} className="bg-white p-6 rounded-[24px] shadow-soft border border-slate-50 space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="font-bold text-slate-900 capitalize text-lg">{format(new Date(stat.month + '-02'), 'MMMM yyyy', { locale: es })}</h4>
+                <div className="px-3 py-1 tint-positive rounded-full text-[10px] font-black uppercase tracking-wider">Profit: ${stat.profit.toLocaleString('es-AR')}</div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-50 p-4 rounded-[18px] space-y-1">
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Recaudado</p>
+                  <p className="font-black text-lg text-slate-900">${stat.total.toLocaleString('es-AR')}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-slate-50 p-5 rounded-[1.5rem] space-y-1">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cobrado Vecinos</p>
-                    <p className="font-black text-xl text-slate-900">${stat.total.toLocaleString('es-AR')}</p>
-                  </div>
-                  <div className="bg-slate-50 p-5 rounded-[1.5rem] space-y-1">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Dueños</p>
-                    <p className="font-black text-xl text-slate-900">${stat.owner_sum.toLocaleString('es-AR')}</p>
-                  </div>
+                <div className="bg-slate-50 p-4 rounded-[18px] space-y-1">
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Liquidado</p>
+                  <p className="font-black text-lg text-slate-900">${stat.owner_sum.toLocaleString('es-AR')}</p>
                 </div>
               </div>
-            ))
+            </div>
+          ))}
+          {(!financialStats || financialStats.length === 0) && (
+            <div className="text-center py-12 bg-white rounded-[24px] border border-dashed border-slate-200">
+              <p className="text-slate-400 font-medium">Sin estadísticas disponibles</p>
+            </div>
           )}
         </div>
       ) : activeTab === "vecinos" ? (
-        <div className="space-y-6 animate-in fade-in duration-300">
+        <div className="space-y-4 animate-in fade-in duration-300">
           <div className="flex justify-between items-center px-1">
-            <h2 className="text-xl font-black text-slate-900">Auditoría de Vecinos</h2>
-            <span className="text-xs font-bold bg-slate-200 text-slate-600 px-3 py-1 rounded-full">
-              {globalNeighbors.length} total
-            </span>
+            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Auditoría de Vecinos ({globalNeighbors.length})</h2>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {globalNeighbors.map((n) => (
-              <div key={n.id} className="bg-white p-5 rounded-[2rem] shadow-soft border border-white flex items-center gap-4">
-                <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 shrink-0">
-                  <User size={24} />
+              <div key={n.id} className="bg-white p-5 rounded-[24px] shadow-soft border border-slate-50 flex items-center gap-4 group">
+                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 shrink-0 overflow-hidden">
+                  {n.avatar_url ? <img src={n.avatar_url} className="w-full h-full object-cover" /> : <User size={20} />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-black text-slate-900 truncate">{n.full_name}</h4>
+                  <h4 className="font-bold text-slate-900 truncate leading-none mb-1">{n.full_name}</h4>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
-                    {n.building?.name} • Piso {n.unit?.floor} - {n.unit?.apartment}
+                    {n.building?.name} • {n.unit?.floor}-{n.unit?.apartment}
                   </p>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={async () => {
-                    const { data } = await supabase
-                      .from("user_agreements" as any)
-                      .select("*")
-                      .eq("user_id", n.id)
-                      .order("accepted_at", { ascending: false });
-                    setSelectedNeighborAgreements(data || []);
-                    setShowAgreementsModal(true);
-                  }}
-                  className="text-primary font-black text-[10px] uppercase tracking-wider"
-                >
-                  Acuerdos
-                </Button>
+                <span className="px-3 py-1 bg-slate-50 text-[9px] font-black text-slate-500 uppercase rounded-full tracking-wider group-hover:bg-black group-hover:text-white transition-all cursor-default">
+                  {n.role}
+                </span>
               </div>
             ))}
           </div>
