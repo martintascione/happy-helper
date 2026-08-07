@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { InfoBanner } from "@/components/InfoBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -23,10 +23,12 @@ import {
   History,
   TrendingUp,
   DollarSign,
-  ShieldCheck
+  ShieldCheck,
+  Circle,
+  User
 } from "lucide-react";
 import { AgreementModal } from "@/components/AgreementModal";
-import { format, isAfter, isBefore, startOfDay, addDays, differenceInDays } from "date-fns";
+import { format, isAfter, isBefore, startOfDay, addDays, differenceInDays, isSameDay, getDay } from "date-fns";
 import { es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,6 +57,7 @@ function CocherasPage() {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [platformSettings, setPlatformSettings] = useState<any>(null);
   const [payoutAccount, setPayoutAccount] = useState<any>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
 
   useEffect(() => {
     fetchData();
@@ -126,6 +129,17 @@ function CocherasPage() {
     setLoading(false);
   }
 
+  const nextBooking = useMemo(() => {
+    return myBookings
+      .filter(b => b.status === 'confirmada' && isAfter(new Date(b.end_date), new Date()))
+      .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())[0];
+  }, [myBookings]);
+
+  const weekDays = useMemo(() => {
+    const today = startOfDay(new Date());
+    return Array.from({ length: 30 }, (_, i) => addDays(today, i));
+  }, []);
+
   return (
     <div className="pb-24 pt-4 px-4 min-h-screen bg-background">
       <header className="px-1 space-y-1 mb-8">
@@ -133,7 +147,62 @@ function CocherasPage() {
         <p className="text-slate-400 font-medium">Alquilá o publicá tu lugar</p>
       </header>
 
-      <div className="flex p-1 bg-gray-200 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
+      {/* Featured Next Booking */}
+      {nextBooking && (
+        <div className="mb-8 p-6 rounded-[24px] bg-gradient-to-br from-green-500/10 via-green-500/5 to-transparent border border-green-500/20 shadow-sm relative overflow-hidden">
+          <div className="relative z-10 flex justify-between items-start">
+            <div className="space-y-1">
+              <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Próxima Reserva</span>
+              <h3 className="text-xl font-bold text-slate-900">{nextBooking.spot?.identifier}</h3>
+              <p className="text-sm font-medium text-slate-500">
+                {format(new Date(nextBooking.start_date), "d 'de' MMMM", { locale: es })}
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+              <Car className="text-green-500" size={24} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Date Selector */}
+      <div className="mb-8 -mx-4">
+        <div className="flex gap-4 overflow-x-auto px-4 pb-2 no-scrollbar">
+          {weekDays.map((date) => {
+            const isSelected = isSameDay(date, selectedDate);
+            const isToday = isSameDay(date, new Date());
+            
+            // Check availability for this specific day
+            const hasAvailability = availableSpots.some(spot => 
+              spot.parking_availability?.some((av: any) => {
+                const start = startOfDay(new Date(av.start_date));
+                const end = startOfDay(new Date(av.end_date));
+                return !isBefore(date, start) && !isAfter(date, end);
+              })
+            );
+
+            return (
+              <button
+                key={date.toISOString()}
+                onClick={() => setSelectedDate(date)}
+                className={`flex flex-col items-center justify-center min-w-[50px] h-[70px] rounded-full transition-all relative ${
+                  isSelected ? "bg-black text-white shadow-xl" : "bg-white text-slate-400 border border-slate-100"
+                }`}
+              >
+                <span className={`text-[10px] font-bold uppercase ${isSelected ? "text-slate-400" : "text-slate-300"}`}>
+                  {format(date, "EEE", { locale: es }).substring(0, 1)}
+                </span>
+                <span className="text-lg font-bold">{format(date, "d")}</span>
+                {hasAvailability && !isSelected && (
+                  <div className="absolute bottom-2 w-1.5 h-1.5 bg-green-500 rounded-full" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="flex gap-2 mb-8 overflow-x-auto no-scrollbar">
         {[
           { id: "disponibles", label: "Disponibles" },
           { id: "mis-reservas", label: "Mis Reservas" },
@@ -143,8 +212,8 @@ function CocherasPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex-1 min-w-fit px-4 py-3 text-[10px] font-black uppercase rounded-xl transition-all whitespace-nowrap ${
-              activeTab === tab.id ? "bg-white text-black shadow-sm" : "text-gray-500"
+            className={`px-6 py-3 text-[10px] font-black uppercase rounded-full transition-all whitespace-nowrap ${
+              activeTab === tab.id ? "bg-black text-white shadow-lg" : "bg-slate-100 text-slate-400 hover:bg-slate-200"
             }`}
           >
             {tab.label}
@@ -232,7 +301,7 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {spots.map((spot) => {
         const ownerPrice = spot.owner_price_per_day;
         const margin = settings?.margin_type === 'porcentaje' 
@@ -241,30 +310,45 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
         const finalPrice = ownerPrice + margin;
 
         return (
-          <div key={spot.id} className="bg-white rounded-[2rem] p-5 shadow-soft border border-white">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h4 className="font-black text-lg leading-tight">{spot.identifier}</h4>
-                <p className="text-gray-500 text-sm font-medium">De {spot.owner?.full_name}</p>
+          <div key={spot.id} className="bg-white rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white/50 space-y-6">
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <h4 className="font-bold text-xl text-slate-900">{spot.identifier}</h4>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
+                    {spot.owner?.avatar_url ? (
+                      <img src={spot.owner.avatar_url} className="w-full h-full object-cover" />
+                    ) : (
+                      <User size={12} className="text-slate-400" />
+                    )}
+                  </div>
+                  <p className="text-slate-400 text-xs font-medium">{spot.owner?.full_name}</p>
+                </div>
               </div>
-              <div className="tint-positive px-3 py-1 rounded-full text-xs font-black">
-                ${Number(finalPrice).toLocaleString('es-AR')} / día
+              <div className="tint-positive px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                Disponible
               </div>
             </div>
+
+            <div className="flex items-end gap-1">
+              <span className="text-3xl font-bold text-slate-900">${Number(finalPrice).toLocaleString('es-AR')}</span>
+              <span className="text-slate-400 text-sm font-medium mb-1.5">/ día</span>
+            </div>
+
             <Button 
               onClick={() => setSelectedSpot({...spot, finalPricePerDay: finalPrice})}
-              className="w-full bg-black hover:bg-zinc-800 text-white rounded-2xl font-black h-12"
+              className="w-full bg-black hover:bg-zinc-800 text-white rounded-[20px] font-bold h-14 active:scale-[0.98] transition-all"
             >
-              Ver detalles y reservar
+              Ver disponibilidad
             </Button>
           </div>
         );
       })}
 
       <Dialog open={!!selectedSpot} onOpenChange={() => setSelectedSpot(null)}>
-        <DialogContent className="rounded-[2.5rem] border-none sm:max-w-[425px]">
+        <DialogContent className="rounded-[28px] border-none sm:max-w-[425px] p-8">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-black">{selectedSpot?.identifier}</DialogTitle>
+            <DialogTitle className="text-3xl font-bold tracking-tight">{selectedSpot?.identifier}</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <div className="bg-gray-50 rounded-2xl p-4 mb-4">
@@ -285,8 +369,8 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
             )}
           </div>
           <DialogFooter>
-            <Button onClick={() => setShowBookingAgreement(true)} className="w-full bg-black text-white h-14 rounded-2xl font-black">
-              Solicitar reserva
+            <Button onClick={() => setShowBookingAgreement(true)} className="w-full bg-black text-white h-16 rounded-[20px] font-bold text-lg shadow-xl shadow-black/10 active:scale-95 transition-all">
+              Confirmar Reserva
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -412,18 +496,21 @@ function MyBookingsList({ bookings, onRefresh, settings }: { bookings: any[], on
           const isPendingPayment = booking.status === 'solicitada' && (!payment || payment.status === 'rechazado' || payment.status === 'pendiente');
 
           return (
-            <div key={booking.id} className="bg-white rounded-[2rem] p-5 shadow-soft border border-white space-y-4">
+            <div key={booking.id} className="bg-white rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white/50 space-y-6">
               <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="font-black text-lg">{booking.spot?.identifier}</h4>
-                  <p className="text-gray-500 text-sm font-medium">De {booking.spot?.owner?.full_name}</p>
+                <div className="space-y-1">
+                  <h4 className="font-bold text-xl text-slate-900">{booking.spot?.identifier}</h4>
+                  <p className="text-slate-400 text-xs font-medium">De {booking.spot?.owner?.full_name}</p>
                 </div>
-                <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
-                  booking.status === 'confirmada' ? 'bg-green-100 text-green-700' : 
-                  booking.status === 'solicitada' ? 'bg-blue-100 text-blue-700' :
-                  booking.status === 'cancelada' ? 'bg-red-100 text-red-700' : 'bg-gray-100'
+                <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                  booking.status === 'confirmada' ? 'tint-positive' : 
+                  booking.status === 'solicitada' ? 'tint-warning' :
+                  booking.status === 'en_curso' ? 'tint-info' :
+                  booking.status === 'finalizada' ? 'bg-slate-100 text-slate-400' :
+                  booking.status === 'cancelada' ? 'tint-error' : 'bg-slate-50 text-slate-300'
                 }`}>
-                  {booking.status === 'solicitada' && payment?.status === 'en_revision' ? 'En revisión' : booking.status}
+                  {booking.status === 'solicitada' && payment?.status === 'en_revision' ? 'Revisando Pago' : 
+                   booking.status === 'solicitada' ? 'Por Pagar' : booking.status}
                 </div>
               </div>
               

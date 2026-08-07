@@ -94,7 +94,7 @@ export function AgreementModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-6 animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-[440px] rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+      <div className="bg-white w-full max-w-[440px] rounded-[28px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
         <div className="p-8 md:p-10 space-y-8">
           <div className="flex flex-col items-center text-center gap-4">
             <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-400">
@@ -132,7 +132,7 @@ export function AgreementModal({
                   type="checkbox"
                   checked={hasAccepted}
                   onChange={(e) => setHasAccepted(e.target.checked)}
-                  className="w-5 h-5 rounded border-slate-300 text-black focus:ring-black/5"
+                  className="w-6 h-6 rounded-full border-2 border-slate-200 text-accent focus:ring-0 appearance-none checked:bg-accent checked:border-accent checked:ring-2 checked:ring-accent/20 cursor-pointer transition-all"
                 />
                 <span className="text-sm font-black text-slate-900 uppercase tracking-wider">Leí y acepto los términos</span>
               </label>
