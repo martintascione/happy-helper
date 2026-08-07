@@ -46,7 +46,7 @@ function LoginPage() {
         .maybeSingle();
 
       // If already super_admin and approved, redirect immediately
-      if (profile && profile.role === 'super_admin' && profile.status === 'aprobado') {
+      if (profile && profile.role === 'super_admin' && profile.status === 'aprobado' && profile.building_id && profile.unit_id) {
         navigate({ to: "/_authenticated/muro" });
         return;
       }
@@ -304,6 +304,7 @@ function LoginPage() {
                     <input
                       type="text"
                       value={inviteCode}
+                      autoFocus
                       onChange={(e) => setInviteCode(e.target.value)}
                       placeholder="TORREXXXX"
                       className="w-full p-4 pl-12 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-mono uppercase"
