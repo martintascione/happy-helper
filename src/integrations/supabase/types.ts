@@ -102,6 +102,47 @@ export type Database = {
           },
         ]
       }
+      parking_bookings: {
+        Row: {
+          created_at: string | null
+          end_date: string
+          id: string
+          renter_id: string
+          spot_id: string
+          start_date: string
+          status: string
+          total_price: number
+        }
+        Insert: {
+          created_at?: string | null
+          end_date: string
+          id?: string
+          renter_id: string
+          spot_id: string
+          start_date: string
+          status?: string
+          total_price: number
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          renter_id?: string
+          spot_id?: string
+          start_date?: string
+          status?: string
+          total_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parking_bookings_spot_id_fkey"
+            columns: ["spot_id"]
+            isOneToOne: false
+            referencedRelation: "parking_spots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parking_spots: {
         Row: {
           building_id: string
