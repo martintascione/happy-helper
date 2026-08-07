@@ -332,36 +332,38 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
         const finalPrice = ownerPrice + margin;
 
         return (
-          <div key={spot.id} className="bg-white rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white/50 space-y-6">
+          <div key={spot.id} className="premium-card p-8 space-y-8 bg-white">
             <div className="flex justify-between items-start">
-              <div className="space-y-1">
-                <h4 className="font-bold text-xl text-slate-900">{spot.identifier}</h4>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center overflow-hidden border border-black/[0.03]">
                     {spot.owner?.avatar_url ? (
                       <img src={spot.owner.avatar_url} className="w-full h-full object-cover" />
                     ) : (
-                      <User size={12} className="text-slate-400" />
+                      <User size={18} className="text-muted-foreground/40" />
                     )}
                   </div>
-                  <p className="text-slate-400 text-xs font-medium">{spot.owner?.full_name}</p>
+                  <div>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{spot.owner?.full_name}</p>
+                    <h4 className="font-bold text-2xl text-foreground tracking-tight">{spot.identifier}</h4>
+                  </div>
                 </div>
               </div>
-              <div className="tint-positive px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
-                Disponible
+              <div className="tint-positive px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-accent/10">
+                Libre
               </div>
             </div>
 
-            <div className="flex items-end gap-1">
-              <span className="text-3xl font-bold text-slate-900">${Number(finalPrice).toLocaleString('es-AR')}</span>
-              <span className="text-slate-400 text-sm font-medium mb-1.5">/ día</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-4xl font-bold text-foreground tracking-tight">${Number(finalPrice).toLocaleString('es-AR')}</span>
+              <span className="text-muted-foreground text-sm font-medium">/ día</span>
             </div>
 
             <Button 
               onClick={() => setSelectedSpot({...spot, finalPricePerDay: finalPrice})}
-              className="w-full bg-black hover:bg-zinc-800 text-white rounded-[20px] font-bold h-14 active:scale-[0.98] transition-all"
+              className="w-full bg-primary text-primary-foreground rounded-2xl font-bold h-[64px] active:scale-[0.98] transition-all text-lg shadow-pill"
             >
-              Ver disponibilidad
+              Reservar ahora
             </Button>
           </div>
         );
