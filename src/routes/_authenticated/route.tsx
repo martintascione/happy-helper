@@ -14,6 +14,7 @@ export const Route = createFileRoute("/_authenticated")({
     const isSuperAdminEmail = session?.user?.email?.toLowerCase() === 'tascione32@gmail.com';
 
     if (!session && !isSuperAdminEmail) {
+      console.log("No session and not super admin, redirecting to login");
       throw redirect({
         to: "/login",
         search: {
@@ -38,10 +39,12 @@ export const Route = createFileRoute("/_authenticated")({
       .maybeSingle();
 
     if (!profile) {
+      console.log("No profile found, redirecting to login");
       throw redirect({ to: "/login" });
     }
 
     if (profile.status === "pendiente" && profile.role !== "super_admin") {
+      console.log("Profile pending, redirecting to login");
       throw redirect({ to: "/login" });
     }
 
