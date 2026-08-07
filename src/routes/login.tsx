@@ -11,7 +11,6 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  console.log("LoginPage rendering");
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1); // 1: Auth, 2: Invitation/Profile
   const [isSignUp, setIsSignUp] = useState(false);
@@ -28,58 +27,24 @@ function LoginPage() {
   const [foundBuilding, setFoundBuilding] = useState<any>(null);
 
   useEffect(() => {
-    console.log("LoginPage mounted");
     if (typeof window === 'undefined') return;
-    
+
+    // Limpieza de flags viejos e inseguros
+    localStorage.removeItem('is_super_admin');
+
     let isMounted = true;
 
     const runCheck = async () => {
-      // 1. Check direct localStorage (fastest)
-      const isSuperAdminFlag = localStorage.getItem('is_super_admin') === 'true';
-      const storedSessionStr = localStorage.getItem('sb-ufsowwvgbxfasucpvzkl-auth-token');
-      let isSA = isSuperAdminFlag;
-      
-      if (!isSA && storedSessionStr) {
-        try {
-          const storedSession = JSON.parse(storedSessionStr);
-          if (storedSession?.user?.email?.toLowerCase() === 'tascione32@gmail.com') {
-            isSA = true;
-          }
-        } catch (e) {}
-      }
-
-      if (isSA) {
-        console.log("Super admin identified, navigating to /muro");
-        window.location.replace("/muro");
-        return;
-      }
-
-      // 2. Check current Supabase session
       const { data: { session } } = await supabase.auth.getSession();
       if (!isMounted) return;
-
-      if (session) {
-        const userEmail = session.user.email?.toLowerCase();
-        if (userEmail === 'tascione32@gmail.com') {
-          localStorage.setItem('is_super_admin', 'true');
-          window.location.replace("/muro");
-          return;
-        }
-        checkSession();
-      }
+      if (session) checkSession();
     };
 
     runCheck();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!isMounted) return;
-      
-      if (session?.user?.email?.toLowerCase() === 'tascione32@gmail.com') {
-        localStorage.setItem('is_super_admin', 'true');
-        window.location.replace("/muro");
-      } else if (event === 'SIGNED_IN' && session) {
-        checkSession();
-      }
+      if (event === 'SIGNED_IN' && session) checkSession();
     });
 
     return () => {
@@ -89,32 +54,11 @@ function LoginPage() {
   }, []);
 
   async function checkSession() {
-    console.log("Checking session...");
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
-    if (sessionError) {
-      console.error("Session error:", sessionError);
-      return;
-    }
 
-    if (!session) {
-      console.log("No session found");
-      return;
-    }
+    if (sessionError || !session) return;
 
-    const userEmail = session.user.email?.toLowerCase();
-    console.log("Active session for:", userEmail);
-    const isSuperAdminEmail = userEmail === 'tascione32@gmail.com';
-
-    if (isSuperAdminEmail) {
-      console.log("Super admin detected, bypassing all checks...");
-      // We use a clean replace to avoid history issues or loops
-      // The path /muro is the target, which will match /_authenticated/muro
-      window.location.replace("/muro");
-      return;
-    }
-
-    // Standard user logic continues...
+    // El rol y el estado salen SIEMPRE de la base (protegida por RLS)
     const { data: profile } = await supabase
       .from("profiles")
       .select("status, role")
@@ -123,13 +67,10 @@ function LoginPage() {
     
     if (profile) {
       if (profile.role === "super_admin" || profile.status === "aprobado") {
-        console.log("Profile approved or admin, navigating to muro...");
         navigate({ to: "/muro" });
       } else if (profile.status === "pendiente") {
-        console.log("Profile pending, staying on step 3");
         setStep(3); // Pending screen
       } else {
-        console.log("Profile invalid status, moving to step 2");
         setStep(2);
       }
     } else {
@@ -140,7 +81,6 @@ function LoginPage() {
   const handleAuth = async (e: React.FormEvent) => {
     if (e) e.preventDefault();
     setLoading(true);
-    console.log("handleAuth starting:", { isSignUp, email, fullName });
     
     if (isSignUp) {
       const { data, error } = await supabase.auth.signUp({
@@ -150,7 +90,6 @@ function LoginPage() {
           data: { full_name: fullName }
         }
       });
-      console.log("Signup result:", { data, error });
       if (error) {
         toast.error(error.message);
         setLoading(false);
@@ -161,48 +100,16 @@ function LoginPage() {
         // The onAuthStateChange listener or handleAuth final setLoading will trigger
       }
     } else {
-      console.log("Attempting sign in with password for:", email);
-      // Hard check for super admin password in frontend for preview stability
-      if (email.toLowerCase() === 'tascione32@gmail.com' && password === 'admin123') {
-        console.log("Super admin local match, bypass starting...");
-        localStorage.setItem('is_super_admin', 'true');
-        // Set a small delay before navigation to ensure localStorage is committed and toast shows
-        toast.success("Acceso Super Admin concedido");
-        
-        // Asynchronously try to sign in to Supabase to get a real session
-        supabase.auth.signInWithPassword({ email, password })
-          .then(({ data }) => {
-            console.log("Supabase background auth successful:", !!data.user);
-          })
-          .catch(e => console.error("Optional auth background failed:", e));
-
-        setTimeout(() => {
-          window.location.replace("/muro");
-        }, 500);
-        return;
-      }
-
       try {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        console.log("Login result details:", { 
-          success: !!data?.user, 
-          email: data?.user?.email, 
-          error: error?.message
-        });
-        
+
         if (error) {
-          toast.error(error.message);
+          toast.error("Email o contraseña incorrectos");
           setLoading(false);
         } else if (data?.user) {
-          if (data.user.email?.toLowerCase() === 'tascione32@gmail.com') {
-            localStorage.setItem('is_super_admin', 'true');
-            window.location.replace("/muro");
-            return;
-          }
           await checkSession();
         }
       } catch (err: any) {
-        console.error("Auth exception:", err);
         toast.error("Error inesperado al iniciar sesión");
       }
     }
@@ -218,7 +125,6 @@ function LoginPage() {
 
   const handleRegisterClick = (e: React.FormEvent) => {
     if (e) e.preventDefault();
-    console.log("handleRegisterClick called, isSignUp:", isSignUp);
     if (!isSignUp) {
       handleAuth(e);
       return;
@@ -230,7 +136,6 @@ function LoginPage() {
   const handleCheckInvite = async () => {
     setLoading(true);
     const code = inviteCode.trim().toUpperCase();
-    console.log("Verifying code:", code);
     
     const { data: building, error } = await supabase
       .from("buildings")
@@ -352,11 +257,6 @@ function LoginPage() {
                   className="w-full p-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
                 />
               </div>
-            </div>
-
-            <div className="tint-warning p-4 rounded-[20px] border border-amber-200/20 text-center">
-              <p className="text-[9px] font-black uppercase tracking-widest mb-1">Modo Demo</p>
-              <p className="text-[10px] font-semibold">tascione32@gmail.com / admin123</p>
             </div>
 
             <button
