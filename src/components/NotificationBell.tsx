@@ -18,7 +18,8 @@ export function NotificationBell({ userId }: { userId: string }) {
     fetchNotifications();
 
     // Subscribe to new notifications
-    const channel = supabase.channel(`notifications:${userId}`);
+    const channelId = `notifications:${userId}`;
+    const channel = supabase.channel(channelId);
     
     channel
       .on(
@@ -33,8 +34,10 @@ export function NotificationBell({ userId }: { userId: string }) {
           setNotifications((prev) => [payload.new, ...prev]);
           setUnreadCount((prev) => prev + 1);
         }
-      )
-      .subscribe();
+      );
+
+    // Subscribe only after all callbacks are registered
+    channel.subscribe();
 
     // Close dropdown on outside click
     const handleClickOutside = (event: MouseEvent) => {
