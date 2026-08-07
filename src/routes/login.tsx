@@ -38,7 +38,7 @@ function LoginPage() {
     if (session.user.email === 'tascione32@gmail.com') {
       const { data: profile } = await supabase
         .from("profiles")
-        .select("status, role")
+        .select("status, role, building_id, unit_id")
         .eq("id", session.user.id)
         .maybeSingle();
 
@@ -49,22 +49,24 @@ function LoginPage() {
       }
 
       // Ensure at least one building and unit exist
-      let buildingId = profile?.building_id;
-      let unitId = profile?.unit_id;
+      let bId = profile?.building_id;
+      let uId = profile?.unit_id;
 
-      if (!buildingId || !unitId) {
+      if (!bId || !uId) {
         const { data: building } = await supabase.from('buildings').select('id').limit(1).maybeSingle();
-        const { data: unit } = await supabase.from('units').select('id').eq('building_id', building?.id).limit(1).maybeSingle();
-        buildingId = building?.id;
-        unitId = unit?.id;
+        if (building) {
+          const { data: unit } = await supabase.from('units').select('id').eq('building_id', building.id).limit(1).maybeSingle();
+          bId = building.id;
+          uId = unit?.id;
+        }
       }
       
-      if (buildingId && unitId) {
+      if (bId && uId) {
         const { error: upsertError } = await supabase.from('profiles').upsert({
           id: session.user.id,
           full_name: fullName || (session.user.user_metadata as any)?.['full_name'] || 'Super Admin',
-          building_id: buildingId,
-          unit_id: unitId,
+          building_id: bId,
+          unit_id: uId,
           role: 'super_admin',
           status: 'aprobado'
         });
