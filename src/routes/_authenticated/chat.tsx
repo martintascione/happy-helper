@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MessageCircle, Send, Search, User, Hash, Clock, ArrowLeft } from "lucide-react";
+import { MessageCircle, Send, Search, User, Hash, Clock, ArrowLeft, ShieldAlert } from "lucide-react";
+import { InfoBanner } from "@/components/InfoBanner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -17,6 +18,7 @@ function ChatPage() {
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showSecurityWarning, setShowSecurityWarning] = useState(true);
   const { startDirect } = Route.useSearch() as { startDirect?: string };
   const navigate = useNavigate();
 
@@ -278,7 +280,27 @@ function ChatPage() {
               </p>
             </div>
           </div>
+
+          <button 
+            onClick={() => setShowSecurityWarning(true)}
+            className="ml-auto p-2 bg-slate-50 text-slate-400 rounded-xl hover:text-red-500 transition-colors"
+            title="Seguridad"
+          >
+            <ShieldAlert size={18} />
+          </button>
         </header>
+
+        {/* Security Warning */}
+        {showSecurityWarning && (
+          <div className="px-4 py-2 border-b border-slate-100 bg-white">
+            <InfoBanner 
+              variant="seguridad" 
+              isClosable
+              onClose={() => setShowSecurityWarning(false)}
+              text="Cuidá tu información: no compartas contraseñas, códigos ni datos bancarios por chat. Los pagos y las reservas se hacen siempre dentro de la app — desconfiá de cualquier pedido de pago por fuera." 
+            />
+          </div>
+        )}
 
         {/* Messages List */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">

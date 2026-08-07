@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { InfoBanner } from "@/components/InfoBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { 
@@ -299,6 +300,15 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
         agreementKey="reservar_cochera"
         items={bookingAgreementItems}
       />
+
+      {selectedSpot && (
+        <div className="mt-4">
+          <InfoBanner 
+            variant="info" 
+            text="Comunidad Tower conecta vecinos del mismo edificio. El alquiler a personas que no viven en el edificio está prohibido y puede implicar la baja de la cuenta." 
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -477,7 +487,12 @@ function MyBookingsList({ bookings, onRefresh, settings }: { bookings: any[], on
             </div>
 
             {paymentMethod === 'transferencia' ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
+                <InfoBanner 
+                  variant="seguridad" 
+                  text="Transferí únicamente a la cuenta oficial que ves en esta pantalla. Nadie de Comunidad Tower te va a pedir por chat ni por ningún otro medio que transfieras a otra cuenta. Subir un comprobante adulterado implica la baja de la cuenta." 
+                />
+                
                 <div className="bg-slate-900 text-white p-6 rounded-[2rem] space-y-4">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Datos para transferir</p>
                   <div className="space-y-3">
@@ -710,7 +725,12 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
       <Dialog open={isAddingPayout} onOpenChange={setIsAddingPayout}>
         <DialogContent className="rounded-[2.5rem] border-none">
           <DialogHeader><DialogTitle className="font-black text-2xl">Datos de Cobro</DialogTitle></DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-6 py-4">
+            <InfoBanner 
+              variant="info" 
+              text="Tus datos bancarios se usan únicamente para transferirte tus cobros. Solo los ve la administración de la plataforma: nunca se muestran a otros vecinos." 
+            />
+            <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Titular de la cuenta</label>
               <Input placeholder="Nombre completo" value={payoutForm.holder_name} onChange={(e) => setPayoutForm({...payoutForm, holder_name: e.target.value})} className="rounded-2xl h-12 bg-gray-50 border-none font-bold" />
@@ -723,6 +743,7 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">CBU o Alias</label>
               <Input placeholder="22 dígitos o alias" value={payoutForm.cbu_or_alias} onChange={(e) => setPayoutForm({...payoutForm, cbu_or_alias: e.target.value})} className="rounded-2xl h-12 bg-gray-50 border-none font-bold" />
             </div>
+          </div>
           </div>
           <DialogFooter><Button onClick={handleSavePayout} className="w-full bg-black text-white h-14 rounded-2xl font-black">Guardar datos</Button></DialogFooter>
         </DialogContent>

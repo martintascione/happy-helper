@@ -2,7 +2,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Building2, User, DoorOpen } from "lucide-react";
+import { Building2, User, DoorOpen, Shield, FileText, ChevronRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 export const Route = createFileRoute("/_authenticated/perfil")({
   component: PerfilPage,
@@ -14,6 +17,7 @@ function PerfilPage() {
   const [profile, setProfile] = useState<any>(null);
   const [building, setBuilding] = useState<any>(null);
   const [unit, setUnit] = useState<any>(null);
+  const [agreement, setAgreement] = useState<any>(null);
 
   useEffect(() => {
     fetchProfile();
@@ -29,10 +33,23 @@ function PerfilPage() {
       .eq("id", user.id)
       .single();
 
+
     if (profileData) {
       setProfile(profileData);
       setBuilding(profileData.building);
       setUnit(profileData.unit);
+      
+      // Fetch terms agreement
+      const { data: agreementData } = await supabase
+        .from("user_agreements" as any)
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("agreement_key", "terminos")
+        .order("accepted_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
+      setAgreement(agreementData);
     }
   }
 
@@ -137,6 +154,35 @@ function PerfilPage() {
           {loading ? "Guardando..." : "Guardar cambios"}
         </button>
       </form>
+
+      <div className="space-y-4">
+        <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Legales</h2>
+        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
+          <Link to="/terminos" className="flex items-center justify-between p-5 hover:bg-slate-50 transition-colors border-b border-slate-50">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                <FileText size={20} />
+              </div>
+              <span className="font-bold text-slate-700">Términos y Condiciones</span>
+            </div>
+            <ChevronRight size={18} className="text-slate-300" />
+          </Link>
+          <Link to="/privacidad" className="flex items-center justify-between p-5 hover:bg-slate-50 transition-colors">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                <Shield size={20} />
+              </div>
+              <span className="font-bold text-slate-700">Política de Privacidad</span>
+            </div>
+            <ChevronRight size={18} className="text-slate-300" />
+          </Link>
+        </div>
+        {agreement && (
+          <p className="text-[10px] font-bold text-slate-400 text-center px-4">
+            Aceptaste los términos el {format(new Date(agreement.accepted_at), "d 'de' MMMM 'de' yyyy", { locale: es })}
+          </p>
+        )}
+      </div>
 
       <button
         onClick={handleSignOut}
