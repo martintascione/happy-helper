@@ -11,6 +11,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  console.log("LoginPage rendering");
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1); // 1: Auth, 2: Invitation/Profile
   const [isSignUp, setIsSignUp] = useState(false);
@@ -31,25 +32,50 @@ function LoginPage() {
   }, []);
 
   async function checkSession() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    console.log("Checking session...");
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error("Session error:", sessionError);
+      return;
+    }
+
+    if (!session) {
+      console.log("No session found");
+      return;
+    }
 
     const userEmail = session.user.email?.toLowerCase();
+    console.log("Active session for:", userEmail);
     const isSuperAdminEmail = userEmail === 'tascione32@gmail.com';
+
+    if (isSuperAdminEmail) {
+      console.log("Bypassing for super admin...");
+      // Forcing a hard redirect to bypass any router issues
+      window.location.replace("/muro");
+      return;
+    }
 
     // 1. Proactive check for super admin email
     if (isSuperAdminEmail) {
-      const { data: profile } = await supabase
+      console.log("Super admin detected, checking profile...");
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("status, role, building_id, unit_id")
         .eq("id", session.user.id)
         .maybeSingle();
 
+      if (profileError) {
+        console.error("Profile error for super admin:", profileError);
+      }
+
       // If already super_admin and approved, redirect immediately
       if (profile && profile.role === 'super_admin' && profile.status === 'aprobado' && profile.building_id && profile.unit_id) {
+        console.log("Super admin fully set up, redirecting to muro");
         navigate({ to: "/_authenticated/muro" });
         return;
       }
+      console.log("Super admin profile incomplete, attempting auto-setup...", profile);
 
       // Ensure at least one building and unit exist
       let bId = profile?.building_id;
@@ -65,6 +91,7 @@ function LoginPage() {
       }
       
       if (bId && uId) {
+        console.log("Upserting super admin profile with building/unit:", bId, uId);
         const { error: upsertError } = await supabase.from('profiles').upsert({
           id: session.user.id,
           full_name: fullName || (session.user.user_metadata as any)?.['full_name'] || 'Super Admin',
@@ -75,9 +102,14 @@ function LoginPage() {
         });
         
         if (!upsertError) {
+          console.log("Upsert success, redirecting to muro");
           navigate({ to: "/_authenticated/muro" });
           return;
+        } else {
+          console.error("Upsert error for super admin:", upsertError);
         }
+      } else {
+        console.warn("No building/unit found for super admin auto-setup");
       }
     }
 
@@ -122,10 +154,11 @@ function LoginPage() {
       }
     } else {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      console.log("Login attempt result:", { success: !!data?.user, error: error?.message });
       if (error) {
         toast.error(error.message);
       } else {
-        checkSession();
+        await checkSession();
       }
     }
     setLoading(false);
@@ -149,13 +182,19 @@ function LoginPage() {
 
   const handleCheckInvite = async () => {
     setLoading(true);
+    const code = inviteCode.trim().toUpperCase();
+    console.log("Verifying code:", code);
+    
     const { data: building, error } = await supabase
       .from("buildings")
       .select("*")
-      .eq("invite_code", inviteCode.toUpperCase())
-      .single();
+      .eq("invite_code", code)
+      .maybeSingle();
 
-    if (error || !building) {
+    if (error) {
+      console.error("Supabase error checking invite:", error);
+      toast.error("Error al verificar código");
+    } else if (!building) {
       toast.error("Código de invitación inválido");
     } else {
       setFoundBuilding(building);
