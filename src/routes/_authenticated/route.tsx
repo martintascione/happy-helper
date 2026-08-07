@@ -142,14 +142,14 @@ function AuthenticatedLayout() {
                 key={item.to}
                 to={item.to}
                 preload="intent"
-                className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-5 px-6 py-4 rounded-[1.25rem] font-bold transition-all duration-300 ${
                   isActive 
-                    ? "bg-black text-white shadow-xl shadow-black/10" 
-                    : "text-slate-400 hover:text-slate-900"
+                    ? "bg-primary text-primary-foreground shadow-premium scale-[1.02]" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-black/[0.02]"
                 }`}
               >
-                <item.icon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-                <span className="text-sm">{item.label}</span>
+                <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                <span className="text-[15px] tracking-tight">{item.label}</span>
               </Link>
             );
           })}
