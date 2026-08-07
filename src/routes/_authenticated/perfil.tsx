@@ -1,11 +1,10 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useLocation } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Building2, User, DoorOpen, Shield, FileText, ChevronRight } from "lucide-react";
+import { Building2, User, DoorOpen, Shield, FileText, ChevronRight, Settings } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { Route as AuthRoute } from "./route";
 
 export const Route = createFileRoute("/_authenticated/perfil")({
   component: PerfilPage,
@@ -13,6 +12,7 @@ export const Route = createFileRoute("/_authenticated/perfil")({
 
 function PerfilPage() {
   const navigate = useNavigate();
+  const { userRole, isSuperAdmin } = AuthRoute.useRouteContext();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const [building, setBuilding] = useState<any>(null);
@@ -114,6 +114,20 @@ function PerfilPage() {
           <span className="font-semibold text-slate-900">Mis Pagos</span>
           <ChevronRight size={20} className="text-slate-300" />
         </Link>
+        
+        {isSuperAdmin && (
+          <Link to="/admin-global" className="flex items-center justify-between p-5 hover:bg-slate-50/50 transition-colors border-b border-slate-50 bg-slate-50/30">
+            <div className="flex items-center gap-3">
+              <Shield size={18} className="text-black" />
+              <span className="font-bold text-black tracking-tight">Panel de Control</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Admin</span>
+              <ChevronRight size={18} className="text-slate-300" />
+            </div>
+          </Link>
+        )}
+
         <Link to="/terminos" className="flex items-center justify-between p-5 hover:bg-slate-50/50 transition-colors border-b border-slate-50">
           <span className="font-semibold text-slate-900">Legales</span>
           <ChevronRight size={20} className="text-slate-300" />
