@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Settings, Landmark, Percent, DollarSign, Save, FileText, Check, X, ExternalLink, Plus, Building2, Users, Calendar, Megaphone } from "lucide-react";
+import { Settings, Landmark, Percent, DollarSign, Save, FileText, Check, X, ExternalLink, Plus, Building2, Users, Calendar, Megaphone, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
