@@ -245,9 +245,17 @@ function ChatPage() {
 
   if (loading) {
     return (
-      <div className="p-8 text-center animate-pulse">
-        <div className="w-12 h-12 bg-slate-200 rounded-full mx-auto mb-4" />
-        <p className="text-slate-400 font-bold">Abriendo chats...</p>
+      <div className="p-5 max-w-2xl mx-auto space-y-3 pt-6">
+        <div className="h-8 w-24 bg-white/70 rounded-full animate-pulse mb-6" />
+        {[0, 1, 2].map(i => (
+          <div key={i} className="bg-white/70 rounded-[24px] p-4 flex items-center gap-4 animate-pulse">
+            <div className="w-12 h-12 bg-[#EFEBE4] rounded-full shrink-0" />
+            <div className="flex-1 space-y-2">
+              <div className="h-3.5 w-1/3 bg-[#EFEBE4] rounded-full" />
+              <div className="h-3 w-2/3 bg-[#F4F1EB] rounded-full" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -279,12 +287,12 @@ function ChatPage() {
               </div>
               <div className="flex flex-col">
                 <h3 className="font-bold text-slate-900 leading-none flex items-center gap-2">
-                  {selectedConversation.type === 'general' ? 'Canal General' : selectedConversation.otherMember?.full_name}
+                  {selectedConversation.type === 'general' ? 'Canal general' : selectedConversation.otherMember?.full_name}
                   {selectedConversation.type === 'general' && (
-                    <span className="px-2 py-0.5 bg-slate-100 text-[9px] font-bold text-slate-500 rounded-full uppercase tracking-wider">Edificio</span>
+                    <span className="px-2 py-0.5 bg-slate-100 text-[10px] font-semibold text-slate-500 rounded-full">Edificio</span>
                   )}
                 </h3>
-                <p className="text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-widest">
+                <p className="text-[12px] font-medium text-slate-400 mt-0.5">
                   {selectedConversation.type === 'general' ? 'Toda la comunidad' : 'Chat privado'}
                 </p>
               </div>
@@ -331,15 +339,15 @@ function ChatPage() {
 
             return (
               <div key={msg.id} className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} space-y-2`}>
-                <div className={`max-w-[85%] px-6 py-4 rounded-[1.75rem] ${
+                <div className={`max-w-[80%] px-4 py-3 rounded-[20px] ${
                   isMine 
-                    ? 'bg-primary text-primary-foreground shadow-premium' 
+                    ? 'bg-primary text-primary-foreground' 
                     : 'bg-white text-foreground shadow-subtle border border-black/[0.03]'
                 }`}>
-                  <p className="text-[16px] font-medium leading-relaxed">{msg.body}</p>
+                  <p className="text-[15px] font-medium leading-relaxed">{msg.body}</p>
                 </div>
                 {showTime && (
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-2 opacity-50">
+                  <span className="text-[11px] font-medium text-muted-foreground px-2 opacity-60">
                     {format(new Date(msg.created_at), 'HH:mm')}
                   </span>
                 )}
@@ -375,8 +383,8 @@ function ChatPage() {
   return (
     <div className="p-8 max-w-2xl mx-auto space-y-12 pb-32 overflow-x-hidden">
       <header className="px-1">
-        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Chat</h1>
-        <p className="text-muted-foreground font-medium text-lg">Vecinos Libertador</p>
+        <h1 className="text-[26px] font-bold text-foreground tracking-tight leading-tight">Chat</h1>
+        <p className="text-[15px] text-muted-foreground font-medium">Hablá con tus vecinos</p>
       </header>
 
       {/* Search/New Chat */}
@@ -387,16 +395,16 @@ function ChatPage() {
         <input 
           type="text" 
           placeholder="Buscar conversación..." 
-          className="w-full bg-white border border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium shadow-soft outline-none focus:border-slate-300 transition-all"
+          className="w-full bg-white border-none rounded-full py-4 pl-12 shadow-subtle pr-4 text-sm font-medium shadow-soft outline-none focus:border-slate-300 transition-all"
         />
       </div>
 
       {/* Conversations List */}
       <div className="space-y-6">
-        <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Tus chats</h2>
+        <h2 className="text-[13px] font-semibold text-slate-400 px-1">Tus chats</h2>
         
         {conversations.length === 0 ? (
-          <div className="bg-white p-12 rounded-[2.5rem] border border-white text-center space-y-4 shadow-sm">
+          <div className="bg-white p-10 rounded-[28px] text-center space-y-3 shadow-subtle">
             <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-slate-200">
               <MessageCircle size={32} />
             </div>
@@ -411,7 +419,7 @@ function ChatPage() {
               <button
                 key={conv.id}
                 onClick={() => setSelectedConversation(conv)}
-                className="w-full bg-white p-6 rounded-[2.5rem] hover:bg-black/[0.01] flex items-center gap-5 transition-all text-left group shadow-subtle border border-black/[0.02]"
+                className="w-full bg-white p-4 rounded-[24px] hover:bg-black/[0.01] flex items-center gap-5 transition-all text-left group shadow-subtle border border-black/[0.02]"
               >
                 <div className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 shrink-0 relative overflow-hidden">
                   {conv.type === 'general' ? (
@@ -432,9 +440,9 @@ function ChatPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-baseline mb-1">
                     <h3 className="font-bold text-slate-900 truncate flex items-center gap-2">
-                      {conv.type === 'general' ? 'Canal General' : conv.otherMember?.full_name}
+                      {conv.type === 'general' ? 'Canal general' : conv.otherMember?.full_name}
                       {conv.type === 'general' && (
-                        <span className="px-2 py-0.5 bg-slate-100 text-[8px] font-bold text-slate-400 rounded-full uppercase tracking-wider">Edificio</span>
+                        <span className="px-2 py-0.5 bg-slate-100 text-[10px] font-semibold text-slate-400 rounded-full">Edificio</span>
                       )}
                     </h3>
                     {conv.lastMessage && (

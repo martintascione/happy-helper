@@ -80,63 +80,75 @@ function PerfilPage() {
     setLoading(false);
   };
 
-  if (!profile) return <div className="p-8">Cargando...</div>;
+  if (!profile) {
+    return (
+      <div className="p-5 max-w-sm mx-auto pt-10 space-y-6">
+        <div className="w-24 h-24 bg-white/70 rounded-full mx-auto animate-pulse" />
+        <div className="h-5 w-40 bg-white/70 rounded-full mx-auto animate-pulse" />
+        <div className="h-64 bg-white/70 rounded-[24px] animate-pulse" />
+      </div>
+    );
+  }
 
   return (
-    <div className="p-8 max-w-sm mx-auto space-y-12 pb-32">
-      <header className="px-1 flex flex-col items-center text-center space-y-6 pt-4">
-        <div className="w-32 h-32 bg-white rounded-[2.5rem] flex items-center justify-center relative overflow-hidden border border-black/[0.03] shadow-premium">
+    <div className="p-5 max-w-sm mx-auto space-y-8 pb-36">
+      <header className="px-1 flex flex-col items-center text-center space-y-4 pt-6">
+        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center relative overflow-hidden shadow-subtle">
           {profile.avatar_url ? (
             <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
-            <User size={64} className="text-muted-foreground/30" strokeWidth={1.5} />
+            <User size={44} className="text-slate-300" strokeWidth={1.5} />
           )}
         </div>
-        <div className="space-y-3">
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">{profile.full_name}</h1>
-          <div className="flex flex-col items-center gap-2">
-            <span className="px-4 py-1.5 bg-black/[0.03] text-[11px] font-bold text-muted-foreground rounded-full uppercase tracking-widest border border-black/[0.05]">
+        <div className="space-y-2">
+          <h1 className="text-[24px] font-bold text-foreground tracking-tight">{profile.full_name}</h1>
+          <div className="flex items-center justify-center gap-2">
+            <span className="px-3 py-1 bg-white shadow-subtle text-[12px] font-semibold text-slate-500 rounded-full">
               {building?.name || "Sin edificio"}
             </span>
-            <span className="text-[13px] font-medium text-muted-foreground opacity-70">
-              Unidad {unit?.floor || "-"}{unit?.apartment || "-"}
+            <span className="px-3 py-1 bg-white shadow-subtle text-[12px] font-semibold text-slate-500 rounded-full">
+              Piso {unit?.floor || "-"} · {unit?.apartment || "-"}
             </span>
           </div>
         </div>
       </header>
 
-      <div className="bg-white rounded-[2.5rem] shadow-subtle overflow-hidden border border-black/[0.03]">
-        <Link to="/perfil" className="flex items-center justify-between p-6 hover:bg-black/[0.01] transition-colors border-b border-black/[0.03]">
-          <span className="font-bold text-foreground text-[15px]">Mis Datos</span>
-          <ChevronRight size={18} className="text-muted-foreground opacity-50" />
+      <div className="bg-white rounded-[24px] shadow-subtle overflow-hidden">
+        <Link to="/perfil" className="flex items-center justify-between p-5 hover:bg-black/[0.01] transition-colors border-b border-black/[0.04]">
+          <span className="font-semibold text-foreground text-[15px]">Mis datos</span>
+          <ChevronRight size={18} className="text-slate-300" />
         </Link>
-        <Link to="/cocheras" className="flex items-center justify-between p-6 hover:bg-black/[0.01] transition-colors border-b border-black/[0.03]">
-          <span className="font-bold text-foreground text-[15px]">Mis Pagos</span>
-          <ChevronRight size={18} className="text-muted-foreground opacity-50" />
+        <Link to="/cocheras" className="flex items-center justify-between p-5 hover:bg-black/[0.01] transition-colors border-b border-black/[0.04]">
+          <span className="font-semibold text-foreground text-[15px]">Mis pagos</span>
+          <ChevronRight size={18} className="text-slate-300" />
         </Link>
-        
+
         {isSuperAdmin && (
-          <Link to="/admin-global" className="flex items-center justify-between p-6 hover:bg-black/[0.01] transition-colors border-b border-black/[0.03] bg-black/[0.02]">
-            <div className="flex items-center gap-4">
-              <Shield size={20} className="text-primary" />
-              <span className="font-bold text-primary tracking-tight text-[15px]">Panel de Control</span>
-            </div>
+          <Link to="/admin-global" className="flex items-center justify-between p-5 hover:bg-black/[0.01] transition-colors border-b border-black/[0.04]">
             <div className="flex items-center gap-3">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-50">Superadmin</span>
-              <ChevronRight size={18} className="text-primary opacity-50" />
+              <Shield size={18} className="text-primary" />
+              <span className="font-semibold text-primary tracking-tight text-[15px]">Panel de control</span>
             </div>
+            <ChevronRight size={18} className="text-slate-300" />
           </Link>
         )}
 
-        <Link to="/terminos" className="flex items-center justify-between p-6 hover:bg-black/[0.01] transition-colors border-b border-black/[0.03]">
-          <span className="font-bold text-foreground text-[15px]">Legales</span>
-          <ChevronRight size={18} className="text-muted-foreground opacity-50" />
+        <Link to="/terminos" className="flex items-center justify-between p-5 hover:bg-black/[0.01] transition-colors border-b border-black/[0.04]">
+          <div>
+            <span className="font-semibold text-foreground text-[15px] block">Legales</span>
+            {agreement && (
+              <span className="text-[12px] font-medium text-slate-400">
+                Términos aceptados el {new Date(agreement.accepted_at).toLocaleDateString('es-AR')}
+              </span>
+            )}
+          </div>
+          <ChevronRight size={18} className="text-slate-300" />
         </Link>
         <button
           onClick={handleSignOut}
-          className="w-full flex items-center justify-between p-6 hover:bg-red-50/50 transition-colors text-red-500"
+          className="w-full flex items-center justify-between p-5 hover:bg-red-50/50 transition-colors text-red-500"
         >
-          <span className="font-bold text-[15px]">Cerrar sesión</span>
+          <span className="font-semibold text-[15px]">Cerrar sesión</span>
           <ChevronRight size={18} className="text-red-300" />
         </button>
       </div>
