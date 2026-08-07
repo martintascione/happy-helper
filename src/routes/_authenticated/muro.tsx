@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Calendar, ArrowRight, MessageSquare, Car, AlertTriangle, X, Image as ImageIcon, Send, User, Bell, Heart, Shield } from "lucide-react";
+import { Plus, Calendar, ArrowRight, MessageSquare, Car, AlertTriangle, X, Image as ImageIcon, Send, User, Bell, Heart, Shield, ShieldCheck } from "lucide-react";
 import { InfoBanner } from "@/components/InfoBanner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
@@ -104,31 +104,34 @@ function MuroPage() {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32 bg-background overflow-x-hidden relative">
-      <header className="px-1 space-y-1">
-        <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">Comunidad</h1>
-        <p className="text-slate-400 font-medium">Torre Libertador 1500</p>
+    <div className="p-8 max-w-2xl mx-auto space-y-12 pb-32 bg-background overflow-x-hidden relative">
+      <header className="px-1">
+        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Comunidad</h1>
+        <p className="text-muted-foreground font-medium text-lg">Edificio Libertador</p>
       </header>
 
       {/* Resumen */}
       <div className="space-y-4">
-        <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Tu resumen</h2>
+        <h2 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em] px-1 opacity-60">Tu resumen</h2>
         
         {data.loading ? (
           <div className="h-32 bg-slate-100 rounded-[2rem] animate-pulse" />
         ) : data.bookings.length > 0 ? (
-          <div className="bg-black text-white p-8 rounded-[2.8rem] shadow-card relative overflow-hidden group active:scale-[0.98] transition-all border border-white/10 ring-1 ring-white/5">
-            <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-accent/20 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-1000" />
-            <h3 className="text-[12px] font-black text-accent uppercase mb-5 flex items-center gap-2 tracking-[0.25em]">
-              <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" /> Próxima cochera
-            </h3>
-            <div className="space-y-2 relative z-10">
-              <p className="text-4xl font-black tracking-tighter italic uppercase">{data.bookings[0].spot?.identifier}</p>
-              <div className="flex items-center gap-2 text-white/40">
-                <Calendar size={14} />
-                <p className="text-sm font-bold uppercase tracking-widest">
-                  {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
-                </p>
+          <div className="premium-card p-10 bg-primary text-primary-foreground shadow-premium relative group active:scale-[0.99] transition-all">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-accent/20 rounded-full blur-[90px] group-hover:scale-125 transition-transform duration-1000" />
+            <div className="flex flex-col gap-6 relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 w-fit">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                <span className="text-[10px] font-bold text-white uppercase tracking-[0.15em]">Próxima cochera</span>
+              </div>
+              <div className="space-y-2">
+                <p className="text-4xl font-bold tracking-tight uppercase">{data.bookings[0].spot?.identifier}</p>
+                <div className="flex items-center gap-2 text-white/50">
+                  <Calendar size={16} />
+                  <p className="text-sm font-bold uppercase tracking-widest">
+                    {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -153,55 +156,55 @@ function MuroPage() {
         )}
       </div>
 
-      {/* Quick Access Grid */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-5">
         <button 
           onClick={() => navigate({ to: "/_authenticated/cocheras" } as any)}
-          className="glass-card p-6 rounded-[2.5rem] flex flex-col items-center gap-3 active:scale-95 transition-all border border-white/60"
+          className="premium-card p-8 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
         >
-          <div className="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center shadow-lg">
-            <Car size={24} strokeWidth={2.5} />
+          <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center shadow-inner-glow">
+            <Car size={28} strokeWidth={2.5} className="text-primary" />
           </div>
-          <span className="text-[11px] font-black uppercase tracking-widest text-slate-800">Cocheras</span>
+          <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-foreground">Cocheras</span>
         </button>
         <button 
           onClick={() => navigate({ to: "/_authenticated/chat" } as any)}
-          className="glass-card p-6 rounded-[2.5rem] flex flex-col items-center gap-3 active:scale-95 transition-all border border-white/60"
+          className="premium-card p-8 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
         >
-          <div className="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center shadow-lg">
-            <MessageSquare size={24} strokeWidth={2.5} />
+          <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center shadow-inner-glow">
+            <MessageSquare size={28} strokeWidth={2.5} className="text-primary" />
           </div>
-          <span className="text-[11px] font-black uppercase tracking-widest text-slate-800">Chat</span>
+          <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-foreground">Chat</span>
         </button>
       </div>
 
       {/* Comunicados Oficiales */}
       <div className="space-y-4">
         {data.posts.length > 0 ? data.posts.map((post) => (
-          <div key={post.id} className="tint-insight card-dashed p-8 rounded-[2.8rem] space-y-6 relative overflow-hidden group hover:bg-violet-500/5 transition-all duration-500 shadow-sm hover:shadow-card active:scale-[0.99]">
+          <div key={post.id} className="premium-card p-10 bg-white space-y-8 relative overflow-hidden group shadow-subtle border-black/[0.03]">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-tint-insight/40 rounded-full blur-[60px]" />
             <div className="flex justify-between items-start relative z-10">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-[1.2rem] bg-white shadow-card flex items-center justify-center text-violet-600 ring-1 ring-violet-500/10 group-hover:scale-110 transition-transform duration-500">
-                  <Bell size={22} strokeWidth={2.5} />
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center text-primary shadow-inner-glow">
+                  <Bell size={26} strokeWidth={2.5} />
                 </div>
                 <div>
-                  <span className="text-[12px] font-black text-violet-600 uppercase tracking-[0.2em] block">Comunicado</span>
-                  <span className="text-[10px] font-black text-violet-400/60 uppercase tracking-widest">
+                  <span className="text-[13px] font-bold text-foreground uppercase tracking-[0.2em] block">Comunicado Oficial</span>
+                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
                     {format(new Date(post.created_at), "d MMM", { locale: es })}
                   </span>
                 </div>
               </div>
             </div>
             <div className="space-y-4 relative z-10">
-              <h3 className="font-black text-2xl text-slate-900 tracking-tight leading-[1.1]">{post.title}</h3>
-              <p className="text-[16px] text-slate-700/90 font-medium leading-relaxed">{post.body}</p>
+              <h3 className="font-bold text-3xl text-foreground tracking-tight leading-[1.1]">{post.title}</h3>
+              <p className="text-[17px] text-muted-foreground font-medium leading-relaxed">{post.body}</p>
             </div>
             {post.author && (
-              <div className="flex justify-between items-center pt-4 relative z-10 border-t border-violet-500/10">
-                <p className="text-[11px] font-black text-violet-500/80 uppercase tracking-widest flex items-center gap-2">
-                  <Shield size={12} /> {post.author.full_name}
+              <div className="flex justify-between items-center pt-6 relative z-10 border-t border-black/[0.03]">
+                <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                  <ShieldCheck size={16} className="text-accent" /> {post.author.full_name}
                 </p>
-                <div className="px-3 py-1 bg-violet-500/10 rounded-full text-[9px] font-black uppercase tracking-widest text-violet-600">
+                <div className="px-4 py-1.5 bg-accent/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-accent border border-accent/10">
                   Prioridad
                 </div>
               </div>
@@ -278,8 +281,8 @@ function MuroPage() {
       <div className="fixed bottom-28 right-6 z-[60]">
         <Dialog open={isComposerOpen} onOpenChange={setIsComposerOpen}>
           <DialogTrigger asChild>
-            <button className="w-14 h-14 bg-black text-white rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-transform">
-              <Plus size={28} strokeWidth={2.5} />
+            <button className="w-16 h-16 bg-primary text-primary-foreground rounded-3xl shadow-premium flex items-center justify-center active:scale-90 transition-all border border-white/10">
+              <Plus size={32} strokeWidth={2.5} />
             </button>
           </DialogTrigger>
           <DialogContent className="rounded-t-[28px] rounded-b-none border-none sm:max-w-[425px] p-8 top-auto bottom-0 translate-y-0 duration-300">

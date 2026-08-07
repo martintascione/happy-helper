@@ -94,36 +94,36 @@ function AdminPage() {
   if (loading) return <div className="p-8 font-bold text-slate-400">Cargando administración...</div>;
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32">
-      <header className="px-1 space-y-1">
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Administración</h1>
-        <p className="text-slate-500 font-medium">Gestión de edificio y vecinos</p>
+    <div className="p-8 max-w-2xl mx-auto space-y-12 pb-32">
+      <header className="px-1">
+        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Administración</h1>
+        <p className="text-muted-foreground font-medium text-lg">Gestión de edificio y vecinos</p>
       </header>
 
       {/* Wallet Style Building Card */}
-      <div className="bg-black text-white p-8 rounded-[28px] shadow-2xl shadow-black/20 relative overflow-hidden">
-        <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-accent/10 rounded-full blur-3xl" />
-        <div className="relative z-10 space-y-6">
-          <div className="space-y-1">
-            <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">{building?.name}</p>
-            <h2 className="text-4xl font-black tracking-tighter">{building?.invite_code}</h2>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-wider">
+      <div className="premium-card p-10 bg-primary text-primary-foreground shadow-premium relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-[100px]" />
+        <div className="relative z-10 space-y-8">
+          <div className="space-y-3">
+            <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[11px]">{building?.name}</p>
+            <h2 className="text-6xl font-bold tracking-tight">{building?.invite_code}</h2>
+            <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/10 rounded-full text-[12px] font-bold uppercase tracking-widest border border-white/10">
               Código de Invitación
             </div>
           </div>
           
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-4 pt-4 border-t border-white/10">
             <button 
               onClick={copyInviteCode}
-              className="flex-1 py-3.5 bg-white/10 hover:bg-white/20 rounded-full font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+              className="flex-1 py-4 bg-white/10 hover:bg-white/20 rounded-[1.5rem] font-bold text-[11px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 border border-white/10"
             >
-              <Copy size={14} /> Copiar
+              <Copy size={16} /> Copiar
             </button>
             <button 
               onClick={shareInvite}
-              className="flex-1 py-3.5 bg-accent text-white rounded-full font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/20"
+              className="flex-1 py-4 bg-accent text-white rounded-[1.5rem] font-bold text-[11px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/20"
             >
-              <Share2 size={14} /> Compartir
+              <Share2 size={16} /> Compartir
             </button>
           </div>
         </div>
@@ -163,9 +163,9 @@ function AdminPage() {
 
         <div className="space-y-3">
           {profiles.map((p) => (
-            <div key={p.id} className="bg-white p-5 rounded-[24px] shadow-soft border border-slate-50 flex items-center gap-4">
-              <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 shrink-0 overflow-hidden">
-                {p.avatar_url ? <img src={p.avatar_url} className="w-full h-full object-cover" /> : <User size={20} />}
+            <div key={p.id} className="bg-white p-6 rounded-[2.5rem] shadow-subtle border border-black/[0.03] flex items-center gap-5 group hover:bg-black/[0.01] transition-all">
+              <div className="w-14 h-14 bg-black/[0.03] rounded-2xl flex items-center justify-center text-muted-foreground shrink-0 overflow-hidden border border-black/[0.05]">
+                {p.avatar_url ? <img src={p.avatar_url} className="w-full h-full object-cover" /> : <User size={24} />}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-slate-900 truncate">{p.full_name}</p>

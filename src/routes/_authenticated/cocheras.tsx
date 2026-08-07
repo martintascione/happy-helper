@@ -151,30 +151,31 @@ function CocherasPage() {
   }, []);
 
   return (
-    <div className="pb-24 pt-4 px-4 min-h-screen bg-background">
-      <header className="px-1 space-y-1 mb-8">
-        <h1 className="text-3xl font-semibold text-black tracking-tight">Cocheras</h1>
-        <p className="text-slate-400 font-medium">Alquilá o publicá tu lugar</p>
+    <div className="pb-32 pt-10 px-6 min-h-screen bg-background">
+      <header className="px-1 mb-10">
+        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Cocheras</h1>
+        <p className="text-muted-foreground font-medium text-lg">Marketplace residencial</p>
       </header>
 
       {/* Featured Next Booking */}
       {nextBooking && (
-        <div className="mb-10 p-7 rounded-[2.5rem] bg-black text-white shadow-card relative overflow-hidden group active:scale-[0.98] transition-all border border-white/10">
-          <div className="absolute top-[-40px] right-[-40px] w-48 h-48 bg-accent/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700" />
-          <div className="relative z-10 flex justify-between items-start">
-            <div className="space-y-3">
-              <span className="text-[11px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
-                <Circle className="fill-accent text-accent" size={6} /> Próxima Reserva
-              </span>
+        <div className="mb-12 premium-card p-8 bg-primary text-primary-foreground shadow-premium relative overflow-hidden group active:scale-[0.98] transition-all">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-accent/20 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-1000" />
+          <div className="relative z-10 flex justify-between items-center">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10">
+                <span className="w-1.5 h-1.5 bg-accent rounded-full" />
+                <span className="text-[10px] font-bold text-white uppercase tracking-[0.15em]">Próxima Reserva</span>
+              </div>
               <div className="space-y-1">
-                <h3 className="text-3xl font-black tracking-tight">{nextBooking.spot?.identifier}</h3>
-                <p className="text-sm font-bold text-white/50">
+                <h3 className="text-3xl font-bold tracking-tight">{nextBooking.spot?.identifier}</h3>
+                <p className="text-white/60 font-medium">
                   {format(new Date(nextBooking.start_date), "d 'de' MMMM", { locale: es })}
                 </p>
               </div>
             </div>
-            <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-xl">
-              <Car className="text-accent" size={28} strokeWidth={2.5} />
+            <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-3xl flex items-center justify-center border border-white/20 shadow-inner-glow">
+              <Car className="text-accent" size={32} strokeWidth={2.5} />
             </div>
           </div>
         </div>
@@ -199,10 +200,10 @@ function CocherasPage() {
               <button
                 key={date.toISOString()}
                 onClick={() => setSelectedDate(date)}
-                className={`flex flex-col items-center justify-center min-w-[62px] h-[82px] rounded-full transition-all duration-500 relative ring-1 ${
+                className={`flex flex-col items-center justify-center min-w-[64px] h-[86px] rounded-[2rem] transition-all duration-300 relative border ${
                   isSelected 
-                    ? "bg-black text-white shadow-card ring-black scale-110 z-10" 
-                    : "bg-white text-slate-400 ring-slate-100 hover:ring-slate-300"
+                    ? "bg-primary text-primary-foreground shadow-premium border-primary scale-105 z-10" 
+                    : "bg-white text-muted-foreground border-black/[0.03] hover:border-black/10"
                 }`}
               >
                 <span className={`text-[11px] font-black uppercase tracking-tighter mb-1 ${isSelected ? "text-white/40" : "text-slate-300"}`}>
@@ -231,10 +232,10 @@ function CocherasPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-1 py-3 text-[9px] font-black uppercase rounded-2xl transition-all text-center border ${
+            className={`px-1 py-3 text-[10px] font-bold uppercase tracking-wider rounded-2xl transition-all text-center border ${
               activeTab === tab.id 
-                ? "bg-black text-white shadow-lg border-black" 
-                : "bg-white text-slate-400 border-slate-100"
+                ? "bg-primary text-primary-foreground shadow-pill border-primary" 
+                : "bg-white text-muted-foreground border-black/[0.03]"
             }`}
           >
             {tab.label}
@@ -331,36 +332,38 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
         const finalPrice = ownerPrice + margin;
 
         return (
-          <div key={spot.id} className="bg-white rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white/50 space-y-6">
+          <div key={spot.id} className="premium-card p-8 space-y-8 bg-white">
             <div className="flex justify-between items-start">
-              <div className="space-y-1">
-                <h4 className="font-bold text-xl text-slate-900">{spot.identifier}</h4>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center overflow-hidden border border-black/[0.03]">
                     {spot.owner?.avatar_url ? (
                       <img src={spot.owner.avatar_url} className="w-full h-full object-cover" />
                     ) : (
-                      <User size={12} className="text-slate-400" />
+                      <User size={18} className="text-muted-foreground/40" />
                     )}
                   </div>
-                  <p className="text-slate-400 text-xs font-medium">{spot.owner?.full_name}</p>
+                  <div>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{spot.owner?.full_name}</p>
+                    <h4 className="font-bold text-2xl text-foreground tracking-tight">{spot.identifier}</h4>
+                  </div>
                 </div>
               </div>
-              <div className="tint-positive px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
-                Disponible
+              <div className="tint-positive px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-accent/10">
+                Libre
               </div>
             </div>
 
-            <div className="flex items-end gap-1">
-              <span className="text-3xl font-bold text-slate-900">${Number(finalPrice).toLocaleString('es-AR')}</span>
-              <span className="text-slate-400 text-sm font-medium mb-1.5">/ día</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-4xl font-bold text-foreground tracking-tight">${Number(finalPrice).toLocaleString('es-AR')}</span>
+              <span className="text-muted-foreground text-sm font-medium">/ día</span>
             </div>
 
             <Button 
               onClick={() => setSelectedSpot({...spot, finalPricePerDay: finalPrice})}
-              className="w-full bg-black hover:bg-zinc-800 text-white rounded-[20px] font-bold h-14 active:scale-[0.98] transition-all"
+              className="w-full bg-primary text-primary-foreground rounded-2xl font-bold h-[64px] active:scale-[0.98] transition-all text-lg shadow-pill"
             >
-              Ver disponibilidad
+              Reservar ahora
             </Button>
           </div>
         );

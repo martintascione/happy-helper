@@ -120,18 +120,17 @@ function AuthenticatedLayout() {
   }, [filteredNavItems]);
 
   return (
-    <div className="flex min-h-screen bg-[#F7F5F1] text-foreground font-sans overflow-x-hidden relative">
+    <div className="flex min-h-screen bg-background text-foreground overflow-x-hidden relative">
       {/* Sidebar for Desktop */}
-      <aside className="hidden lg:flex flex-col w-64 bg-[#F7F5F1] p-8 gap-8 border-r border-slate-200/50">
+      <aside className="hidden lg:flex flex-col w-72 bg-background p-10 gap-10 border-r border-black/[0.03]">
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center shadow-xl shadow-black/10">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-premium">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
               </svg>
             </div>
-            <span className="font-extrabold text-slate-900 tracking-tight text-xl">Tower</span>
+            <span className="font-bold text-foreground tracking-tight text-2xl">Tower</span>
           </div>
         </div>
         
@@ -143,14 +142,14 @@ function AuthenticatedLayout() {
                 key={item.to}
                 to={item.to}
                 preload="intent"
-                className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-5 px-6 py-4 rounded-[1.25rem] font-bold transition-all duration-300 ${
                   isActive 
-                    ? "bg-black text-white shadow-xl shadow-black/10" 
-                    : "text-slate-400 hover:text-slate-900"
+                    ? "bg-primary text-primary-foreground shadow-premium scale-[1.02]" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-black/[0.02]"
                 }`}
               >
-                <item.icon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-                <span className="text-sm">{item.label}</span>
+                <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                <span className="text-[15px] tracking-tight">{item.label}</span>
               </Link>
             );
           })}
@@ -165,9 +164,8 @@ function AuthenticatedLayout() {
           <Outlet />
         </div>
 
-        {/* Floating Pill Navigation for Mobile */}
-        <div className="lg:hidden fixed bottom-10 left-0 right-0 px-8 z-[100]">
-          <nav className="h-16 glass-card rounded-full shadow-pill flex items-center justify-around px-3 relative border border-white/60 ring-1 ring-black/5 touch-none">
+        <div className="lg:hidden fixed bottom-12 left-0 right-0 px-10 z-[100]">
+          <nav className="h-[76px] glass rounded-[2.5rem] shadow-pill flex items-center justify-around px-4 relative border border-black/[0.03] ring-1 ring-black/[0.02] touch-none">
             {mobileNavItems.map((item) => {
               const isActive = location.pathname === item.to;
               return (
@@ -175,11 +173,11 @@ function AuthenticatedLayout() {
                   key={item.to}
                   to={item.to}
                   preload="intent"
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 ${
-                    isActive ? "bg-black text-white shadow-lg scale-110" : "text-slate-400 hover:text-slate-600"
+                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 ${
+                    isActive ? "bg-primary text-primary-foreground shadow-premium scale-110" : "text-muted-foreground/60 hover:text-foreground"
                   }`}
                 >
-                  <item.icon size={24} strokeWidth={2} />
+                  <item.icon size={26} strokeWidth={2.5} />
                 </Link>
               );
             })}

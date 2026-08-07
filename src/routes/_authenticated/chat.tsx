@@ -330,16 +330,16 @@ function ChatPage() {
               new Date(messages[idx+1].created_at).getTime() - new Date(msg.created_at).getTime() > 300000;
 
             return (
-              <div key={msg.id} className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} space-y-1`}>
-                <div className={`max-w-[85%] px-5 py-3.5 rounded-[22px] ${
+              <div key={msg.id} className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} space-y-2`}>
+                <div className={`max-w-[85%] px-6 py-4 rounded-[1.75rem] ${
                   isMine 
-                    ? 'bg-black text-white shadow-xl shadow-black/5' 
-                    : 'bg-white text-slate-900 shadow-[0_4px_15px_rgba(0,0,0,0.04)] border border-slate-50'
+                    ? 'bg-primary text-primary-foreground shadow-premium' 
+                    : 'bg-white text-foreground shadow-subtle border border-black/[0.03]'
                 }`}>
-                  <p className="text-[15px] font-medium leading-relaxed">{msg.body}</p>
+                  <p className="text-[16px] font-medium leading-relaxed">{msg.body}</p>
                 </div>
                 {showTime && (
-                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-tighter px-2">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-2 opacity-50">
                     {format(new Date(msg.created_at), 'HH:mm')}
                   </span>
                 )}
@@ -373,10 +373,10 @@ function ChatPage() {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32 overflow-x-hidden">
-      <header className="px-1 space-y-1">
-        <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">Chat</h1>
-        <p className="text-slate-400 font-medium">Conversá con tus vecinos</p>
+    <div className="p-8 max-w-2xl mx-auto space-y-12 pb-32 overflow-x-hidden">
+      <header className="px-1">
+        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Chat</h1>
+        <p className="text-muted-foreground font-medium text-lg">Vecinos Libertador</p>
       </header>
 
       {/* Search/New Chat */}
@@ -411,7 +411,7 @@ function ChatPage() {
               <button
                 key={conv.id}
                 onClick={() => setSelectedConversation(conv)}
-                className="w-full bg-white p-5 rounded-[24px] hover:bg-slate-50 flex items-center gap-4 transition-all text-left group"
+                className="w-full bg-white p-6 rounded-[2.5rem] hover:bg-black/[0.01] flex items-center gap-5 transition-all text-left group shadow-subtle border border-black/[0.02]"
               >
                 <div className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 shrink-0 relative overflow-hidden">
                   {conv.type === 'general' ? (
