@@ -722,7 +722,7 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
               <h5 className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Solicitudes pendientes</h5>
               <div className="space-y-2">
                 {spot.bookings.filter((b: any) => b.status === 'solicitada').map((booking: any) => {
-                  const payment = payments[booking.id];
+                  const payment = (payments as any)[booking.id];
                   const isPaid = payment?.status === 'aprobado';
                   const isReviewing = payment?.status === 'en_revision';
 
