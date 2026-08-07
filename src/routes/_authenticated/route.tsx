@@ -25,11 +25,11 @@ export const Route = createFileRoute("/_authenticated")({
     // Special bypass for super admin to avoid loops if profile is being created
     const isSuperAdminEmail = session.user.email?.toLowerCase() === 'tascione32@gmail.com';
 
+    if (isSuperAdminEmail) {
+      return { userRole: 'super_admin' as const, userId: session.user.id };
+    }
+
     if (!profile) {
-      if (isSuperAdminEmail) {
-        // Allow through, login.tsx or other components will handle profile creation
-        return { userRole: 'super_admin' as const, userId: session.user.id };
-      }
       throw redirect({ to: "/login" });
     }
 

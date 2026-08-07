@@ -33,18 +33,26 @@ function LoginPage() {
   async function checkSession() {
     console.log("Checking session...");
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
     if (sessionError) {
-      console.error("Session fetch error:", sessionError);
+      console.error("Session error:", sessionError);
       return;
     }
+
     if (!session) {
-      console.log("No active session found.");
+      console.log("No session found");
       return;
     }
 
     const userEmail = session.user.email?.toLowerCase();
-    console.log("Session active for:", userEmail);
+    console.log("Active session for:", userEmail);
     const isSuperAdminEmail = userEmail === 'tascione32@gmail.com';
+
+    if (isSuperAdminEmail) {
+      console.log("Bypassing for super admin...");
+      navigate({ to: "/muro" });
+      return;
+    }
 
     // 1. Proactive check for super admin email
     if (isSuperAdminEmail) {
