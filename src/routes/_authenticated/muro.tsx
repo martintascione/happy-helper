@@ -153,9 +153,31 @@ function MuroPage() {
         )}
       </div>
 
+      {/* Quick Access Grid */}
+      <div className="grid grid-cols-2 gap-4">
+        <button 
+          onClick={() => navigate({ to: "/_authenticated/cocheras" } as any)}
+          className="glass-card p-6 rounded-[2.5rem] flex flex-col items-center gap-3 active:scale-95 transition-all border border-white/60"
+        >
+          <div className="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center shadow-lg">
+            <Car size={24} strokeWidth={2.5} />
+          </div>
+          <span className="text-[11px] font-black uppercase tracking-widest text-slate-800">Cocheras</span>
+        </button>
+        <button 
+          onClick={() => navigate({ to: "/_authenticated/chat" } as any)}
+          className="glass-card p-6 rounded-[2.5rem] flex flex-col items-center gap-3 active:scale-95 transition-all border border-white/60"
+        >
+          <div className="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center shadow-lg">
+            <MessageSquare size={24} strokeWidth={2.5} />
+          </div>
+          <span className="text-[11px] font-black uppercase tracking-widest text-slate-800">Chat</span>
+        </button>
+      </div>
+
       {/* Comunicados Oficiales */}
       <div className="space-y-4">
-        {data.posts.map((post) => (
+        {data.posts.length > 0 ? data.posts.map((post) => (
           <div key={post.id} className="tint-insight card-dashed p-8 rounded-[2.8rem] space-y-6 relative overflow-hidden group hover:bg-violet-500/5 transition-all duration-500 shadow-sm hover:shadow-card active:scale-[0.99]">
             <div className="flex justify-between items-start relative z-10">
               <div className="flex items-center gap-3">
@@ -185,7 +207,11 @@ function MuroPage() {
               </div>
             )}
           </div>
-        ))}
+        )) : (
+          <div className="tint-insight card-dashed p-8 rounded-[2.8rem] text-center border-dashed">
+            <p className="text-violet-600 font-black uppercase tracking-widest text-xs">Sin comunicados nuevos</p>
+          </div>
+        )}
       </div>
 
       {/* Muro Vecinal */}
