@@ -39,17 +39,24 @@ function LoginPage() {
 
     // 1. Proactive check for super admin email
     if (isSuperAdminEmail) {
-      const { data: profile } = await supabase
+      console.log("Super admin detected, checking profile...");
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("status, role, building_id, unit_id")
         .eq("id", session.user.id)
         .maybeSingle();
 
+      if (profileError) {
+        console.error("Profile error for super admin:", profileError);
+      }
+
       // If already super_admin and approved, redirect immediately
       if (profile && profile.role === 'super_admin' && profile.status === 'aprobado' && profile.building_id && profile.unit_id) {
+        console.log("Super admin fully set up, redirecting to muro");
         navigate({ to: "/_authenticated/muro" });
         return;
       }
+      console.log("Super admin profile incomplete, attempting auto-setup...", profile);
 
       // Ensure at least one building and unit exist
       let bId = profile?.building_id;
@@ -65,6 +72,7 @@ function LoginPage() {
       }
       
       if (bId && uId) {
+        console.log("Upserting super admin profile with building/unit:", bId, uId);
         const { error: upsertError } = await supabase.from('profiles').upsert({
           id: session.user.id,
           full_name: fullName || (session.user.user_metadata as any)?.['full_name'] || 'Super Admin',
@@ -75,9 +83,14 @@ function LoginPage() {
         });
         
         if (!upsertError) {
+          console.log("Upsert success, redirecting to muro");
           navigate({ to: "/_authenticated/muro" });
           return;
+        } else {
+          console.error("Upsert error for super admin:", upsertError);
         }
+      } else {
+        console.warn("No building/unit found for super admin auto-setup");
       }
     }
 
