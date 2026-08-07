@@ -249,7 +249,6 @@ function MuroPage() {
 
       {/* Muro Vecinal */}
       <div className="space-y-6">
-        <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Comunidad</h2>
         
         {neighborPosts.length > 0 ? (
           neighborPosts.map((post) => (
