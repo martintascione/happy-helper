@@ -32,11 +32,13 @@ function LoginPage() {
     
     // Check session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Current session in mount effect:", session?.user?.email);
       if (session) {
         const userEmail = session.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
-          console.log("Super admin session found on mount, redirecting...");
-          window.location.replace("/muro");
+          console.log("Super admin detected on mount, performing immediate cleanup and redirect");
+          // Clear any potentially conflicting local state or breadcrumbs
+          window.location.href = "/muro";
         } else {
           checkSession();
         }
@@ -45,15 +47,21 @@ function LoginPage() {
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state change:", event, session?.user?.email);
-      if (event === 'SIGNED_IN' && session) {
-        const userEmail = session.user.email?.toLowerCase();
+      console.log("Auth state change event:", event, "User:", session?.user?.email);
+      
+      // Handle the session if it exists, regardless of the event type for Super Admin
+      const currentSession = session;
+      if (currentSession) {
+        const userEmail = currentSession.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
-          console.log("Super admin signed in, redirecting...");
-          window.location.replace("/muro");
-        } else {
-          checkSession();
+          console.log("Super admin session detected in state change, redirecting...");
+          window.location.href = "/muro";
+          return;
         }
+      }
+
+      if (event === 'SIGNED_IN' && session) {
+        checkSession();
       }
     });
 

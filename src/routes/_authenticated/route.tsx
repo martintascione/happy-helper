@@ -1,13 +1,20 @@
 import { createFileRoute, Outlet, Link, useLocation, redirect } from "@tanstack/react-router";
 import { Home, Car, MessageSquare, AlertCircle, User, Plus, ShieldCheck, Settings } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { NotificationBell } from "@/components/NotificationBell";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
+    
+    // Debug session
+    console.log("Layout beforeLoad session:", session?.user?.email);
+    
+    const isSuperAdminEmail = session?.user?.email?.toLowerCase() === 'tascione32@gmail.com';
+
+    if (!session && !isSuperAdminEmail) {
+      console.log("No session and not super admin, redirecting to login");
       throw redirect({
         to: "/login",
         search: {
@@ -16,31 +23,35 @@ export const Route = createFileRoute("/_authenticated")({
       });
     }
 
+    if (isSuperAdminEmail) {
+      console.log("Allowing super admin bypass in layout");
+      return { 
+        userRole: 'super_admin' as const, 
+        userId: session?.user?.id || 'super-admin-id',
+        isSuperAdmin: true
+      };
+    }
+
     const { data: profile } = await supabase
       .from("profiles")
       .select("status, role")
-      .eq("id", session.user.id)
+      .eq("id", session!.user.id)
       .maybeSingle();
 
-    // Special bypass for super admin to avoid loops if profile is being created
-    const isSuperAdminEmail = session.user.email?.toLowerCase() === 'tascione32@gmail.com';
-
-    if (isSuperAdminEmail) {
-      console.log("Allowing super admin bypass in layout");
-      return { userRole: 'super_admin' as const, userId: session.user.id };
-    }
-
     if (!profile) {
+      console.log("No profile found, redirecting to login");
       throw redirect({ to: "/login" });
     }
 
-    if (profile.status === "pendiente" && profile.role !== "super_admin" && !isSuperAdminEmail) {
+    if (profile.status === "pendiente" && profile.role !== "super_admin") {
+      console.log("Profile pending, redirecting to login");
       throw redirect({ to: "/login" });
     }
 
     return { 
-      userRole: (profile.role || (isSuperAdminEmail ? 'super_admin' : 'vecino')) as "admin" | "super_admin" | "vecino", 
-      userId: session.user.id 
+      userRole: (profile.role || 'vecino') as "admin" | "super_admin" | "vecino", 
+      userId: session!.user.id,
+      isSuperAdmin: false
     };
   },
   component: AuthenticatedLayout,
@@ -48,14 +59,14 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedLayout() {
   const location = useLocation();
-  const { userRole, userId } = Route.useRouteContext();
+  const { userRole, userId, isSuperAdmin } = Route.useRouteContext();
   const [activeRole, setActiveRole] = useState(userRole);
 
   useEffect(() => {
     setActiveRole(userRole);
   }, [userRole]);
   
-  const navItems = [
+  const navItems = useMemo(() => [
     { label: "Muro", icon: Home, to: "/muro" },
     { label: "Cocheras", icon: Car, to: "/cocheras" },
     { label: "Chat", icon: MessageSquare, to: "/chat" },
@@ -63,13 +74,13 @@ function AuthenticatedLayout() {
     { label: "Admin", icon: ShieldCheck, to: "/admin" },
     { label: "Global", icon: Settings, to: "/admin-global" },
     { label: "Perfil", icon: User, to: "/perfil" },
-  ];
+  ], []);
 
-  const filteredNavItems = navItems.filter(item => {
+  const filteredNavItems = useMemo(() => navItems.filter(item => {
     if (item.label === "Admin") return activeRole === "admin" || activeRole === "super_admin";
     if (item.label === "Global") return activeRole === "super_admin";
     return true;
-  });
+  }), [navItems, activeRole]);
 
   return (
     <div className="flex min-h-screen bg-[#F2F2F2] text-foreground font-sans">
@@ -153,7 +164,7 @@ function AuthenticatedLayout() {
         </div>
 
         {/* Role Switcher for Super Admin */}
-        {userRole === "super_admin" && (
+        {isSuperAdmin && (
           <div className="fixed top-4 right-4 z-[60] flex gap-2">
             <NotificationBell userId={userId} />
             <div className="flex gap-2 bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-lg border border-slate-200">
