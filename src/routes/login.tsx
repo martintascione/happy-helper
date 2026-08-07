@@ -28,6 +28,7 @@ function LoginPage() {
   const [foundBuilding, setFoundBuilding] = useState<any>(null);
 
   useEffect(() => {
+    console.log("LoginPage mounted");
     checkSession();
   }, []);
 
