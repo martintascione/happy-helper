@@ -51,7 +51,8 @@ function LoginPage() {
 
     if (isSuperAdminEmail) {
       console.log("Bypassing for super admin...");
-      window.location.href = "/muro";
+      // Forcing a hard redirect to bypass any router issues
+      window.location.assign("/muro");
       return;
     }
 
