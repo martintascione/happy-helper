@@ -94,10 +94,10 @@ function AdminPage() {
   if (loading) return <div className="p-8 font-bold text-slate-400">Cargando administración...</div>;
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32">
-      <header className="px-1 space-y-1">
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Administración</h1>
-        <p className="text-slate-500 font-medium">Gestión de edificio y vecinos</p>
+    <div className="p-8 max-w-2xl mx-auto space-y-12 pb-32">
+      <header className="px-1">
+        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Administración</h1>
+        <p className="text-muted-foreground font-medium text-lg">Gestión de edificio y vecinos</p>
       </header>
 
       {/* Wallet Style Building Card */}
