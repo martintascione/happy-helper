@@ -117,16 +117,19 @@ function MuroPage() {
         {data.loading ? (
           <div className="h-32 bg-slate-100 rounded-[2rem] animate-pulse" />
         ) : data.bookings.length > 0 ? (
-          <div className="bg-black text-white p-7 rounded-[2.5rem] shadow-card relative overflow-hidden group active:scale-[0.98] transition-all border border-white/10">
-            <div className="absolute top-[-40px] right-[-40px] w-48 h-48 bg-white/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700" />
-            <h3 className="text-[11px] font-black text-accent uppercase mb-4 flex items-center gap-2 tracking-[0.2em]">
-              <Calendar size={12} strokeWidth={3} /> Próxima cochera
+          <div className="bg-black text-white p-8 rounded-[2.8rem] shadow-card relative overflow-hidden group active:scale-[0.98] transition-all border border-white/10 ring-1 ring-white/5">
+            <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-accent/20 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-1000" />
+            <h3 className="text-[12px] font-black text-accent uppercase mb-5 flex items-center gap-2 tracking-[0.25em]">
+              <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" /> Próxima cochera
             </h3>
-            <div className="space-y-1 relative z-10">
-              <p className="text-3xl font-black tracking-tight">{data.bookings[0].spot?.identifier}</p>
-              <p className="text-sm font-bold text-white/50">
-                {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
-              </p>
+            <div className="space-y-2 relative z-10">
+              <p className="text-4xl font-black tracking-tighter italic uppercase">{data.bookings[0].spot?.identifier}</p>
+              <div className="flex items-center gap-2 text-white/40">
+                <Calendar size={14} />
+                <p className="text-sm font-bold uppercase tracking-widest">
+                  {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
+                </p>
+              </div>
             </div>
           </div>
         ) : (
