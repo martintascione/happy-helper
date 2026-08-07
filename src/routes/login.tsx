@@ -172,8 +172,9 @@ function LoginPage() {
   }
 
   const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setLoading(true);
+    console.log("handleAuth starting:", { isSignUp, email, fullName });
     
     if (isSignUp) {
       const { data, error } = await supabase.auth.signUp({
@@ -183,19 +184,21 @@ function LoginPage() {
           data: { full_name: fullName }
         }
       });
+      console.log("Signup result:", { data, error });
       if (error) {
         toast.error(error.message);
+        setLoading(false);
       } else {
         toast.success("Cuenta creada.");
-        // The onAuthStateChange listener will handle the redirect
-        setLoading(false);
+        // Close modal if it was open
+        setShowRegisterAgreement(false);
+        // The onAuthStateChange listener or handleAuth final setLoading will trigger
       }
     } else {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       console.log("Login attempt result:", { success: !!data?.user, error: error?.message });
       if (error) {
         toast.error(error.message);
-        // The onAuthStateChange listener will handle the redirect
         setLoading(false);
       }
     }
