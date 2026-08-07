@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, Link, useLocation, redirect } from "@tanstack/react-router";
-import { Home, Car, MessageSquare, AlertCircle, User, Plus } from "lucide-react";
+import { Home, Car, MessageSquare, AlertCircle, User, Plus, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
@@ -16,7 +17,7 @@ export const Route = createFileRoute("/_authenticated")({
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("status")
+      .select("status, role")
       .eq("id", session.user.id)
       .single();
 
@@ -27,12 +28,15 @@ export const Route = createFileRoute("/_authenticated")({
     if (profile.status === "pendiente") {
       throw redirect({ to: "/login" });
     }
+
+    return { userRole: profile.role };
   },
   component: AuthenticatedLayout,
 });
 
 function AuthenticatedLayout() {
   const location = useLocation();
+  const { userRole } = Route.useRouteContext();
   
   const navItems = [
     { label: "Muro", icon: Home, to: "/_authenticated/muro" },
@@ -41,6 +45,10 @@ function AuthenticatedLayout() {
     { label: "Reportes", icon: AlertCircle, to: "/_authenticated/reportes" },
     { label: "Perfil", icon: User, to: "/_authenticated/perfil" },
   ];
+
+  if (userRole === "admin" || userRole === "super_admin") {
+    navItems.splice(navItems.length - 1, 0, { label: "Admin", icon: ShieldCheck, to: "/_authenticated/admin" });
+  }
 
   return (
     <div className="flex min-h-screen bg-[#F2F2F2] text-foreground font-sans">
