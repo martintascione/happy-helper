@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/admin-global")({
 
 function GlobalAdminPage() {
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"config" | "pagos" | "liquidaciones" | "resumen" | "edificios">("config");
+  const [activeTab, setActiveTab] = useState<"config" | "pagos" | "liquidaciones" | "resumen" | "edificios" | "vecinos">("config");
   const [settings, setSettings] = useState<any>(null);
   const [pendingPayments, setPendingPayments] = useState<any[]>([]);
   const [pendingPayouts, setPendingPayouts] = useState<any[]>([]);
@@ -30,6 +30,9 @@ function GlobalAdminPage() {
 
   const [buildings, setBuildings] = useState<any[]>([]);
   const [showNewBuildingModal, setShowNewBuildingModal] = useState(false);
+  const [globalNeighbors, setGlobalNeighbors] = useState<any[]>([]);
+  const [selectedNeighborAgreements, setSelectedNeighborAgreements] = useState<any[]>([]);
+  const [showAgreementsModal, setShowAgreementsModal] = useState(false);
 
   async function fetchData() {
     setLoading(true);
@@ -106,6 +109,16 @@ function GlobalAdminPage() {
           publicaciones:posts(count)
         `);
       setBuildings(data || []);
+    } else if (activeTab === "vecinos") {
+      const { data } = await supabase
+        .from("profiles")
+        .select(`
+          *,
+          building:buildings(name),
+          unit:units(floor, apartment)
+        `)
+        .order("created_at", { ascending: false });
+      setGlobalNeighbors(data || []);
     }
     setLoading(false);
   }
@@ -178,6 +191,7 @@ function GlobalAdminPage() {
         {[
           { id: "config", label: "Configuración", icon: Settings },
           { id: "edificios", label: "Edificios", icon: Building2 },
+          { id: "vecinos", label: "Vecinos", icon: Users },
           { id: "pagos", label: "Pagos", icon: FileText },
           { id: "liquidaciones", label: "Liquidaciones", icon: Landmark },
           { id: "resumen", label: "Resumen", icon: DollarSign }
@@ -371,6 +385,80 @@ function GlobalAdminPage() {
                 </div>
               </div>
             ))
+          )}
+        </div>
+      ) : activeTab === "vecinos" ? (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          <div className="flex justify-between items-center px-1">
+            <h2 className="text-xl font-black text-slate-900">Auditoría de Vecinos</h2>
+            <span className="text-xs font-bold bg-slate-200 text-slate-600 px-3 py-1 rounded-full">
+              {globalNeighbors.length} total
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            {globalNeighbors.map((n) => (
+              <div key={n.id} className="bg-white p-5 rounded-[2rem] shadow-soft border border-white flex items-center gap-4">
+                <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 shrink-0">
+                  <User size={24} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-black text-slate-900 truncate">{n.full_name}</h4>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
+                    {n.building?.name} • Piso {n.unit?.floor} - {n.unit?.apartment}
+                  </p>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={async () => {
+                    const { data } = await supabase
+                      .from("user_agreements" as any)
+                      .select("*")
+                      .eq("user_id", n.id)
+                      .order("accepted_at", { ascending: false });
+                    setSelectedNeighborAgreements(data || []);
+                    setShowAgreementsModal(true);
+                  }}
+                  className="text-primary font-black text-[10px] uppercase tracking-wider"
+                >
+                  Acuerdos
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          {showAgreementsModal && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-6 animate-in fade-in duration-200">
+              <div className="bg-white w-full max-w-[440px] rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+                <div className="p-8 space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-2xl font-black text-slate-900 tracking-tight">Compromisos Aceptados</h3>
+                    <button onClick={() => setShowAgreementsModal(false)} className="p-2 bg-slate-50 rounded-xl text-slate-400"><X size={20} /></button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {selectedNeighborAgreements.length === 0 ? (
+                      <p className="text-center py-8 text-slate-400 font-medium">No hay compromisos registrados.</p>
+                    ) : (
+                      selectedNeighborAgreements.map((a) => (
+                        <div key={a.id} className="bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
+                          <div>
+                            <p className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                              {a.agreement_key.replace('_', ' ')}
+                            </p>
+                            <p className="text-[10px] text-slate-400 font-bold">Versión {a.version}</p>
+                          </div>
+                          <p className="text-[10px] font-black text-slate-500">
+                            {format(new Date(a.accepted_at), "d/MM/yy HH:mm")}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       ) : (
