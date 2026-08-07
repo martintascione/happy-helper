@@ -79,28 +79,7 @@ function LoginPage() {
           navigate({ to: "/_authenticated/muro" });
         }
       } else {
-        // If it's the specific super admin email, create the profile automatically if it doesn't exist
-        if (session.user.email === 'tascione32@gmail.com') {
-          // Check if building exists first
-          const { data: firstBuilding } = await supabase.from('buildings').select('id').limit(1).single();
-          const { data: firstUnit } = await supabase.from('units').select('id').limit(1).single();
-          
-          if (firstBuilding && firstUnit) {
-            const { error: insertError } = await supabase.from('profiles').insert({
-              id: session.user.id,
-              full_name: 'Super Admin',
-              building_id: firstBuilding.id,
-              unit_id: firstUnit.id,
-              role: 'super_admin',
-              status: 'aprobado'
-            });
-            
-            if (!insertError || insertError.code === '23505') { // Success or already exists
-              navigate({ to: "/_authenticated/muro" });
-              return;
-            }
-          }
-        }
+        // The previous block already handles super admin redirect
         setStep(2); // Authenticated but no profile
       }
     }
@@ -121,8 +100,9 @@ function LoginPage() {
       if (error) {
         toast.error(error.message);
       } else {
-        toast.success("Cuenta creada. Ahora vinculá tu edificio.");
-        setStep(2);
+        toast.success("Cuenta creada.");
+        // Re-check session to trigger auto-profile creation for super admin
+        setTimeout(() => checkSession(), 500);
       }
     } else {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
