@@ -36,14 +36,17 @@ function MuroPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { data: profile } = await supabase.from("profiles").select("building_id").eq("id", user.id).single();
+    const { data: profileData } = await supabase.from("profiles").select("full_name, avatar_url, building_id").eq("id", user.id).single();
     
-    if (profile?.building_id) {
-      const [officialRes, bookingsRes, neighborsRes] = await Promise.all([
-        supabase
-          .from("posts")
-          .select("*, author:profiles!author_id(full_name)")
-          .eq("building_id", profile.building_id)
+    if (profileData) {
+      setProfile({ full_name: profileData.full_name, avatar_url: profileData.avatar_url });
+      
+      if (profileData.building_id) {
+        const [officialRes, bookingsRes, neighborsRes] = await Promise.all([
+          supabase
+            .from("posts")
+            .select("*, author:profiles!author_id(full_name)")
+            .eq("building_id", profileData.building_id)
           .eq("type", "oficial")
           .order("created_at", { ascending: false })
           .limit(3),
