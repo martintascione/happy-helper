@@ -21,13 +21,50 @@ function GlobalAdminPage() {
   const [pendingPayments, setPendingPayments] = useState<any[]>([]);
 
   useEffect(() => {
-    fetchSettings();
-  }, []);
+    fetchData();
+  }, [activeTab]);
 
-  async function fetchSettings() {
+  async function fetchData() {
     setLoading(true);
-    const { data } = await supabase.from("platform_settings" as any).select("*").single();
-    if (data) setSettings(data);
+    if (activeTab === "config") {
+      const { data } = await supabase.from("platform_settings" as any).select("*").single();
+      if (data) setSettings(data);
+    } else {
+      const { data } = await supabase
+        .from("parking_payments" as any)
+        .select(`
+          *,
+          booking:parking_bookings(
+            id,
+            total_price,
+            renter:profiles!renter_id(full_name),
+            spot:parking_spots(identifier)
+          )
+        `)
+        .eq("status", "en_revision")
+        .order("created_at", { ascending: true });
+      setPendingPayments(data || []);
+    }
+    setLoading(false);
+  }
+
+  async function handleReviewPayment(paymentId: string, status: 'aprobado' | 'rechazado', reason?: string) {
+    setLoading(true);
+    const { error } = await supabase
+      .from("parking_payments" as any)
+      .update({ 
+        status, 
+        reject_reason: reason,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", paymentId);
+
+    if (error) {
+      toast.error("Error al procesar pago");
+    } else {
+      toast.success(status === 'aprobado' ? "Pago aprobado" : "Pago rechazado");
+      fetchData();
+    }
     setLoading(false);
   }
 
@@ -47,7 +84,7 @@ function GlobalAdminPage() {
     setLoading(false);
   };
 
-  if (!settings && loading) return <div className="p-8 font-bold text-slate-400">Cargando...</div>;
+  if (!settings && loading && activeTab === 'config') return <div className="p-8 font-bold text-slate-400">Cargando...</div>;
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32">
