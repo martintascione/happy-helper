@@ -181,11 +181,11 @@ function GlobalAdminPage() {
   if (!settings && loading && activeTab === 'config') return <div className="p-8 font-bold text-slate-400">Cargando...</div>;
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-8 pb-32">
-      <div className="space-y-1 px-1">
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Panel Global</h1>
-        <p className="text-slate-500 font-medium">Configuración y auditoría</p>
-      </div>
+    <div className="p-8 max-w-2xl mx-auto space-y-12 pb-32">
+      <header className="px-1">
+        <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2">Panel Global</h1>
+        <p className="text-muted-foreground font-medium text-lg">Configuración y auditoría</p>
+      </header>
 
       {activeTab === "resumen" && financialStats && (
         <section className="space-y-6 animate-in fade-in duration-300">
