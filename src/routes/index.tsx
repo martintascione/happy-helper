@@ -35,7 +35,7 @@ function Index() {
             <span className="font-extrabold text-slate-900 tracking-tight text-xl">Tower</span>
           </div>
           <div className="flex gap-2">
-            <Link to="/login" className="px-5 py-2 text-sm font-bold text-primary bg-white rounded-full shadow-soft hover:scale-[0.98] transition-all">
+            <Link to="/login" preload="intent" className="px-5 py-2 text-sm font-bold text-primary bg-white rounded-full shadow-soft hover:scale-[0.98] transition-all cursor-pointer">
               Ingresar
             </Link>
           </div>
@@ -57,7 +57,8 @@ function Index() {
               <div className="pt-4">
                 <Link 
                   to="/login" 
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-full font-bold text-sm shadow-lg shadow-accent/20 active:scale-[0.98] transition-all"
+                  preload="intent"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-full font-bold text-sm shadow-lg shadow-accent/20 active:scale-[0.98] transition-all cursor-pointer"
                 >
                   Registrarme ahora
                   <ChevronRight size={18} strokeWidth={3} />
