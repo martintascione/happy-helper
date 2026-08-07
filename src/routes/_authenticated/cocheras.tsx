@@ -511,6 +511,31 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
   const [newSpot, setNewSpot] = useState({ identifier: "", description: "", owner_price_per_day: "" });
   const [isAddingAvailability, setIsAddingAvailability] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [payments, setPayments] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    fetchPayments();
+  }, [spots]);
+
+  async function fetchPayments() {
+    const bookingIds = spots.flatMap(s => s.bookings?.map((b: any) => b.id) || []);
+    if (bookingIds.length === 0) return;
+    
+    const { data } = await supabase
+      .from("parking_payments" as any)
+      .select("*")
+      .in("booking_id", bookingIds);
+    
+    if (data) {
+      const pMap: Record<string, any> = {};
+      (data as any[]).forEach(p => {
+        if (!pMap[p.booking_id] || p.status === 'aprobado' || (pMap[p.booking_id].status !== 'aprobado' && p.status === 'en_revision')) {
+          pMap[p.booking_id] = p;
+        }
+      });
+      setPayments(pMap);
+    }
+  }
   
   // Payout Account State
   const [isAddingPayout, setIsAddingPayout] = useState(false);
