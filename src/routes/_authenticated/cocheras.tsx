@@ -130,16 +130,17 @@ function CocherasPage() {
         <p className="text-gray-500 font-medium">Alquilá o publicá tu lugar</p>
       </header>
 
-      <div className="flex p-1 bg-gray-200 rounded-2xl mb-6 overflow-x-auto">
+      <div className="flex p-1 bg-gray-200 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
         {[
           { id: "disponibles", label: "Disponibles" },
-          { id: "mi-cochera", label: "Mi cochera" },
-          { id: "mis-reservas", label: "Mis reservas" }
+          { id: "mis-reservas", label: "Mis Reservas" },
+          { id: "mi-cochera", label: "Mi Cochera" },
+          { id: "mis-cobros", label: "Mis Cobros" }
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex-1 py-2 text-sm font-bold rounded-xl transition-all whitespace-nowrap px-4 ${
+            className={`flex-1 min-w-fit px-4 py-3 text-[10px] font-black uppercase rounded-xl transition-all whitespace-nowrap ${
               activeTab === tab.id ? "bg-white text-black shadow-sm" : "text-gray-500"
             }`}
           >
