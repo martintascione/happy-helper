@@ -56,12 +56,11 @@ function LoginPage() {
         // Upsert super admin profile: force role and status
         const { error: upsertError } = await supabase.from('profiles').upsert({
           id: session.user.id,
-          full_name: fullName || session.user.user_metadata['full_name'] || 'Super Admin',
+          full_name: fullName || (session.user.user_metadata as any)?.['full_name'] || 'Super Admin',
           building_id: building.id,
           unit_id: unit.id,
           role: 'super_admin',
-          status: 'aprobado',
-          updated_at: new Date().toISOString()
+          status: 'aprobado'
         });
         
         if (!upsertError) {
