@@ -156,24 +156,33 @@ function MuroPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-3 gap-5">
         <button 
           onClick={() => navigate({ to: "/_authenticated/cocheras" } as any)}
-          className="premium-card p-8 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
+          className="premium-card p-6 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
         >
           <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center shadow-inner-glow">
             <Car size={28} strokeWidth={2.5} className="text-primary" />
           </div>
-          <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-foreground">Cocheras</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground">Cocheras</span>
         </button>
         <button 
           onClick={() => navigate({ to: "/_authenticated/chat" } as any)}
-          className="premium-card p-8 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
+          className="premium-card p-6 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
         >
           <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center shadow-inner-glow">
             <MessageSquare size={28} strokeWidth={2.5} className="text-primary" />
           </div>
-          <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-foreground">Chat</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground">Chat</span>
+        </button>
+        <button 
+          onClick={() => navigate({ to: "/_authenticated/reportes" } as any)}
+          className="premium-card p-6 flex flex-col items-center gap-4 bg-white active:scale-95 transition-all shadow-subtle border border-black/[0.02]"
+        >
+          <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center shadow-inner-glow">
+            <AlertTriangle size={28} strokeWidth={2.5} className="text-primary" />
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground">Reportes</span>
         </button>
       </div>
 
