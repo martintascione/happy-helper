@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useLocation, redirect } from "@tanstack/react-router";
-import { Home, Car, MessageSquare, AlertCircle, User, Plus, ShieldCheck } from "lucide-react";
+import { Home, Car, MessageSquare, AlertCircle, User, Plus, ShieldCheck, Settings } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -49,11 +49,13 @@ function AuthenticatedLayout() {
     { label: "Chat", icon: MessageSquare, to: "/_authenticated/chat" },
     { label: "Reportes", icon: AlertCircle, to: "/_authenticated/reportes" },
     { label: "Admin", icon: ShieldCheck, to: "/_authenticated/admin" },
+    { label: "Global", icon: Settings, to: "/_authenticated/admin-global" },
     { label: "Perfil", icon: User, to: "/_authenticated/perfil" },
   ];
 
   const filteredNavItems = navItems.filter(item => {
     if (item.label === "Admin") return activeRole === "admin" || activeRole === "super_admin";
+    if (item.label === "Global") return activeRole === "super_admin";
     return true;
   });
 
