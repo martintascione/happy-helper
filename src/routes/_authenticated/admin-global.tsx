@@ -457,9 +457,6 @@ function GlobalAdminPage() {
               </div>
             ))}
           </div>
-        </div>
-            ))}
-          </div>
 
           {showAgreementsModal && (
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-6 animate-in fade-in duration-200">
