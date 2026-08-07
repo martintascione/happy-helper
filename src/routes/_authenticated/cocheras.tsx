@@ -21,8 +21,10 @@ import {
   Wallet,
   History,
   TrendingUp,
-  DollarSign
+  DollarSign,
+  ShieldCheck
 } from "lucide-react";
+import { AgreementModal } from "@/components/AgreementModal";
 import { format, isAfter, isBefore, startOfDay, addDays, differenceInDays } from "date-fns";
 import { es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
@@ -219,6 +221,15 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
     }
   }
 
+  const [showBookingAgreement, setShowBookingAgreement] = useState(false);
+  const bookingAgreementItems = [
+    { text: "Voy a usar la cochera únicamente para un vehículo propio o a mi cargo, dentro de las fechas reservadas. No puedo ceder, prestar ni transferir la reserva a terceros que no vivan en el edificio." },
+    { text: "Me comprometo a respetar las indicaciones del dueño (altura máxima, tipo de cochera) y las normas del edificio." },
+    { text: "El pago se hace únicamente por los medios oficiales de la app. Nunca voy a transferir a cuentas personales de otros vecinos." },
+    { text: "Puedo cancelar gratis hasta 24 horas antes del inicio. Después de ese plazo, la reserva se cobra igual." },
+    { text: "Entiendo que Comunidad Tower actúa como intermediaria y que cualquier daño o incidente se resuelve entre las partes." }
+  ];
+
   return (
     <div className="space-y-4">
       {spots.map((spot) => {
@@ -273,12 +284,21 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
             )}
           </div>
           <DialogFooter>
-            <Button onClick={handleBooking} className="w-full bg-black text-white h-14 rounded-2xl font-black">
+            <Button onClick={() => setShowBookingAgreement(true)} className="w-full bg-black text-white h-14 rounded-2xl font-black">
               Solicitar reserva
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AgreementModal
+        isOpen={showBookingAgreement}
+        onClose={() => setShowBookingAgreement(false)}
+        onAccept={handleBooking}
+        title="Compromiso de uso"
+        agreementKey="reservar_cochera"
+        items={bookingAgreementItems}
+      />
     </div>
   );
 }
@@ -580,6 +600,14 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
     }
   }
 
+  const [showPublishAgreement, setShowPublishAgreement] = useState(false);
+  const publishAgreementItems = [
+    { text: "Me comprometo a alquilar la cochera únicamente a vecinos que viven en el edificio y que ya tienen acceso a él. Queda prohibido ofrecerla, alquilarla o cederla a terceros que no vivan en el edificio." },
+    { text: "Declaro que tengo derecho de uso sobre la cochera que publico y que los datos que cargo (ubicación, medidas, precio) son reales." },
+    { text: "El cobro se realiza únicamente a través de los medios oficiales de la app. No voy a aceptar ni pedir pagos por fuera." },
+    { text: "Entiendo que Comunidad Tower actúa como intermediaria entre vecinos y no se responsabiliza por daños, robos o incidentes en la cochera. Es mi responsabilidad verificar la cobertura de mi seguro." }
+  ];
+
   async function handleAddSpot() {
     if (!newSpot.identifier || !newSpot.owner_price_per_day) {
       toast.error("Por favor completa los campos obligatorios");
@@ -807,9 +835,18 @@ function MySpotsManager({ spots, onRefresh, buildingId, userId, settings, payout
             </div>
             <Textarea placeholder="Descripción" value={newSpot.description} onChange={(e) => setNewSpot({...newSpot, description: e.target.value})} className="rounded-2xl bg-gray-50 border-none font-medium" />
           </div>
-          <DialogFooter><Button onClick={handleAddSpot} className="w-full bg-black text-white h-14 rounded-2xl font-black">Guardar</Button></DialogFooter>
+          <DialogFooter><Button onClick={() => setShowPublishAgreement(true)} className="w-full bg-black text-white h-14 rounded-2xl font-black">Guardar</Button></DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AgreementModal
+        isOpen={showPublishAgreement}
+        onClose={() => setShowPublishAgreement(false)}
+        onAccept={handleAddSpot}
+        title="Compromiso de publicación"
+        agreementKey="publicar_cochera"
+        items={publishAgreementItems}
+      />
     </div>
   );
 }

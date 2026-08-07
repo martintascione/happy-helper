@@ -2,7 +2,8 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Mail, Lock, User, Key, Building2, DoorOpen, ArrowRight, ArrowLeft } from "lucide-react";
+import { Mail, Lock, User, Key, Building2, DoorOpen, ArrowRight, ArrowLeft, ShieldCheck } from "lucide-react";
+import { AgreementModal } from "@/components/AgreementModal";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -115,6 +116,22 @@ function LoginPage() {
     setLoading(false);
   };
 
+  const [showRegisterAgreement, setShowRegisterAgreement] = useState(false);
+  const registerAgreementItems = [
+    { text: "Al crear tu cuenta aceptás los Términos y Condiciones y la Política de Privacidad de Comunidad Tower.", link: { label: "Ver legales", to: "/terminos" } },
+    { text: "Tu cuenta va a ser verificada por la administración de tu edificio antes de activarse." },
+    { text: "Los datos que declarás (nombre, piso y departamento) deben ser reales. Una cuenta con datos falsos puede ser dada de baja." }
+  ];
+
+  const handleRegisterClick = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isSignUp) {
+      handleAuth(e);
+      return;
+    }
+    setShowRegisterAgreement(true);
+  };
+
   const handleCheckInvite = async () => {
     setLoading(true);
     const { data: building, error } = await supabase
@@ -197,7 +214,7 @@ function LoginPage() {
         </div>
 
         {step === 1 ? (
-          <form onSubmit={handleAuth} className="space-y-4">
+          <form onSubmit={handleRegisterClick} className="space-y-4">
             {isSignUp && (
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
@@ -243,17 +260,7 @@ function LoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 py-2">
-              <input 
-                type="checkbox" 
-                id="terms" 
-                required 
-                className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary/20"
-              />
-              <label htmlFor="terms" className="text-xs text-slate-500 font-medium">
-                Acepto los <Link to="/terminos" className="text-primary font-bold">Términos</Link> y la <Link to="/privacidad" className="text-primary font-bold">Privacidad</Link>.
-              </label>
-            </div>
+            {/* Checkbox moved to modal for register, or removed for login */}
 
             <button
               type="submit"
@@ -339,6 +346,15 @@ function LoginPage() {
           </div>
         )}
       </div>
+
+      <AgreementModal
+        isOpen={showRegisterAgreement}
+        onClose={() => setShowRegisterAgreement(false)}
+        onAccept={() => handleAuth({ preventDefault: () => {} } as any)}
+        title="Antes de empezar"
+        agreementKey="terminos"
+        items={registerAgreementItems}
+      />
     </div>
   );
 }
