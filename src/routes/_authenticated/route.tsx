@@ -27,7 +27,11 @@ export const Route = createFileRoute("/_authenticated")({
 
     if (isSuperAdminEmail) {
       console.log("Allowing super admin bypass in layout");
-      return { userRole: 'super_admin' as const, userId: session.user.id };
+      return { 
+        userRole: 'super_admin' as const, 
+        userId: session.user.id,
+        isSuperAdmin: true
+      };
     }
 
     if (!profile) {
