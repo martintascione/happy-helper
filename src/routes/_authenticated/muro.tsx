@@ -112,7 +112,7 @@ function MuroPage() {
 
       {/* Resumen */}
       <div className="space-y-4">
-        <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Tu resumen</h2>
+        <h2 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em] px-1 opacity-60">Tu resumen</h2>
         
         {data.loading ? (
           <div className="h-32 bg-slate-100 rounded-[2rem] animate-pulse" />
