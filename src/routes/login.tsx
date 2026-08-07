@@ -29,54 +29,48 @@ function LoginPage() {
 
   useEffect(() => {
     console.log("LoginPage mounted");
-    
     let isMounted = true;
 
-    // Direct redirect for super admin if session exists in storage
-    const storedSessionStr = localStorage.getItem('sb-ufsowwvgbxfasucpvzkl-auth-token');
-    if (storedSessionStr) {
-      try {
-        const storedSession = JSON.parse(storedSessionStr);
-        if (storedSession?.user?.email?.toLowerCase() === 'tascione32@gmail.com') {
-          console.log("Super admin detected in storage, hard redirecting...");
-          window.location.href = "/muro";
-          return;
-        }
-      } catch (e) {
-        console.error("Error parsing stored session", e);
+    const runCheck = async () => {
+      // 1. Check direct localStorage (fastest)
+      const storedSessionStr = localStorage.getItem('sb-ufsowwvgbxfasucpvzkl-auth-token');
+      if (storedSessionStr) {
+        try {
+          const storedSession = JSON.parse(storedSessionStr);
+          if (storedSession?.user?.email?.toLowerCase() === 'tascione32@gmail.com') {
+            console.log("Super admin found in storage, bypassing to /muro");
+            window.location.replace("/muro");
+            return;
+          }
+        } catch (e) {}
       }
-    }
 
-    // Check session on mount
-    supabase.auth.getSession().then(({ data: { session } }) => {
+      // 2. Check current Supabase session
+      const { data: { session } } = await supabase.auth.getSession();
       if (!isMounted) return;
-      console.log("Current session in mount effect:", session?.user?.email);
+
       if (session) {
         const userEmail = session.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
-          console.log("Super admin detected on mount, performing immediate redirect");
-          window.location.href = "/muro";
-        } else {
-          checkSession();
+          console.log("Super admin session active, bypassing to /muro");
+          window.location.replace("/muro");
+          return;
         }
+        // For others, run standard check
+        checkSession();
       }
-    });
+    };
+
+    runCheck();
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!isMounted) return;
-      console.log("Auth state change event:", event, "User:", session?.user?.email);
+      console.log("Auth event:", event, session?.user?.email);
       
-      if (session) {
-        const userEmail = session.user.email?.toLowerCase();
-        if (userEmail === 'tascione32@gmail.com') {
-          console.log("Super admin session detected in state change, redirecting...");
-          window.location.href = "/muro";
-          return;
-        }
-      }
-
-      if (event === 'SIGNED_IN' && session) {
+      if (session?.user?.email?.toLowerCase() === 'tascione32@gmail.com') {
+        window.location.replace("/muro");
+      } else if (event === 'SIGNED_IN' && session) {
         checkSession();
       }
     });
