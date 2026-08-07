@@ -70,6 +70,79 @@ export type Database = {
           },
         ]
       }
+      parking_availability: {
+        Row: {
+          created_at: string | null
+          end_date: string
+          id: string
+          spot_id: string
+          start_date: string
+        }
+        Insert: {
+          created_at?: string | null
+          end_date: string
+          id?: string
+          spot_id: string
+          start_date: string
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          spot_id?: string
+          start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parking_availability_spot_id_fkey"
+            columns: ["spot_id"]
+            isOneToOne: false
+            referencedRelation: "parking_spots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parking_spots: {
+        Row: {
+          building_id: string
+          created_at: string | null
+          description: string | null
+          id: string
+          identifier: string
+          is_active: boolean | null
+          owner_id: string
+          price_per_day: number
+        }
+        Insert: {
+          building_id: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          identifier: string
+          is_active?: boolean | null
+          owner_id: string
+          price_per_day: number
+        }
+        Update: {
+          building_id?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          identifier?: string
+          is_active?: boolean | null
+          owner_id?: string
+          price_per_day?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parking_spots_building_id_fkey"
+            columns: ["building_id"]
+            isOneToOne: false
+            referencedRelation: "buildings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           author_id: string
