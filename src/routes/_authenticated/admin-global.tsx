@@ -344,17 +344,7 @@ function GlobalAdminPage() {
             ))
           )}
         </div>
-      ) : activeTab === "liquidaciones" ? (
-        <div className="space-y-6 animate-in fade-in duration-300">
-          {pendingPayouts.length === 0 ? (
-            <EmptyState title="Sin pendientes" description="No hay liquidaciones por realizar." />
-          ) : (
-            pendingPayouts.map((payout) => (
-              <PayoutCard key={payout.id} payout={payout} onReview={handleReviewPayout} />
-            ))
-          )}
-        </div>
-      ) : (
+      ) : activeTab === "resumen" ? (
         <div className="space-y-6 animate-in fade-in duration-300">
           {(!financialStats || financialStats.length === 0) ? (
             <EmptyState title="Sin datos" description="Aún no hay reservas confirmadas para mostrar estadísticas." />
