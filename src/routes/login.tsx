@@ -215,6 +215,7 @@ function LoginPage() {
       handleAuth(e);
       return;
     }
+    // If we're signing up, we show the agreement first
     setShowRegisterAgreement(true);
   };
 
