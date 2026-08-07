@@ -17,7 +17,11 @@ import {
   X,
   Landmark,
   CreditCard,
-  ChevronDown
+  ChevronDown,
+  Wallet,
+  History,
+  TrendingUp,
+  DollarSign
 } from "lucide-react";
 import { format, isAfter, isBefore, startOfDay, addDays, differenceInDays } from "date-fns";
 import { es } from "date-fns/locale";
@@ -40,7 +44,7 @@ export const Route = createFileRoute("/_authenticated/cocheras")({
 });
 
 function CocherasPage() {
-  const [activeTab, setActiveTab] = useState<"disponibles" | "mi-cochera" | "mis-reservas">("disponibles");
+  const [activeTab, setActiveTab] = useState<"disponibles" | "mi-cochera" | "mis-reservas" | "mis-cobros">("disponibles");
   const [mySpots, setMySpots] = useState<any[]>([]);
   const [availableSpots, setAvailableSpots] = useState<any[]>([]);
   const [myBookings, setMyBookings] = useState<any[]>([]);
@@ -164,8 +168,10 @@ function CocherasPage() {
           settings={platformSettings}
           payoutAccount={payoutAccount}
         />
-      ) : (
+      ) : activeTab === "mis-reservas" ? (
         <MyBookingsList bookings={myBookings} onRefresh={fetchData} settings={platformSettings} />
+      ) : (
+        <MyPayoutsList userId={userProfile?.id} />
       )}
     </div>
   );
