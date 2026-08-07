@@ -333,6 +333,7 @@ function LoginPage() {
             </div>
 
             <button
+              id="auth-submit-button"
               key={isSignUp ? "signup" : "signin"}
               type="button"
               onClick={handleRegisterClick}
