@@ -11,7 +11,8 @@ export const Route = createFileRoute("/_authenticated")({
     // Debug session
     console.log("Layout beforeLoad session:", session?.user?.email);
     
-    const isSuperAdminEmail = session?.user?.email?.toLowerCase() === 'tascione32@gmail.com';
+    const userEmail = session?.user?.email?.toLowerCase();
+    const isSuperAdminEmail = userEmail === 'tascione32@gmail.com';
 
     if (!session && !isSuperAdminEmail) {
       console.log("No session and not super admin, redirecting to login");
