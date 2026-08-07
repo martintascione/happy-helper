@@ -10,64 +10,70 @@ export const Route = createFileRoute("/")({
 // IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-background selection:bg-primary/20">
-      {/* Container simulating a mobile app UI with the requested style */}
-      <div className="w-full max-w-[390px] bg-white rounded-[3.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] overflow-hidden border border-border/40 p-10 text-center flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-12 duration-1000">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#F8F9FB] selection:bg-primary/10">
+      <div className="w-full max-w-[420px] bg-white rounded-[3.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.06)] overflow-hidden border border-[#E9EDF2] p-10 flex flex-col gap-10 animate-in fade-in zoom-in-95 duration-1000 ease-out">
         
-        {/* Header/Logo section */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center">
-            <div className="w-5 h-5 border-[3px] border-white rounded-md rotate-45" />
+        {/* Navigation Bar */}
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#1A1D21] rounded-2xl flex items-center justify-center shadow-lg shadow-black/5">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+            </div>
+            <span className="font-bold text-[#1A1D21] tracking-tight">Studio.</span>
           </div>
-          <div className="flex gap-2">
-            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-              <span className="text-xs">🔍</span>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-              <span className="text-xs">👤</span>
-            </div>
+          <div className="w-10 h-10 rounded-2xl bg-[#F0F3F7] flex items-center justify-center group cursor-pointer hover:bg-[#E9EDF2] transition-colors">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A1D21" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:scale-110 transition-transform">
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="4" y1="18" x2="20" y2="18" />
+            </svg>
           </div>
         </div>
 
-        {/* Featured Card */}
-        <div className="bg-[#1a1a1a] rounded-[2.5rem] p-8 text-left aspect-square flex flex-col justify-end relative overflow-hidden">
-          <div className="absolute top-6 left-6 bg-accent/30 text-accent-foreground px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase">
-            Estilo SwiftUI
+        {/* Hero Section */}
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <p className="text-[11px] font-bold text-primary uppercase tracking-[0.25em] opacity-80">Diseño Profesional</p>
+            <h1 className="text-[44px] font-extrabold text-[#1A1D21] leading-[1.05] tracking-[-0.04em]">
+              Pulido &<br />
+              <span className="text-primary">Estructurado</span>
+            </h1>
           </div>
-          <h2 className="text-5xl font-black text-white leading-[0.9] tracking-tighter mb-4">
-            SOFT<br />
-            <span className="text-accent">STYLE</span><br />
-            UI
-          </h2>
-          <p className="text-white/60 text-sm font-medium">
-            Bordes suaves, sombras profundas y tipografía moderna.
+          <p className="text-[#64748B] text-[15px] leading-relaxed font-medium">
+            Implementando buenas prácticas de diseño con un enfoque en la calidad 
+            visual, alejándonos de patrones genéricos para lograr una interfaz 
+            premium y artesanal.
           </p>
-        </div>
-        
-        <div className="space-y-4">
-          <p className="text-muted-foreground font-semibold leading-relaxed px-2">
-            He interpretado el estilo de las imágenes: minimalismo "Soft UI" con 
-            esquinas muy redondeadas, fondos limpios y acentos de color.
-          </p>
-          
-          <button className="w-full h-16 bg-primary rounded-[1.25rem] flex items-center justify-center font-bold text-primary-foreground shadow-xl shadow-primary/20 hover:scale-[0.98] transition-transform active:scale-95">
-            Comenzar Proyecto
-          </button>
         </div>
 
-        {/* Bottom Nav Simulation */}
-        <div className="mt-4 flex justify-around items-center pt-6 border-t border-border/40">
-          <div className="w-2 h-2 rounded-full bg-primary" />
-          <div className="w-2 h-2 rounded-full bg-muted" />
-          <div className="w-2 h-2 rounded-full bg-muted" />
-          <div className="w-2 h-2 rounded-full bg-muted" />
+        {/* Visual Elements / Cards */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-[#F8F9FB] p-5 rounded-[2rem] border border-[#E9EDF2] space-y-3">
+            <div className="w-8 h-8 rounded-xl bg-accent/20 flex items-center justify-center">
+              <div className="w-4 h-4 rounded-full border-2 border-accent" />
+            </div>
+            <p className="text-[13px] font-bold text-[#1A1D21]">UI Limpia</p>
+          </div>
+          <div className="bg-[#1A1D21] p-5 rounded-[2rem] space-y-3 shadow-xl shadow-black/10">
+            <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-white">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+            </div>
+            <p className="text-[13px] font-bold text-white">Calidad</p>
+          </div>
         </div>
+        
+        {/* Action Button */}
+        <button className="w-full h-16 bg-primary rounded-2xl flex items-center justify-center font-bold text-white shadow-[0_20px_40px_-10px_rgba(var(--primary-rgb),0.3)] hover:brightness-110 active:scale-[0.98] transition-all duration-300">
+          Explorar Proyecto
+        </button>
       </div>
 
-      <div className="mt-8 text-center max-w-md">
-        <p className="text-xs text-muted-foreground font-medium uppercase tracking-[0.2em]">
-          Listo para definir la funcionalidad
-        </p>
+      <div className="mt-12 flex items-center gap-6 opacity-40 grayscale grayscale-100">
+        <div className="w-8 h-8 rounded bg-slate-400" />
+        <div className="w-8 h-8 rounded bg-slate-400" />
+        <div className="w-8 h-8 rounded bg-slate-400" />
       </div>
     </div>
   );
