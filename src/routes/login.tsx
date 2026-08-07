@@ -304,6 +304,7 @@ function LoginPage() {
                     <input
                       type="text"
                       value={inviteCode}
+                      autoFocus
                       onChange={(e) => setInviteCode(e.target.value)}
                       placeholder="TORREXXXX"
                       className="w-full p-4 pl-12 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-mono uppercase"
