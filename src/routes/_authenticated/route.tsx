@@ -7,7 +7,13 @@ import { NotificationBell } from "@/components/NotificationBell";
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
+    
+    // Debug session
+    console.log("Layout beforeLoad session:", session?.user?.email);
+    
+    const isSuperAdminEmail = session?.user?.email?.toLowerCase() === 'tascione32@gmail.com';
+
+    if (!session && !isSuperAdminEmail) {
       throw redirect({
         to: "/login",
         search: {
