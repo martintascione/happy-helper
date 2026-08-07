@@ -196,26 +196,26 @@ function GlobalAdminPage() {
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider relative z-10">
               Disponible: ${financialStats[0]?.profit.toLocaleString('es-AR') || 0}
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { label: "Comprobantes", icon: FileText, id: "pagos" },
-              { label: "Liquidaciones", icon: Landmark, id: "liquidaciones" },
-              { label: "Edificios", icon: Building2, id: "edificios" },
-              { label: "Configuración", icon: Settings, id: "config" }
-            ].map((action) => (
-              <button 
-                key={action.id}
-                onClick={() => setActiveTab(action.id as any)}
-                className="flex flex-col items-center gap-3 p-6 bg-white rounded-[24px] shadow-soft border border-slate-50 hover:bg-slate-50 transition-all text-center"
-              >
-                <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center text-black">
-                  <action.icon size={20} />
-                </div>
-                <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest leading-none">{action.label}</span>
-              </button>
-            ))}
+            <div className="flex gap-4 mt-8 relative z-10">
+              {[
+                { label: "Pagos", icon: FileText, id: "pagos" },
+                { label: "Liquids", icon: Landmark, id: "liquidaciones" },
+                { label: "Edificios", icon: Building2, id: "edificios" },
+                { label: "Config", icon: Settings, id: "config" }
+              ].map((action) => (
+                <button 
+                  key={action.id}
+                  onClick={() => setActiveTab(action.id as any)}
+                  className="flex flex-col items-center gap-2 transition-transform active:scale-95"
+                >
+                  <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+                    <action.icon size={20} />
+                  </div>
+                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">{action.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </section>
       )}
