@@ -148,7 +148,12 @@ function AdminPage() {
                 {p.avatar_url ? <img src={p.avatar_url} className="w-full h-full object-cover" /> : <User size={24} />}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-slate-900 truncate">{p.full_name}</h3>
+                <button 
+                  onClick={() => Route.useNavigate()({ to: "/_authenticated/chat", search: { startDirect: p.id } } as any)}
+                  className="font-bold text-slate-900 truncate hover:text-pink-500 transition-colors block text-left w-full"
+                >
+                  {p.full_name}
+                </button>
                 <p className="text-xs text-slate-500 font-medium">
                   Piso {p.unit?.floor} - {p.unit?.apartment}
                 </p>
