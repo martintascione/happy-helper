@@ -53,7 +53,8 @@ export const Route = createFileRoute("/_authenticated")({
     return { 
       userRole: (profile.role || 'vecino') as "admin" | "super_admin" | "vecino", 
       userId: session!.user.id,
-      isSuperAdmin: false
+      isSuperAdmin: false,
+      userEmail: userEmail || ''
     };
   },
   component: AuthenticatedLayout,
