@@ -29,7 +29,35 @@ function LoginPage() {
 
   useEffect(() => {
     console.log("LoginPage mounted");
-    checkSession();
+    
+    // Check session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        const userEmail = session.user.email?.toLowerCase();
+        if (userEmail === 'tascione32@gmail.com') {
+          console.log("Super admin session found on mount, redirecting...");
+          window.location.replace("/muro");
+        } else {
+          checkSession();
+        }
+      }
+    });
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state change:", event, session?.user?.email);
+      if (event === 'SIGNED_IN' && session) {
+        const userEmail = session.user.email?.toLowerCase();
+        if (userEmail === 'tascione32@gmail.com') {
+          console.log("Super admin signed in, redirecting...");
+          window.location.replace("/muro");
+        } else {
+          checkSession();
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   async function checkSession() {
@@ -151,16 +179,16 @@ function LoginPage() {
         toast.error(error.message);
       } else {
         toast.success("Cuenta creada.");
-        // Re-check session to trigger auto-profile creation for super admin
-        setTimeout(() => checkSession(), 500);
+        // The onAuthStateChange listener will handle the redirect
+        setLoading(false);
       }
     } else {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       console.log("Login attempt result:", { success: !!data?.user, error: error?.message });
       if (error) {
         toast.error(error.message);
-      } else {
-        await checkSession();
+        // The onAuthStateChange listener will handle the redirect
+        setLoading(false);
       }
     }
     setLoading(false);
