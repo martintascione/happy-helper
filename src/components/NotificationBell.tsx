@@ -13,11 +13,14 @@ export function NotificationBell({ userId }: { userId: string }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!userId) return;
+    
     fetchNotifications();
 
     // Subscribe to new notifications
-    const channel = supabase
-      .channel(`notifications:${userId}`)
+    const channel = supabase.channel(`notifications:${userId}`);
+    
+    channel
       .on(
         'postgres_changes',
         {
@@ -41,6 +44,7 @@ export function NotificationBell({ userId }: { userId: string }) {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+    
     return () => {
       supabase.removeChannel(channel);
       document.removeEventListener("mousedown", handleClickOutside);
