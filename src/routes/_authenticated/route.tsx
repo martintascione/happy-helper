@@ -7,46 +7,35 @@ import { NotificationBell } from "@/components/NotificationBell";
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
     const { data: { session } } = await supabase.auth.getSession();
-    
-    // Debug session
-    console.log("Layout beforeLoad session:", session?.user?.email);
-    
     const userEmail = session?.user?.email?.toLowerCase();
     const isSuperAdminEmail = userEmail === 'tascione32@gmail.com';
 
+    // 1. If no session AND not the special super admin email -> login
     if (!session && !isSuperAdminEmail) {
-      console.log("No session and not super admin, redirecting to login");
       throw redirect({
         to: "/login",
-        search: {
-          redirect: location.href,
-        },
+        search: { redirect: location.href },
       });
     }
 
+    // 2. Super admin bypasses all profile checks
     if (isSuperAdminEmail) {
-      console.log("Allowing super admin bypass in layout");
       return { 
         userRole: 'super_admin' as const, 
         userId: session?.user?.id || 'super-admin-id',
         isSuperAdmin: true,
-        userEmail: userEmail || 'tascione32@gmail.com'
+        userEmail: 'tascione32@gmail.com'
       };
     }
 
+    // 3. Regular users must have a profile and be approved
     const { data: profile } = await supabase
       .from("profiles")
       .select("status, role")
       .eq("id", session!.user.id)
       .maybeSingle();
 
-    if (!profile) {
-      console.log("No profile found, redirecting to login");
-      throw redirect({ to: "/login" });
-    }
-
-    if (profile.status === "pendiente" && profile.role !== "super_admin") {
-      console.log("Profile pending, redirecting to login");
+    if (!profile || (profile.status === "pendiente" && profile.role !== "super_admin")) {
       throw redirect({ to: "/login" });
     }
 
