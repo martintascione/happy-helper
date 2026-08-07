@@ -47,15 +47,21 @@ function LoginPage() {
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state change:", event, session?.user?.email);
-      if (session) {
-        const userEmail = session.user.email?.toLowerCase();
+      console.log("Auth state change event:", event, "User:", session?.user?.email);
+      
+      // Handle the session if it exists, regardless of the event type for Super Admin
+      const currentSession = session;
+      if (currentSession) {
+        const userEmail = currentSession.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
-          console.log("Super admin event detected, redirecting...");
+          console.log("Super admin session detected in state change, redirecting...");
           window.location.href = "/muro";
-        } else if (event === 'SIGNED_IN') {
-          checkSession();
+          return;
         }
+      }
+
+      if (event === 'SIGNED_IN' && session) {
+        checkSession();
       }
     });
 
