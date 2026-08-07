@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MessageCircle, Send, Search, User, Hash, Clock, ArrowLeft, ShieldAlert } from "lucide-react";
+import { MessageCircle, Send, Search, User, Hash, Clock, ArrowLeft, ShieldAlert, Shield, X } from "lucide-react";
 import { InfoBanner } from "@/components/InfoBanner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -19,6 +19,7 @@ function ChatPage() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showSecurityWarning, setShowSecurityWarning] = useState(true);
+  const [hasSeenWarning, setHasSeenWarning] = useState(false);
   const { startDirect } = Route.useSearch() as { startDirect?: string };
   const navigate = useNavigate();
 
@@ -253,94 +254,120 @@ function ChatPage() {
 
   if (selectedConversation) {
     return (
-      <div className="flex flex-col h-[calc(100vh-80px)] bg-white max-w-2xl mx-auto overflow-hidden">
+      <div className="flex flex-col h-[calc(100vh-80px)] bg-white max-w-2xl mx-auto overflow-hidden relative">
         {/* Chat Header */}
-        <header className="p-4 border-b border-slate-100 flex items-center gap-4 bg-white sticky top-0 z-10">
-          <button 
-            onClick={() => setSelectedConversation(null)}
-            className="p-2 hover:bg-slate-50 rounded-full transition-colors"
-          >
-            <ArrowLeft size={20} className="text-slate-600" />
-          </button>
-          
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400">
-              {selectedConversation.type === 'general' ? (
-                <Hash size={20} className="text-accent" />
-              ) : selectedConversation.otherMember?.avatar_url ? (
-                <img src={selectedConversation.otherMember.avatar_url} className="w-full h-full rounded-full object-cover" />
-              ) : (
-                <User size={20} />
-              )}
-            </div>
-            <div>
-              <h3 className="font-black text-slate-900 leading-none">
-                {selectedConversation.type === 'general' ? 'Canal General' : selectedConversation.otherMember?.full_name}
-              </h3>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                {selectedConversation.type === 'general' ? 'Toda la comunidad' : 'Chat privado'}
-              </p>
+        <header className="p-6 border-b border-slate-50 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-20">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setSelectedConversation(null)}
+              className="p-2 hover:bg-slate-50 rounded-full transition-colors"
+            >
+              <ArrowLeft size={20} className="text-slate-900" />
+            </button>
+            
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 overflow-hidden">
+                {selectedConversation.type === 'general' ? (
+                  <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-900">
+                    <Hash size={20} />
+                  </div>
+                ) : selectedConversation.otherMember?.avatar_url ? (
+                  <img src={selectedConversation.otherMember.avatar_url} className="w-full h-full object-cover" />
+                ) : (
+                  <User size={20} />
+                )}
+              </div>
+              <div className="flex flex-col">
+                <h3 className="font-bold text-slate-900 leading-none flex items-center gap-2">
+                  {selectedConversation.type === 'general' ? 'Canal General' : selectedConversation.otherMember?.full_name}
+                  {selectedConversation.type === 'general' && (
+                    <span className="px-2 py-0.5 bg-slate-100 text-[9px] font-bold text-slate-500 rounded-full uppercase tracking-wider">Edificio</span>
+                  )}
+                </h3>
+                <p className="text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-widest">
+                  {selectedConversation.type === 'general' ? 'Toda la comunidad' : 'Chat privado'}
+                </p>
+              </div>
             </div>
           </div>
 
           <button 
             onClick={() => setShowSecurityWarning(true)}
-            className="ml-auto p-2 bg-slate-50 text-slate-400 rounded-xl hover:text-red-500 transition-colors"
-            title="Seguridad"
+            className={`p-2.5 rounded-full transition-all ${showSecurityWarning ? 'bg-red-50 text-red-500' : 'text-slate-300 hover:text-slate-900'}`}
           >
-            <ShieldAlert size={18} />
+            <Shield size={20} strokeWidth={2} />
           </button>
         </header>
 
-        {/* Security Warning */}
+        {/* Security Warning - Tint Error Compact */}
         {showSecurityWarning && (
-          <div className="px-4 py-2 border-b border-slate-100 bg-white">
-            <InfoBanner 
-              variant="seguridad" 
-              isClosable
-              onClose={() => setShowSecurityWarning(false)}
-              text="Cuidá tu información: no compartas contraseñas, códigos ni datos bancarios por chat. Los pagos y las reservas se hacen siempre dentro de la app — desconfiá de cualquier pedido de pago por fuera." 
-            />
+          <div className="mx-6 mt-4 animate-in slide-in-from-top-2 duration-300">
+            <div className="tint-error p-4 rounded-[20px] flex gap-3 relative border border-red-200/20">
+              <div className="shrink-0 mt-0.5">
+                <ShieldAlert size={16} className="text-red-600" />
+              </div>
+              <p className="text-xs font-medium leading-relaxed pr-6">
+                No compartas contraseñas ni datos bancarios. Los pagos se hacen siempre dentro de la app.
+              </p>
+              <button 
+                onClick={() => {
+                  setShowSecurityWarning(false);
+                  setHasSeenWarning(true);
+                }} 
+                className="absolute top-4 right-4 text-red-400 hover:text-red-600"
+              >
+                <X size={14} />
+              </button>
+            </div>
           </div>
         )}
 
         {/* Messages List */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
-          {messages.map((msg) => {
+        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 no-scrollbar">
+          {messages.map((msg, idx) => {
             const isMine = msg.sender_id === currentUserId;
+            const showTime = idx === messages.length - 1 || 
+              new Date(messages[idx+1].created_at).getTime() - new Date(msg.created_at).getTime() > 300000;
+
             return (
-              <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] px-4 py-3 rounded-[1.5rem] shadow-sm ${
-                  isMine ? 'bg-black text-white rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none border border-slate-100'
+              <div key={msg.id} className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} space-y-1`}>
+                <div className={`max-w-[85%] px-5 py-3.5 rounded-[22px] ${
+                  isMine 
+                    ? 'bg-black text-white shadow-xl shadow-black/5' 
+                    : 'bg-white text-slate-900 shadow-[0_4px_15px_rgba(0,0,0,0.04)] border border-slate-50'
                 }`}>
-                  <p className="text-sm font-medium leading-relaxed">{msg.body}</p>
-                  <p className={`text-[9px] mt-1 font-bold uppercase tracking-tighter ${isMine ? 'text-white/50' : 'text-slate-400'}`}>
-                    {format(new Date(msg.created_at), 'HH:mm')}
-                  </p>
+                  <p className="text-[15px] font-medium leading-relaxed">{msg.body}</p>
                 </div>
+                {showTime && (
+                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-tighter px-2">
+                    {format(new Date(msg.created_at), 'HH:mm')}
+                  </span>
+                )}
               </div>
             );
           })}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Message Input */}
-        <form onSubmit={sendMessage} className="p-4 bg-white border-t border-slate-100 flex gap-2">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Escribí un mensaje..."
-            className="flex-1 bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-black outline-none transition-all"
-          />
-          <button 
-            type="submit"
-            disabled={!newMessage.trim()}
-            className="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 active:scale-90 disabled:opacity-30 transition-all"
-          >
-            <Send size={20} />
-          </button>
-        </form>
+        {/* Floating Message Input */}
+        <div className="p-6 bg-transparent pointer-events-none sticky bottom-0">
+          <form onSubmit={sendMessage} className="bg-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 p-2 flex gap-2 pointer-events-auto items-center max-w-lg mx-auto">
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Escribí un mensaje..."
+              className="flex-1 bg-transparent border-none px-4 py-2 text-sm font-medium outline-none"
+            />
+            <button 
+              type="submit"
+              disabled={!newMessage.trim()}
+              className="w-11 h-11 bg-accent text-white rounded-full flex items-center justify-center shadow-lg shadow-accent/20 active:scale-90 disabled:opacity-30 transition-all shrink-0"
+            >
+              <Send size={18} strokeWidth={2.5} />
+            </button>
+          </form>
+        </div>
       </div>
     );
   }
@@ -365,12 +392,12 @@ function ChatPage() {
       </div>
 
       {/* Conversations List */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Tus chats</h2>
         
         {conversations.length === 0 ? (
-          <div className="bg-white p-12 rounded-[2.5rem] border-2 border-dashed border-slate-100 text-center space-y-4 shadow-soft">
-            <div className="w-16 h-16 tint-insight rounded-2xl flex items-center justify-center mx-auto">
+          <div className="bg-white p-12 rounded-[2.5rem] border border-white text-center space-y-4 shadow-sm">
+            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-slate-200">
               <MessageCircle size={32} />
             </div>
             <div>
@@ -379,40 +406,52 @@ function ChatPage() {
             </div>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-1">
             {conversations.map((conv) => (
               <button
                 key={conv.id}
                 onClick={() => setSelectedConversation(conv)}
-                className="w-full bg-white p-4 rounded-[2rem] shadow-soft border border-transparent hover:border-slate-100 flex items-center gap-4 active:scale-[0.98] transition-all text-left"
+                className="w-full bg-white p-5 rounded-[24px] hover:bg-slate-50 flex items-center gap-4 transition-all text-left group"
               >
-                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 shrink-0 relative">
+                <div className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 shrink-0 relative overflow-hidden">
                   {conv.type === 'general' ? (
-                    <div className="w-full h-full tint-insight rounded-2xl flex items-center justify-center">
+                    <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-900">
                       <Hash size={24} />
                     </div>
                   ) : conv.otherMember?.avatar_url ? (
-                    <img src={conv.otherMember.avatar_url} className="w-full h-full rounded-2xl object-cover" />
+                    <img src={conv.otherMember.avatar_url} className="w-full h-full object-cover" />
                   ) : (
                     <User size={24} />
                   )}
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
+                  {/* Status Indicator Example - Dot for unread/active */}
+                  {conv.type === 'general' && (
+                    <div className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                  )}
                 </div>
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-baseline mb-1">
-                    <h3 className="font-black text-slate-900 truncate">
+                    <h3 className="font-bold text-slate-900 truncate flex items-center gap-2">
                       {conv.type === 'general' ? 'Canal General' : conv.otherMember?.full_name}
+                      {conv.type === 'general' && (
+                        <span className="px-2 py-0.5 bg-slate-100 text-[8px] font-bold text-slate-400 rounded-full uppercase tracking-wider">Edificio</span>
+                      )}
                     </h3>
                     {conv.lastMessage && (
-                      <span className="text-[9px] font-bold text-slate-400 flex items-center gap-1 shrink-0 uppercase">
-                        <Clock size={8} /> {format(new Date(conv.lastMessage.created_at), 'HH:mm')}
+                      <span className="text-[10px] font-medium text-slate-400 shrink-0">
+                        {format(new Date(conv.lastMessage.created_at), 'HH:mm')}
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 font-medium truncate">
-                    {conv.lastMessage?.body || "Iniciá la conversación..."}
-                  </p>
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm text-slate-500 font-medium truncate pr-4">
+                      {conv.lastMessage?.body || "Iniciá la conversación..."}
+                    </p>
+                    {/* Unread Dot Example */}
+                    {Math.random() > 0.7 && (
+                      <div className="w-2 h-2 bg-green-500 rounded-full shrink-0" />
+                    )}
+                  </div>
                 </div>
               </button>
             ))}
