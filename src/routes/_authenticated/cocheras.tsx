@@ -159,22 +159,23 @@ function CocherasPage() {
 
       {/* Featured Next Booking */}
       {nextBooking && (
-        <div className="mb-10 p-7 rounded-[2.5rem] bg-black text-white shadow-card relative overflow-hidden group active:scale-[0.98] transition-all border border-white/10">
-          <div className="absolute top-[-40px] right-[-40px] w-48 h-48 bg-accent/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700" />
-          <div className="relative z-10 flex justify-between items-start">
-            <div className="space-y-3">
-              <span className="text-[11px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
-                <Circle className="fill-accent text-accent" size={6} /> Próxima Reserva
-              </span>
+        <div className="mb-12 premium-card p-8 bg-primary text-primary-foreground shadow-premium relative overflow-hidden group active:scale-[0.98] transition-all">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-accent/20 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-1000" />
+          <div className="relative z-10 flex justify-between items-center">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10">
+                <span className="w-1.5 h-1.5 bg-accent rounded-full" />
+                <span className="text-[10px] font-bold text-white uppercase tracking-[0.15em]">Próxima Reserva</span>
+              </div>
               <div className="space-y-1">
-                <h3 className="text-3xl font-black tracking-tight">{nextBooking.spot?.identifier}</h3>
-                <p className="text-sm font-bold text-white/50">
+                <h3 className="text-3xl font-bold tracking-tight">{nextBooking.spot?.identifier}</h3>
+                <p className="text-white/60 font-medium">
                   {format(new Date(nextBooking.start_date), "d 'de' MMMM", { locale: es })}
                 </p>
               </div>
             </div>
-            <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-xl">
-              <Car className="text-accent" size={28} strokeWidth={2.5} />
+            <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-3xl flex items-center justify-center border border-white/20 shadow-inner-glow">
+              <Car className="text-accent" size={32} strokeWidth={2.5} />
             </div>
           </div>
         </div>
