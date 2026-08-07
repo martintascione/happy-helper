@@ -266,7 +266,7 @@ function ChatPage() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400">
               {selectedConversation.type === 'general' ? (
-                <Hash size={20} className="text-pink-500" />
+                <Hash size={20} className="text-accent" />
               ) : selectedConversation.otherMember?.avatar_url ? (
                 <img src={selectedConversation.otherMember.avatar_url} className="w-full h-full rounded-full object-cover" />
               ) : (
@@ -372,7 +372,7 @@ function ChatPage() {
         
         {conversations.length === 0 ? (
           <div className="bg-white p-12 rounded-[2.5rem] border-2 border-dashed border-slate-100 text-center space-y-4 shadow-soft">
-            <div className="w-16 h-16 bg-pink-50 rounded-2xl flex items-center justify-center text-pink-200 mx-auto">
+            <div className="w-16 h-16 tint-insight rounded-2xl flex items-center justify-center mx-auto">
               <MessageCircle size={32} />
             </div>
             <div>
@@ -390,7 +390,7 @@ function ChatPage() {
               >
                 <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 shrink-0 relative">
                   {conv.type === 'general' ? (
-                    <div className="w-full h-full bg-pink-50 rounded-2xl flex items-center justify-center text-pink-400">
+                    <div className="w-full h-full tint-insight rounded-2xl flex items-center justify-center">
                       <Hash size={24} />
                     </div>
                   ) : conv.otherMember?.avatar_url ? (

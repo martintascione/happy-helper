@@ -152,7 +152,7 @@ function AdminPage() {
               <div className="flex-1 min-w-0">
                 <button 
                   onClick={() => Route.useNavigate()({ to: "/_authenticated/chat", search: { startDirect: p.id } } as any)}
-                  className="font-bold text-slate-900 truncate hover:text-pink-500 transition-colors block text-left w-full"
+                  className="font-bold text-slate-900 truncate hover:text-accent transition-colors block text-left w-full"
                 >
                   {p.full_name}
                 </button>

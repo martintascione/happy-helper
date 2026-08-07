@@ -110,7 +110,7 @@ function AuthenticatedLayout() {
   }), [navItems, activeRole]);
 
   return (
-    <div className="flex min-h-screen bg-[#F2F2F2] text-foreground font-sans">
+    <div className="flex min-h-screen bg-background text-foreground font-sans">
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-white border-r p-8 gap-8">
         <div className="flex flex-col gap-6">
@@ -180,7 +180,7 @@ function AuthenticatedLayout() {
                     isActive ? "text-slate-900" : "text-slate-300"
                   }`}
                 >
-                  <div className={`p-1.5 rounded-full transition-colors ${isActive ? "bg-accent/30" : ""}`}>
+                  <div className={`p-1.5 rounded-full transition-colors ${isActive ? "bg-accent/10" : ""}`}>
                     <item.icon size={24} strokeWidth={isActive ? 2.5 : 2} />
                   </div>
                   <span className={`text-[9px] font-extrabold uppercase tracking-widest ${isActive ? "opacity-100" : "opacity-0"}`}>
