@@ -112,22 +112,11 @@ function AuthenticatedLayout() {
     { label: "Perfil", icon: User, to: "/perfil" },
   ], []);
 
-  const filteredNavItems = useMemo(() => navItems.filter(item => {
-    if (item.label === "Admin") return activeRole === "admin" || activeRole === "super_admin";
-    if (item.label === "Global") return activeRole === "super_admin";
-    return true;
-  }), [navItems, activeRole]);
+  const filteredNavItems = useMemo(() => navItems, [navItems]);
 
   // Mobile navigation items (limited to 5)
   const mobileNavItems = useMemo(() => {
-    const mainItems = filteredNavItems.filter(item => !item.isAdmin);
-    const adminItems = filteredNavItems.filter(item => item.isAdmin);
-    
-    if (adminItems.length > 0) {
-      // Show first 4 main items + 1 Admin group if there are admin items
-      return [...mainItems.slice(0, 4), { label: "Admin Group", icon: Shield, isGroup: true, items: adminItems }];
-    }
-    return mainItems;
+    return filteredNavItems;
   }, [filteredNavItems]);
 
   return (
