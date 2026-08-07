@@ -11,7 +11,8 @@ export const Route = createFileRoute("/_authenticated")({
     // Debug session
     console.log("Layout beforeLoad session:", session?.user?.email);
     
-    const isSuperAdminEmail = session?.user?.email?.toLowerCase() === 'tascione32@gmail.com';
+    const userEmail = session?.user?.email?.toLowerCase();
+    const isSuperAdminEmail = userEmail === 'tascione32@gmail.com';
 
     if (!session && !isSuperAdminEmail) {
       console.log("No session and not super admin, redirecting to login");
@@ -28,7 +29,8 @@ export const Route = createFileRoute("/_authenticated")({
       return { 
         userRole: 'super_admin' as const, 
         userId: session?.user?.id || 'super-admin-id',
-        isSuperAdmin: true
+        isSuperAdmin: true,
+        userEmail: userEmail || 'tascione32@gmail.com'
       };
     }
 
@@ -51,7 +53,8 @@ export const Route = createFileRoute("/_authenticated")({
     return { 
       userRole: (profile.role || 'vecino') as "admin" | "super_admin" | "vecino", 
       userId: session!.user.id,
-      isSuperAdmin: false
+      isSuperAdmin: false,
+      userEmail: userEmail || ''
     };
   },
   component: AuthenticatedLayout,
@@ -59,12 +62,13 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedLayout() {
   const location = useLocation();
-  const { userRole, userId, isSuperAdmin } = Route.useRouteContext();
+  const { userRole, userId, isSuperAdmin, userEmail } = Route.useRouteContext();
   const [activeRole, setActiveRole] = useState(userRole);
 
   useEffect(() => {
+    console.log("AuthenticatedLayout mounted/updated", { userEmail, userRole, isSuperAdmin });
     setActiveRole(userRole);
-  }, [userRole]);
+  }, [userRole, userEmail, isSuperAdmin]);
   
   const navItems = useMemo(() => [
     { label: "Muro", icon: Home, to: "/muro" },

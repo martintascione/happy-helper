@@ -30,14 +30,31 @@ function LoginPage() {
   useEffect(() => {
     console.log("LoginPage mounted");
     
+    let isMounted = true;
+
+    // Direct redirect for super admin if session exists in storage
+    const storedSessionStr = localStorage.getItem('sb-ufsowwvgbxfasucpvzkl-auth-token');
+    if (storedSessionStr) {
+      try {
+        const storedSession = JSON.parse(storedSessionStr);
+        if (storedSession?.user?.email?.toLowerCase() === 'tascione32@gmail.com') {
+          console.log("Super admin detected in storage, hard redirecting...");
+          window.location.href = "/muro";
+          return;
+        }
+      } catch (e) {
+        console.error("Error parsing stored session", e);
+      }
+    }
+
     // Check session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
       console.log("Current session in mount effect:", session?.user?.email);
       if (session) {
         const userEmail = session.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
-          console.log("Super admin detected on mount, performing immediate cleanup and redirect");
-          // Clear any potentially conflicting local state or breadcrumbs
+          console.log("Super admin detected on mount, performing immediate redirect");
           window.location.href = "/muro";
         } else {
           checkSession();
@@ -47,12 +64,11 @@ function LoginPage() {
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!isMounted) return;
       console.log("Auth state change event:", event, "User:", session?.user?.email);
       
-      // Handle the session if it exists, regardless of the event type for Super Admin
-      const currentSession = session;
-      if (currentSession) {
-        const userEmail = currentSession.user.email?.toLowerCase();
+      if (session) {
+        const userEmail = session.user.email?.toLowerCase();
         if (userEmail === 'tascione32@gmail.com') {
           console.log("Super admin session detected in state change, redirecting...");
           window.location.href = "/muro";
@@ -65,7 +81,10 @@ function LoginPage() {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   async function checkSession() {
@@ -94,64 +113,7 @@ function LoginPage() {
       return;
     }
 
-    // 1. Proactive check for super admin email
-    if (isSuperAdminEmail) {
-      console.log("Super admin detected, checking profile...");
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("status, role, building_id, unit_id")
-        .eq("id", session.user.id)
-        .maybeSingle();
-
-      if (profileError) {
-        console.error("Profile error for super admin:", profileError);
-      }
-
-      // If already super_admin and approved, redirect immediately
-      if (profile && profile.role === 'super_admin' && profile.status === 'aprobado' && profile.building_id && profile.unit_id) {
-        console.log("Super admin fully set up, redirecting to muro");
-        navigate({ to: "/muro" });
-        return;
-      }
-      console.log("Super admin profile incomplete, attempting auto-setup...", profile);
-
-      // Ensure at least one building and unit exist
-      let bId = profile?.building_id;
-      let uId = profile?.unit_id;
-
-      if (!bId || !uId) {
-        const { data: building } = await supabase.from('buildings').select('id').limit(1).maybeSingle();
-        if (building) {
-          const { data: unit } = await supabase.from('units').select('id').eq('building_id', building.id).limit(1).maybeSingle();
-          bId = building.id;
-          uId = unit?.id;
-        }
-      }
-      
-      if (bId && uId) {
-        console.log("Upserting super admin profile with building/unit:", bId, uId);
-        const { error: upsertError } = await supabase.from('profiles').upsert({
-          id: session.user.id,
-          full_name: fullName || (session.user.user_metadata as any)?.['full_name'] || 'Super Admin',
-          building_id: bId,
-          unit_id: uId,
-          role: 'super_admin',
-          status: 'aprobado'
-        });
-        
-        if (!upsertError) {
-          console.log("Upsert success, redirecting to muro");
-          navigate({ to: "/muro" });
-          return;
-        } else {
-          console.error("Upsert error for super admin:", upsertError);
-        }
-      } else {
-        console.warn("No building/unit found for super admin auto-setup");
-      }
-    }
-
-    // 2. Standard user check
+    // Standard user logic continues...
     const { data: profile } = await supabase
       .from("profiles")
       .select("status, role")
@@ -357,18 +319,15 @@ function LoginPage() {
               </div>
             </div>
 
-            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 mb-4">
-              <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Acceso Directo (Demo)</p>
-              <p className="text-[10px] text-amber-500 font-medium">Usá tascione32@gmail.com / admin123 para entrar como Super Admin.</p>
+            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 mb-2">
+              <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1 text-center">Modo Demo Activado</p>
+              <p className="text-[10px] text-amber-500 font-medium text-center">Usá tascione32@gmail.com / admin123</p>
             </div>
 
             <button
               key={isSignUp ? "signup" : "signin"}
               type="button"
-              onClick={(e) => {
-                console.log("Direct button click");
-                handleRegisterClick(e);
-              }}
+              onClick={handleRegisterClick}
               disabled={loading}
               className="w-full py-5 bg-primary text-white rounded-2xl font-bold shadow-xl shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 relative z-10"
             >
