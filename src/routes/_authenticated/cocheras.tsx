@@ -165,7 +165,7 @@ function CocherasPage() {
           payoutAccount={payoutAccount}
         />
       ) : (
-        <MyBookingsList bookings={myBookings} onRefresh={fetchData} />
+        <MyBookingsList bookings={myBookings} onRefresh={fetchData} settings={platformSettings} />
       )}
     </div>
   );
@@ -276,7 +276,36 @@ function AvailableSpotsList({ spots, userId, onRefresh, settings }: { spots: any
   );
 }
 
-function MyBookingsList({ bookings, onRefresh }: { bookings: any[], onRefresh: () => void }) {
+function MyBookingsList({ bookings, onRefresh, settings }: { bookings: any[], onRefresh: () => void, settings: any }) {
+  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [uploading, setUploading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'transferencia' | 'mercadopago'>('transferencia');
+  const [payments, setPayments] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    fetchPayments();
+  }, [bookings]);
+
+  async function fetchPayments() {
+    if (bookings.length === 0) return;
+    const bookingIds = bookings.map(b => b.id);
+    const { data } = await supabase
+      .from("parking_payments" as any)
+      .select("*")
+      .in("booking_id", bookingIds);
+    
+    if (data) {
+      const pMap: Record<string, any> = {};
+      data.forEach(p => {
+        // If there are multiple, preferred order: aprobado > en_revision > rechazado > pendiente
+        if (!pMap[p.booking_id] || p.status === 'aprobado' || (pMap[p.booking_id].status !== 'aprobado' && p.status === 'en_revision')) {
+          pMap[p.booking_id] = p;
+        }
+      });
+      setPayments(pMap);
+    }
+  }
+
   async function handleCancel(bookingId: string) {
     const { error } = await supabase
       .from("parking_bookings")
@@ -288,6 +317,50 @@ function MyBookingsList({ bookings, onRefresh }: { bookings: any[], onRefresh: (
     }
   }
 
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>, booking: any) {
+    const file = e.target.files?.[0];
+    if (!file || !settings) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${booking.renter_id}/${booking.id}_${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('payment-receipts')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { error: paymentError } = await supabase
+        .from("parking_payments" as any)
+        .upsert({
+          booking_id: booking.id,
+          method: 'transferencia',
+          amount: booking.total_price,
+          receipt_url: filePath,
+          status: 'en_revision',
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'booking_id' });
+
+      if (paymentError) throw paymentError;
+
+      toast.success("Comprobante subido. En revisión.");
+      setSelectedBooking(null);
+      onRefresh();
+    } catch (error: any) {
+      toast.error("Error al subir: " + error.message);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Copiado");
+  };
+
   return (
     <div className="space-y-4">
       {bookings.length === 0 ? (
@@ -297,38 +370,138 @@ function MyBookingsList({ bookings, onRefresh }: { bookings: any[], onRefresh: (
           <p className="text-gray-500 font-medium">Todavía no realizaste ninguna reserva.</p>
         </div>
       ) : (
-        bookings.map((booking) => (
-          <div key={booking.id} className="bg-white rounded-[2rem] p-5 shadow-soft border border-white">
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <h4 className="font-black text-lg">{booking.spot?.identifier}</h4>
-                <p className="text-gray-500 text-sm font-medium">De {booking.spot?.owner?.full_name}</p>
+        bookings.map((booking) => {
+          const payment = payments[booking.id];
+          const isPendingPayment = booking.status === 'solicitada' && (!payment || payment.status === 'rechazado' || payment.status === 'pendiente');
+
+          return (
+            <div key={booking.id} className="bg-white rounded-[2rem] p-5 shadow-soft border border-white space-y-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-black text-lg">{booking.spot?.identifier}</h4>
+                  <p className="text-gray-500 text-sm font-medium">De {booking.spot?.owner?.full_name}</p>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
+                  booking.status === 'confirmada' ? 'bg-green-100 text-green-700' : 
+                  booking.status === 'solicitada' ? 'bg-blue-100 text-blue-700' :
+                  booking.status === 'cancelada' ? 'bg-red-100 text-red-700' : 'bg-gray-100'
+                }`}>
+                  {booking.status === 'solicitada' && payment?.status === 'en_revision' ? 'En revisión' : booking.status}
+                </div>
               </div>
-              <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
-                booking.status === 'confirmada' ? 'bg-green-100 text-green-700' : 
-                booking.status === 'solicitada' ? 'bg-blue-100 text-blue-700' :
-                booking.status === 'cancelada' ? 'bg-red-100 text-red-700' : 'bg-gray-100'
-              }`}>
-                {booking.status}
+              
+              <div className="flex items-center gap-2 text-gray-600 font-bold text-sm">
+                <CalendarIcon className="w-4 h-4" />
+                {format(new Date(booking.start_date), "d 'de' MMMM", { locale: es })} - {format(new Date(booking.end_date), "d 'de' MMMM", { locale: es })}
               </div>
+
+              {payment?.status === 'rechazado' && (
+                <div className="bg-red-50 p-3 rounded-2xl text-xs font-bold text-red-800 border border-red-100">
+                  Pago rechazado: {payment.reject_reason || "Comprobante inválido"}. Por favor reintentá.
+                </div>
+              )}
+
+              {isPendingPayment && (
+                <Button 
+                  onClick={() => setSelectedBooking(booking)}
+                  className="w-full bg-pink-500 hover:bg-pink-600 text-white h-12 rounded-2xl font-black shadow-lg shadow-pink-500/20"
+                >
+                  Pagar reserva (${Number(booking.total_price).toLocaleString('es-AR')})
+                </Button>
+              )}
+
+              {payment?.status === 'en_revision' && (
+                <div className="bg-blue-50 p-3 rounded-2xl text-xs font-bold text-blue-800 flex items-center gap-2 border border-blue-100">
+                  <Clock className="w-4 h-4" /> Comprobante en revisión
+                </div>
+              )}
+
+              {booking.status === 'solicitada' && !payment && (
+                <Button variant="ghost" onClick={() => handleCancel(booking.id)} className="w-full rounded-2xl font-black text-red-500 hover:text-red-600 hover:bg-red-50">
+                  Cancelar reserva
+                </Button>
+              )}
             </div>
-            <div className="flex items-center gap-2 mb-4 text-gray-600 font-bold text-sm">
-              <CalendarIcon className="w-4 h-4" />
-              {format(new Date(booking.start_date), "d 'de' MMMM", { locale: es })} - {format(new Date(booking.end_date), "d 'de' MMMM", { locale: es })}
+          );
+        })
+      )}
+
+      {/* Payment Dialog */}
+      <Dialog open={!!selectedBooking} onOpenChange={() => setSelectedBooking(null)}>
+        <DialogContent className="rounded-[2.5rem] border-none sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black">Pagar Reserva</DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4 space-y-6">
+            <div className="flex p-1 bg-gray-100 rounded-2xl">
+              <button 
+                onClick={() => setPaymentMethod('transferencia')}
+                className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${paymentMethod === 'transferencia' ? 'bg-white text-black shadow-sm' : 'text-gray-500'}`}
+              >
+                Transferencia
+              </button>
+              <button 
+                onClick={() => setPaymentMethod('mercadopago')}
+                className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${paymentMethod === 'mercadopago' ? 'bg-white text-black shadow-sm' : 'text-gray-500'}`}
+              >
+                Mercado Pago
+              </button>
             </div>
-            {isAfter(new Date(booking.start_date), addDays(new Date(), 1)) && booking.status === 'solicitada' && (
-              <Button variant="ghost" onClick={() => handleCancel(booking.id)} className="w-full rounded-2xl font-black text-red-500 hover:text-red-600 hover:bg-red-50">
-                Cancelar reserva
-              </Button>
-            )}
-            {booking.status === 'confirmada' && (
-              <div className="bg-green-50 p-3 rounded-2xl text-xs font-bold text-green-800 flex items-center gap-2">
-                <Check className="w-4 h-4" /> Coordiná el pago directamente con tu vecino
+
+            {paymentMethod === 'transferencia' ? (
+              <div className="space-y-4">
+                <div className="bg-slate-900 text-white p-6 rounded-[2rem] space-y-4">
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Datos para transferir</p>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between group">
+                      <div>
+                        <p className="text-[10px] text-slate-500 font-bold uppercase">Titular</p>
+                        <p className="font-bold text-sm">{settings?.transfer_holder_name}</p>
+                      </div>
+                      <button onClick={() => copyToClipboard(settings?.transfer_holder_name)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Plus size={16}/></button>
+                    </div>
+                    <div className="flex items-center justify-between group">
+                      <div>
+                        <p className="text-[10px] text-slate-500 font-bold uppercase">CBU</p>
+                        <p className="font-mono text-xs">{settings?.transfer_cbu}</p>
+                      </div>
+                      <button onClick={() => copyToClipboard(settings?.transfer_cbu)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Plus size={16}/></button>
+                    </div>
+                    <div className="flex items-center justify-between group">
+                      <div>
+                        <p className="text-[10px] text-slate-500 font-bold uppercase">Alias</p>
+                        <p className="font-bold text-sm">{settings?.transfer_alias}</p>
+                      </div>
+                      <button onClick={() => copyToClipboard(settings?.transfer_alias)} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><Plus size={16}/></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <p className="text-sm font-bold text-slate-900 ml-1">Subí tu comprobante</p>
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-[2rem] hover:bg-slate-50 cursor-pointer transition-all">
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <Plus className="w-8 h-8 text-gray-400 mb-2" />
+                      <p className="text-xs font-bold text-gray-500">{uploading ? "Subiendo..." : "Imagen o PDF"}</p>
+                    </div>
+                    <input type="file" className="hidden" accept="image/*,application/pdf" onChange={(e) => handleFileUpload(e, selectedBooking)} disabled={uploading} />
+                  </label>
+                </div>
+              </div>
+            ) : (
+              <div className="py-8 text-center space-y-4">
+                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto text-blue-500">
+                  <CreditCard size={32} />
+                </div>
+                <h3 className="text-lg font-bold">Mercado Pago</h3>
+                <p className="text-sm text-gray-500 font-medium px-4">Esta opción estará disponible próximamente.</p>
+                <Button disabled className="w-full bg-blue-600 opacity-50 h-14 rounded-2xl">Continuar con Mercado Pago</Button>
               </div>
             )}
           </div>
-        ))
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
