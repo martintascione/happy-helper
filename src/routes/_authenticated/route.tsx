@@ -158,7 +158,7 @@ function AuthenticatedLayout() {
         </div>
 
         {/* Role Switcher for Super Admin */}
-        {userRole === "super_admin" && (
+        {isSuperAdmin && (
           <div className="fixed top-4 right-4 z-[60] flex gap-2">
             <NotificationBell userId={userId} />
             <div className="flex gap-2 bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-lg border border-slate-200">
