@@ -276,22 +276,6 @@ function MuroPage() {
           </div>
         )) : null}
       </div>
-            <div className="space-y-1.5">
-              <h3 className="font-bold text-[18px] text-slate-900 tracking-tight leading-snug">{post.title}</h3>
-              <p className="text-[15px] text-slate-600 font-medium leading-relaxed">{post.body}</p>
-            </div>
-            {post.author && (
-              <p className="text-[12px] font-semibold text-violet-700/60 flex items-center gap-1.5 pt-1">
-                <ShieldCheck size={14} /> {post.author.full_name} · Administración
-              </p>
-            )}
-          </div>
-        )) : (
-          <div className="tint-insight card-dashed rounded-[24px] p-6 text-center space-y-1">
-            <p className="text-[14px] font-semibold text-violet-700">Sin comunicados por ahora</p>
-            <p className="text-[12px] font-medium text-violet-700/50">Los avisos de la administración aparecen acá</p>
-          </div>
-        )}
       </div>
 
       {/* Muro Vecinal */}
