@@ -226,7 +226,8 @@ function MuroPage() {
               Leer comunicado completo
             </button>
           </div>
-        )) : null}
+          )) : null}
+        </div>
       </div>
 
       {/* Muro Vecinal */}
