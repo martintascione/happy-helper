@@ -187,17 +187,17 @@ function GlobalAdminPage() {
         <p className="text-muted-foreground font-medium text-lg">Configuración y auditoría</p>
       </header>
 
-      {activeTab === "resumen" && financialStats && (
+      {activeTab === "resumen" && (
         <section className="space-y-6 animate-in fade-in duration-300">
           <div className="premium-card p-10 bg-primary text-primary-foreground shadow-premium relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-[100px] animate-pulse" />
             <div className="space-y-6 relative z-10">
               <div className="space-y-2">
                 <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[11px]">Facturación Mensual</p>
-                <h2 className="text-6xl font-bold tracking-tight">${financialStats[0]?.total.toLocaleString('es-AR') || 0}</h2>
+                <h2 className="text-6xl font-bold tracking-tight">${financialStats?.[0]?.total?.toLocaleString('es-AR') || 0}</h2>
               </div>
               <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/10 rounded-full text-[12px] font-bold uppercase tracking-widest border border-white/10">
-                Ganancia Neta: ${financialStats[0]?.profit.toLocaleString('es-AR') || 0}
+                Ganancia Neta: ${financialStats?.[0]?.profit?.toLocaleString('es-AR') || 0}
               </div>
 
               <div className="flex justify-between items-center mt-10 border-t border-white/10 pt-8">
