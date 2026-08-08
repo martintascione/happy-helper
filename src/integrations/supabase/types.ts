@@ -610,6 +610,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_my_building_id: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
