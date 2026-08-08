@@ -276,7 +276,6 @@ function MuroPage() {
           </div>
         )) : null}
       </div>
-      </div>
 
       {/* Muro Vecinal */}
       <div className="space-y-3">
