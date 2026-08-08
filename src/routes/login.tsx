@@ -220,7 +220,30 @@ function LoginPage() {
 
       <div className="w-full max-w-[420px] space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
         {step === 1 ? (
-          <div className="space-y-8">
+          <div className="space-y-6">
+            {/* Sliding Switch */}
+            <div className="flex justify-center">
+              <div className="bg-[#F5F5F3] p-1 rounded-full flex relative w-[240px] shadow-sm">
+                <div 
+                  className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-full shadow-md transition-all duration-300 ease-out ${isSignUp ? 'translate-x-[calc(100%+4px)]' : 'translate-x-0'}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsSignUp(false)}
+                  className={`flex-1 py-2 text-xs font-bold relative z-10 transition-colors duration-200 ${!isSignUp ? 'text-black' : 'text-slate-400'}`}
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsSignUp(true)}
+                  className={`flex-1 py-2 text-xs font-bold relative z-10 transition-colors duration-200 ${isSignUp ? 'text-black' : 'text-slate-400'}`}
+                >
+                  Registro
+                </button>
+              </div>
+            </div>
+
             {/* Form Container */}
             <div className="premium-card p-8 md:p-10 space-y-6">
               {existingSession && (
@@ -338,18 +361,6 @@ function LoginPage() {
               </div>
 
               <div className="flex flex-col items-center gap-4">
-                <button
-                  type="button"
-                  onClick={() => setIsSignUp(!isSignUp)}
-                  className="text-[13px] text-slate-500 font-semibold hover:text-black transition-colors"
-                >
-                  {isSignUp ? (
-                    <>¿Ya tenés cuenta? <span className="text-black font-bold underline underline-offset-4">Log in</span></>
-                  ) : (
-                    <>¿No tenés cuenta? <span className="text-black font-bold underline underline-offset-4">Registrate</span></>
-                  )}
-                </button>
-                
                 <Link 
                   to="/" 
                   className="text-[10px] text-slate-400 font-bold uppercase tracking-widest hover:text-slate-600"
