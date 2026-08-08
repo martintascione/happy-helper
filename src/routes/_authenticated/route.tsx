@@ -89,9 +89,7 @@ function AuthenticatedLayout() {
   return (
     <div className="flex min-h-screen bg-background text-foreground overflow-x-hidden relative justify-center">
       <main className="flex-1 flex flex-col relative min-h-screen max-w-[480px] w-full overflow-x-hidden bg-background">
-        <header className="flex justify-end p-6 sticky top-0 z-[50]">
-          <NotificationBell userId={userId} />
-        </header>
+        {/* Notification Bell removed as requested */}
         
         <div className="flex-1 pb-32">
           <Outlet />
