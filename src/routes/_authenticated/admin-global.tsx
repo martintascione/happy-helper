@@ -22,7 +22,7 @@ function GlobalAdminPage() {
   const [settings, setSettings] = useState<any>(null);
   const [pendingPayments, setPendingPayments] = useState<any[]>([]);
   const [pendingPayouts, setPendingPayouts] = useState<any[]>([]);
-  const [financialStats, setFinancialStats] = useState<any>(null);
+  const [financialStats, setFinancialStats] = useState<any[]>([]);
 
   useEffect(() => {
     fetchData();
