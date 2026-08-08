@@ -158,83 +158,124 @@ function MuroPage() {
       </div>
 
       {/* Resumen */}
-      <div>
-        {data.loading ? (
-          <div className="h-28 bg-white/60 rounded-[28px] animate-pulse" />
-        ) : data.bookings.length > 0 ? (
-          <button
-            onClick={() => navigate({ to: "/_authenticated/cocheras" } as any)}
-            className="w-full text-left rounded-[28px] p-6 active:scale-[0.99] transition-all"
-            style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.14) 0%, rgba(16,185,129,0.05) 100%)" }}
-          >
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 rounded-full bg-white shadow-subtle flex items-center justify-center shrink-0">
-                <Car size={24} className="text-emerald-600" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[13px] font-semibold text-emerald-800/70">Tu próxima cochera</p>
-                <p className="text-[22px] font-bold text-slate-900 tracking-tight truncate">{data.bookings[0].spot?.identifier}</p>
-                <span className="inline-flex items-center gap-1.5 mt-1 px-2.5 py-0.5 bg-white/70 rounded-full text-[12px] font-semibold text-emerald-800">
-                  <Calendar size={12} />
-                  {format(new Date(data.bookings[0].start_date), "d 'de' MMMM", { locale: es })}
-                </span>
-              </div>
+      {/* Dynamic Activity Grid */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* Cochera Highlight */}
+        <div 
+          onClick={() => navigate({ to: "/_authenticated/cocheras" } as any)}
+          className="bg-white p-5 rounded-[28px] shadow-subtle border border-white flex flex-col gap-4 active:scale-95 transition-all cursor-pointer"
+        >
+          <div className="flex items-center justify-between">
+            <h4 className="text-[13px] font-bold text-slate-900">Cochera</h4>
+            <ArrowRight size={14} className="text-slate-300" />
+          </div>
+          <div className="flex items-end gap-2">
+            <div className="flex flex-col">
+              <span className="text-2xl font-black tracking-tight text-slate-900">
+                {data.bookings.length > 0 ? data.bookings[0].spot?.identifier : "0"}
+              </span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Reservas</span>
             </div>
-          </button>
-        ) : (
-          <button
-            onClick={() => navigate({ to: "/_authenticated/cocheras" } as any)}
-            className="w-full bg-white p-5 rounded-[28px] flex items-center justify-between shadow-subtle active:scale-[0.99] transition-all"
-          >
-            <div className="flex items-center gap-4 text-left">
-              <div className="w-12 h-12 bg-[#F4F1EB] rounded-full flex items-center justify-center text-slate-500">
-                <Car size={22} />
-              </div>
-              <div>
-                <p className="font-semibold text-[15px] text-slate-900">Sin reservas próximas</p>
-                <p className="text-[13px] font-medium text-slate-400">Mirá las cocheras disponibles</p>
-              </div>
+            <div className="w-full h-10 flex items-end gap-0.5 pb-1">
+              {[30, 45, 25, 60, 40, 70, 50].map((h, i) => (
+                <div key={i} className="flex-1 bg-slate-100 rounded-t-sm" style={{ height: `${h}%` }} />
+              ))}
             </div>
-            <div className="w-9 h-9 bg-slate-900 text-white rounded-full flex items-center justify-center shrink-0">
-              <ArrowRight size={18} />
+          </div>
+        </div>
+
+        {/* Community Health / Reports */}
+        <div 
+          onClick={() => navigate({ to: "/_authenticated/reportes" } as any)}
+          className="bg-white p-5 rounded-[28px] shadow-subtle border border-white flex flex-col gap-4 active:scale-95 transition-all cursor-pointer"
+        >
+          <div className="flex items-center justify-between">
+            <h4 className="text-[13px] font-bold text-slate-900">Actividad</h4>
+            <ArrowRight size={14} className="text-slate-300" />
+          </div>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <TrendingUp size={16} className="text-emerald-500" />
+              <span className="text-xl font-black text-slate-900">+12%</span>
             </div>
-          </button>
-        )}
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Esta semana</p>
+          </div>
+          <div className="flex -space-x-2">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center">
+                <User size={10} className="text-slate-400" />
+              </div>
+            ))}
+            <div className="w-6 h-6 rounded-full border-2 border-white bg-slate-900 flex items-center justify-center text-[8px] font-bold text-white">
+              +5
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
-        {[
-          { label: "Cocheras", icon: Car, to: "/_authenticated/cocheras" },
-          { label: "Chat", icon: MessageSquare, to: "/_authenticated/chat" },
-          { label: "Reportes", icon: AlertTriangle, to: "/_authenticated/reportes" },
-        ].map(({ label, icon: Icon, to }) => (
-          <button
-            key={label}
-            onClick={() => navigate({ to } as any)}
-            className="bg-white rounded-[24px] p-4 flex flex-col items-center gap-2.5 shadow-subtle active:scale-95 transition-all"
-          >
-            <div className="w-12 h-12 bg-[#F4F1EB] rounded-full flex items-center justify-center">
-              <Icon size={21} strokeWidth={2} className="text-slate-700" />
-            </div>
-            <span className="text-[12px] font-semibold text-slate-600">{label}</span>
-          </button>
-        ))}
+      {/* Main Tool Grid (Horizontal Scroll Style) */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-[17px] font-bold text-slate-900">Herramientas</h2>
+          <button className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Ver todo</button>
+        </div>
+        
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { label: "Cocheras", icon: Car, to: "/_authenticated/cocheras", color: "bg-blue-50 text-blue-600" },
+            { label: "Chat", icon: MessageSquare, to: "/_authenticated/chat", color: "bg-emerald-50 text-emerald-600" },
+            { label: "Reportes", icon: AlertTriangle, to: "/_authenticated/reportes", color: "bg-rose-50 text-rose-600" },
+          ].map(({ label, icon: Icon, to, color }) => (
+            <button
+              key={label}
+              onClick={() => navigate({ to } as any)}
+              className="bg-white rounded-[28px] p-5 flex flex-col items-center gap-3 shadow-subtle border border-white active:scale-95 transition-all"
+            >
+              <div className={`w-12 h-12 ${color} rounded-2xl flex items-center justify-center`}>
+                <Icon size={22} strokeWidth={2.5} />
+              </div>
+              <span className="text-[11px] font-bold text-slate-600 uppercase tracking-tight">{label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Post Section Header */}
+      <div className="flex items-center justify-between px-1 pt-2">
+        <h2 className="text-[17px] font-bold text-slate-900">Última actividad</h2>
+        <MoreHorizontal size={20} className="text-slate-400" />
       </div>
 
       {/* Comunicados Oficiales */}
-      <div className="space-y-3">
-        <h2 className="text-[17px] font-bold text-slate-900 px-1">Comunicados</h2>
+      <div className="space-y-4">
         {data.posts.length > 0 ? data.posts.map((post) => (
-          <div key={post.id} className="tint-insight card-dashed rounded-[24px] p-5 space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-white shadow-subtle flex items-center justify-center shrink-0">
-                <Bell size={16} className="text-violet-600" />
+          <div key={post.id} className="premium-card p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-black flex items-center justify-center shrink-0">
+                  <Bell size={18} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Oficial</p>
+                  <p className="text-[12px] font-bold text-slate-900">Administración</p>
+                </div>
               </div>
-              <p className="text-[13px] font-semibold text-violet-700">
-                Comunicado oficial
-                <span className="text-violet-700/50 font-medium"> · {format(new Date(post.created_at), "d MMM", { locale: es })}</span>
-              </p>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                {format(new Date(post.created_at), "d MMM", { locale: es })}
+              </span>
             </div>
+            
+            <div className="space-y-2">
+              <h3 className="font-bold text-[19px] text-slate-900 tracking-tight leading-tight">{post.title}</h3>
+              <p className="text-[14px] text-slate-500 font-medium leading-relaxed">{post.body}</p>
+            </div>
+            
+            <button className="w-full py-3 bg-slate-50 rounded-2xl text-[12px] font-bold text-slate-900 active:scale-95 transition-all">
+              Leer comunicado completo
+            </button>
+          </div>
+        )) : null}
+      </div>
             <div className="space-y-1.5">
               <h3 className="font-bold text-[18px] text-slate-900 tracking-tight leading-snug">{post.title}</h3>
               <p className="text-[15px] text-slate-600 font-medium leading-relaxed">{post.body}</p>
