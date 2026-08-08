@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link, useLocation, redirect } from "@tanstack/
 import { Home, Car, MessageSquare, AlertCircle, User, Plus, ShieldCheck, Settings, Shield } from "lucide-react";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { NotificationBell } from "@/components/NotificationBell";
+
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
