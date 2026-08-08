@@ -22,7 +22,7 @@ function GlobalAdminPage() {
   const [settings, setSettings] = useState<any>(null);
   const [pendingPayments, setPendingPayments] = useState<any[]>([]);
   const [pendingPayouts, setPendingPayouts] = useState<any[]>([]);
-  const [financialStats, setFinancialStats] = useState<any>(null);
+  const [financialStats, setFinancialStats] = useState<any[]>([]);
 
   useEffect(() => {
     fetchData();
@@ -81,7 +81,7 @@ function GlobalAdminPage() {
         .eq("status", "confirmada") // Solo las pagadas/confirmadas
         .or("status.eq.finalizada");
       
-      if (bookings) {
+      if (bookings && bookings.length > 0) {
         const stats = (bookings as any[]).reduce((acc, curr) => {
           const date = new Date(curr.created_at);
           const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -90,14 +90,16 @@ function GlobalAdminPage() {
             acc[monthKey] = { month: monthKey, total: 0, owner_sum: 0, profit: 0 };
           }
           
-          acc[monthKey].total += Number(curr.total_price);
-          acc[monthKey].owner_sum += Number(curr.owner_amount);
-          acc[monthKey].profit += Number(curr.platform_fee);
+          acc[monthKey].total += Number(curr.total_price || 0);
+          acc[monthKey].owner_sum += Number(curr.owner_amount || 0);
+          acc[monthKey].profit += Number(curr.platform_fee || 0);
           
           return acc;
         }, {} as Record<string, any>);
         
         setFinancialStats(Object.values(stats).sort((a: any, b: any) => b.month.localeCompare(a.month)));
+      } else {
+        setFinancialStats([]);
       }
     } else if (activeTab === "edificios") {
       const { data } = await supabase
@@ -187,17 +189,17 @@ function GlobalAdminPage() {
         <p className="text-muted-foreground font-medium text-lg">Configuración y auditoría</p>
       </header>
 
-      {activeTab === "resumen" && financialStats && (
+      {activeTab === "resumen" && (
         <section className="space-y-6 animate-in fade-in duration-300">
           <div className="premium-card p-10 bg-primary text-primary-foreground shadow-premium relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-[100px] animate-pulse" />
             <div className="space-y-6 relative z-10">
               <div className="space-y-2">
                 <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[11px]">Facturación Mensual</p>
-                <h2 className="text-6xl font-bold tracking-tight">${financialStats[0]?.total.toLocaleString('es-AR') || 0}</h2>
+                <h2 className="text-6xl font-bold tracking-tight">${financialStats?.[0]?.total?.toLocaleString('es-AR') || 0}</h2>
               </div>
               <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/10 rounded-full text-[12px] font-bold uppercase tracking-widest border border-white/10">
-                Ganancia Neta: ${financialStats[0]?.profit.toLocaleString('es-AR') || 0}
+                Ganancia Neta: ${financialStats?.[0]?.profit?.toLocaleString('es-AR') || 0}
               </div>
 
               <div className="flex justify-between items-center mt-10 border-t border-white/10 pt-8">
@@ -413,7 +415,7 @@ function GlobalAdminPage() {
         </div>
       ) : activeTab === "resumen" ? (
         <div className="space-y-6 animate-in fade-in duration-300">
-          {financialStats.map((stat: any) => (
+          {financialStats?.map((stat: any) => (
             <div key={stat.month} className="bg-white p-6 rounded-[24px] shadow-soft border border-slate-50 space-y-4">
               <div className="flex justify-between items-center">
                 <h4 className="font-bold text-slate-900 capitalize text-lg">{format(new Date(stat.month + '-02'), 'MMMM yyyy', { locale: es })}</h4>
