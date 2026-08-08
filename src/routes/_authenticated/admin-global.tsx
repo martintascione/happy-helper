@@ -413,7 +413,7 @@ function GlobalAdminPage() {
         </div>
       ) : activeTab === "resumen" ? (
         <div className="space-y-6 animate-in fade-in duration-300">
-          {financialStats.map((stat: any) => (
+          {financialStats?.map((stat: any) => (
             <div key={stat.month} className="bg-white p-6 rounded-[24px] shadow-soft border border-slate-50 space-y-4">
               <div className="flex justify-between items-center">
                 <h4 className="font-bold text-slate-900 capitalize text-lg">{format(new Date(stat.month + '-02'), 'MMMM yyyy', { locale: es })}</h4>
