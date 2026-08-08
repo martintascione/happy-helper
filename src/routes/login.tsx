@@ -202,194 +202,224 @@ function LoginPage() {
     setLoading(false);
   };
 
-  if (step === 3) {
-    return (
-      <div className="min-h-screen bg-[#F8F9FB] flex items-center justify-center p-6">
-        <div className="w-full max-w-[400px] bg-white rounded-[2.5rem] p-10 shadow-xl text-center space-y-6">
-          <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto text-amber-500">
-            <Lock size={40} />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900">Cuenta en espera</h1>
-          <p className="text-slate-500">Tu cuenta está esperando la aprobación del administrador de tu edificio. Te avisaremos cuando puedas ingresar.</p>
-          <button 
-            onClick={() => supabase.auth.signOut().then(() => window.location.reload())}
-            className="text-primary font-bold"
-          >
-            Cerrar sesión
-          </button>
+  return (
+    <div className="min-h-screen bg-[#F7F5F1] flex flex-col items-center justify-start p-6 pt-12 pb-10">
+      {/* Header Area */}
+      <div className="w-full max-w-[420px] mb-8 text-center flex flex-col items-center space-y-4">
+        <div className="w-16 h-16 bg-black rounded-[22px] flex items-center justify-center shadow-xl shadow-black/10">
+          <Building2 size={32} className="text-white" />
+        </div>
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold text-[#0A0A0B] tracking-tight">
+            {step === 1 ? (isSignUp ? "Crear cuenta" : "Login") : "Vinculá tu edificio"}
+          </h1>
+          {step === 1 && (
+            <p className="text-slate-500 text-sm font-medium">
+              {isSignUp ? "Unite a la comunidad de tu edificio" : "Ingresá a tu panel de control"}
+            </p>
+          )}
         </div>
       </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen bg-[#F7F5F1] flex items-center justify-center p-6">
-      <div className="w-full max-w-[420px] bg-white rounded-[28px] p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-8 animate-in fade-in zoom-in-95 duration-500">
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-14 h-14 bg-black rounded-[18px] flex items-center justify-center shadow-lg shadow-black/10">
-            <Building2 size={28} className="text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mt-2">
-            {step === 1 ? (isSignUp ? "Crear cuenta" : "Bienvenido") : "Vinculá tu edificio"}
-          </h1>
-        </div>
-
+      <div className="w-full max-w-[420px] space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
         {step === 1 ? (
-          <div className="space-y-6">
-            {existingSession && (
-              <div className="tint-info rounded-[20px] p-4 space-y-3">
-                <p className="text-[13px] font-medium leading-relaxed">
-                  Ya hay una sesión iniciada como <span className="font-semibold">{existingSession}</span>
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => checkSession()}
-                    className="flex-1 py-2.5 bg-black text-white rounded-full text-[13px] font-semibold active:scale-[0.98] transition-all"
-                  >
-                    Continuar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      await supabase.auth.signOut();
-                      setExistingSession(null);
-                      toast.success("Sesión cerrada");
-                    }}
-                    className="flex-1 py-2.5 bg-white rounded-full text-[13px] font-semibold text-slate-600 shadow-subtle active:scale-[0.98] transition-all"
-                  >
-                    Usar otra cuenta
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {signupNotice && (
-              <div className="tint-warning rounded-[20px] p-4">
-                <p className="text-[13px] font-medium leading-relaxed">
-                  Te enviamos un correo para confirmar tu cuenta. Abrí el link y después ingresá con tu email y contraseña.
-                </p>
-              </div>
-            )}
-
-            <div className="space-y-4">
-              {isSignUp && (
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nombre Completo</label>
-                  <input
-                    type="text"
-                    required
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Tu nombre completo"
-                    className="w-full p-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
-                  />
+          <div className="space-y-8">
+            {/* Form Container */}
+            <div className="premium-card p-8 md:p-10 space-y-6">
+              {existingSession && (
+                <div className="tint-info rounded-[20px] p-4 space-y-3">
+                  <p className="text-[13px] font-medium leading-relaxed">
+                    Ya hay una sesión iniciada como <span className="font-semibold">{existingSession}</span>
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => checkSession()}
+                      className="flex-1 py-2.5 bg-black text-white rounded-full text-[13px] font-semibold active:scale-[0.98] transition-all"
+                    >
+                      Continuar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await supabase.auth.signOut();
+                        setExistingSession(null);
+                        toast.success("Sesión cerrada");
+                      }}
+                      className="flex-1 py-2.5 bg-white rounded-full text-[13px] font-semibold text-slate-600 shadow-subtle active:scale-[0.98] transition-all"
+                    >
+                      Usar otra cuenta
+                    </button>
+                  </div>
                 </div>
               )}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Email</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="ejemplo@correo.com"
-                  className="w-full p-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
-                />
+
+              {signupNotice && (
+                <div className="tint-warning rounded-[20px] p-4">
+                  <p className="text-[13px] font-medium leading-relaxed">
+                    Te enviamos un correo para confirmar tu cuenta. Abrí el link y después ingresá con tu email y contraseña.
+                  </p>
+                </div>
+              )}
+
+              <div className="space-y-4">
+                {isSignUp && (
+                  <div className="relative group">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-black transition-colors" size={18} />
+                    <input
+                      type="text"
+                      required
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Nombre Completo"
+                      className="w-full pl-12 pr-4 py-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
+                    />
+                  </div>
+                )}
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-black transition-colors" size={18} />
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email"
+                    className="w-full pl-12 pr-4 py-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
+                  />
+                </div>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-black transition-colors" size={18} />
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Contraseña"
+                    className="w-full pl-12 pr-4 py-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
+                  />
+                  {!isSignUp && (
+                    <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400 hover:text-black">
+                      ¿Olvidaste?
+                    </button>
+                  )}
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Contraseña</label>
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full p-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
-                />
-              </div>
+
+              <button
+                key={isSignUp ? "signup" : "signin"}
+                type="button"
+                onClick={handleRegisterClick}
+                disabled={loading}
+                className="w-full py-4 bg-black text-white rounded-full font-bold shadow-xl shadow-black/10 active:scale-[0.98] transition-all disabled:opacity-50 text-sm"
+              >
+                {loading ? "Procesando..." : isSignUp ? "Login" : "Login"}
+              </button>
             </div>
 
-            <button
-              id="auth-submit-button"
-              key={isSignUp ? "signup" : "signin"}
-              type="button"
-              onClick={handleRegisterClick}
-              disabled={loading}
-              className="w-full py-4 bg-black text-white rounded-full font-bold shadow-xl shadow-black/10 active:scale-[0.98] transition-all disabled:opacity-50 text-sm"
-            >
-              {loading ? "Procesando..." : isSignUp ? "Registrarme" : "Ingresar"}
-            </button>
+            {/* Switch & Social Section */}
+            <div className="space-y-6">
+              <div className="relative py-2">
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200"></div></div>
+                <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-bold"><span className="bg-[#F7F5F1] px-4 text-slate-400">o</span></div>
+              </div>
 
-            <div className="flex flex-col gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="w-full py-2 text-[13px] text-slate-500 font-semibold hover:text-black transition-colors"
-              >
-                {isSignUp ? "¿Ya tenés cuenta? Ingresá" : "¿No tenés cuenta? Registrate"}
-              </button>
-              
-              <Link 
-                to="/" 
-                className="w-full py-2 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest hover:text-slate-600"
-              >
-                Volver al inicio
-              </Link>
+              <div className="space-y-3">
+                <button 
+                  type="button"
+                  className="w-full py-4 bg-[#F5F5F3] text-[#0A0A0B] rounded-full font-bold text-sm flex items-center justify-center gap-3 active:scale-[0.98] transition-all"
+                >
+                  <img src="https://www.google.com/favicon.ico" className="w-4 h-4 grayscale opacity-70" alt="G" />
+                  Continue with Google
+                </button>
+                <button 
+                  type="button"
+                  className="w-full py-4 bg-[#B4F481] text-[#0A0A0B] rounded-full font-bold text-sm flex items-center justify-center gap-3 active:scale-[0.98] transition-all"
+                >
+                  <div className="w-4 h-4 flex items-center justify-center"><User size={16} /></div>
+                  Continue As Guest
+                </button>
+              </div>
+
+              <div className="flex flex-col items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => setIsSignUp(!isSignUp)}
+                  className="text-[13px] text-slate-500 font-semibold hover:text-black transition-colors"
+                >
+                  {isSignUp ? (
+                    <>¿Ya tenés cuenta? <span className="text-black font-bold underline underline-offset-4">Log in</span></>
+                  ) : (
+                    <>¿No tenés cuenta? <span className="text-black font-bold underline underline-offset-4">Registrate</span></>
+                  )}
+                </button>
+                
+                <Link 
+                  to="/" 
+                  className="text-[10px] text-slate-400 font-bold uppercase tracking-widest hover:text-slate-600"
+                >
+                  Volver al inicio
+                </Link>
+              </div>
             </div>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
             {!foundBuilding ? (
-              <div className="space-y-6">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center w-full block">Código de invitación</label>
-                  <input
-                    type="text"
-                    value={inviteCode}
-                    autoFocus
-                    inputMode="text"
-                    onChange={(e) => setInviteCode(e.target.value)}
-                    placeholder="TORREXXXX"
-                    className="w-full p-6 bg-[#F5F5F3] rounded-[24px] border-none focus:ring-2 focus:ring-black/5 transition-all text-2xl font-black text-center tracking-[0.2em] font-mono uppercase"
-                  />
-                  <p className="text-[10px] text-slate-400 text-center font-medium">El código fue enviado a tu correo o entregado por la administración.</p>
+              <div className="premium-card p-8 md:p-10 space-y-6">
+                <div className="space-y-4">
+                  <div className="w-full p-6 bg-[#F5F5F3] rounded-[24px] border-none focus-within:ring-2 focus-within:ring-black/5 transition-all text-center">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-4">Código de invitación</label>
+                    <input
+                      type="text"
+                      value={inviteCode}
+                      autoFocus
+                      inputMode="text"
+                      onChange={(e) => setInviteCode(e.target.value)}
+                      placeholder="TORREXXXX"
+                      className="w-full bg-transparent border-none focus:ring-0 text-3xl font-black text-center tracking-[0.2em] font-mono uppercase p-0"
+                    />
+                  </div>
+                  <p className="text-[11px] text-slate-400 text-center font-medium px-4">El código fue enviado a tu correo o entregado por la administración.</p>
                 </div>
                 <button
                   onClick={handleCheckInvite}
                   disabled={loading || !inviteCode}
-                  className="w-full py-4 bg-black text-white rounded-full font-bold flex items-center justify-center gap-2 shadow-xl shadow-black/10"
+                  className="w-full py-4 bg-black text-white rounded-full font-bold flex items-center justify-center gap-2 shadow-xl shadow-black/10 active:scale-[0.98] transition-all"
                 >
                   Verificar código <ArrowRight size={18} strokeWidth={2.5} />
                 </button>
+                <button onClick={() => setStep(1)} className="w-full text-center text-xs text-slate-400 font-bold uppercase py-2">Volver</button>
               </div>
             ) : (
-              <div className="space-y-6 animate-in slide-in-from-right duration-300">
-                <div className="tint-positive p-5 rounded-[24px] border border-green-200/20 text-center">
+              <div className="premium-card p-8 md:p-10 space-y-6">
+                <div className="tint-positive p-5 rounded-[24px] text-center">
                   <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-70">Edificio encontrado</p>
                   <p className="text-lg font-bold">{foundBuilding.name}</p>
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Seleccioná tu unidad</label>
-                  <select
-                    value={selectedUnitId}
-                    onChange={(e) => setSelectedUnitId(e.target.value)}
-                    className="w-full p-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-semibold appearance-none"
-                  >
-                    <option value="">Seleccionar Piso/Depto</option>
-                    {units.map((u) => (
-                      <option key={u.id} value={u.id}>
-                        Piso {u.floor} - Depto {u.apartment}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative group">
+                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <select
+                      value={selectedUnitId}
+                      onChange={(e) => setSelectedUnitId(e.target.value)}
+                      className="w-full pl-12 pr-4 py-4 bg-[#F5F5F3] rounded-[20px] border-none focus:ring-2 focus:ring-black/5 transition-all text-sm font-semibold appearance-none"
+                    >
+                      <option value="">Seleccionar Piso/Depto</option>
+                      {units.map((u) => (
+                        <option key={u.id} value={u.id}>
+                          Piso {u.floor} - Depto {u.apartment}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div className="flex gap-3">
                   <button
                     onClick={() => setFoundBuilding(null)}
-                    className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors"
+                    className="w-14 h-14 bg-slate-100 rounded-[20px] flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors active:scale-90"
                   >
                     <ArrowLeft size={20} strokeWidth={2.5} />
                   </button>
