@@ -206,9 +206,6 @@ function LoginPage() {
     <div className="min-h-screen bg-[#F7F5F1] flex flex-col items-center justify-start p-6 pt-12 pb-10">
       {/* Header Area */}
       <div className="w-full max-w-[420px] mb-8 text-center flex flex-col items-center space-y-4">
-        <div className="w-16 h-16 bg-black rounded-[22px] flex items-center justify-center shadow-xl shadow-black/10">
-          <Building2 size={32} className="text-white" />
-        </div>
         <div className="space-y-1">
           <h1 className="text-3xl font-bold text-[#0A0A0B] tracking-tight">
             {step === 1 ? (isSignUp ? "Crear cuenta" : "Login") : "Vinculá tu edificio"}
