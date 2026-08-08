@@ -111,27 +111,51 @@ function MuroPage() {
   };
 
   return (
-    <div className="px-5 pt-6 max-w-2xl mx-auto space-y-8 pb-36 bg-background overflow-x-hidden relative">
-      <header className="px-1 flex justify-between items-center">
-        <div>
-          <h1 className="text-[26px] font-bold text-foreground tracking-tight leading-tight">
-            Hola, {profile?.full_name?.split(' ')[0] || 'vecino'}
-          </h1>
-          <p className="text-[15px] text-muted-foreground font-medium">
-            {(() => { const d = format(new Date(), "EEEE d 'de' MMMM", { locale: es }); return d.charAt(0).toUpperCase() + d.slice(1); })()}
+    <div className="px-5 pt-8 max-w-2xl mx-auto space-y-7 pb-36 bg-background overflow-x-hidden relative">
+      <header className="px-1 flex justify-between items-center mb-2">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate({ to: "/_authenticated/perfil" } as any)}
+            className="w-10 h-10 rounded-full overflow-hidden active:scale-95 transition-all bg-white shadow-subtle border border-white flex items-center justify-center"
+          >
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <User size={18} className="text-slate-400" />
+            )}
+          </button>
+          <div className="flex flex-col">
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Bienvenido</p>
+            <h1 className="text-[20px] font-bold text-foreground tracking-tight leading-none">
+              {profile?.full_name?.split(' ')[0] || 'Vecino'}
+            </h1>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+            {format(new Date(), "d MMM", { locale: es })}
           </p>
         </div>
-        <button
-          onClick={() => navigate({ to: "/_authenticated/perfil" } as any)}
-          className="w-11 h-11 rounded-full overflow-hidden active:scale-95 transition-all bg-white shadow-subtle flex items-center justify-center"
-        >
-          {profile?.avatar_url ? (
-            <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-          ) : (
-            <User size={20} className="text-slate-400" />
-          )}
-        </button>
       </header>
+
+      {/* Wellness / Quick Actions Highlight */}
+      <div className="bg-black text-white rounded-[32px] p-6 relative overflow-hidden group active:scale-[0.98] transition-all cursor-pointer shadow-premium">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white/10 transition-colors" />
+        <div className="relative z-10 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-md">
+              <Zap size={22} className="text-yellow-400 fill-yellow-400" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold tracking-tight">Comunidad Premium</h3>
+              <p className="text-xs font-medium text-white/50">Tu edificio al día</p>
+            </div>
+          </div>
+          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black">
+            <ArrowRight size={18} />
+          </div>
+        </div>
+      </div>
 
       {/* Resumen */}
       <div>
