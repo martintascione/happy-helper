@@ -81,7 +81,7 @@ function GlobalAdminPage() {
         .eq("status", "confirmada") // Solo las pagadas/confirmadas
         .or("status.eq.finalizada");
       
-      if (bookings) {
+      if (bookings && bookings.length > 0) {
         const stats = (bookings as any[]).reduce((acc, curr) => {
           const date = new Date(curr.created_at);
           const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -90,14 +90,16 @@ function GlobalAdminPage() {
             acc[monthKey] = { month: monthKey, total: 0, owner_sum: 0, profit: 0 };
           }
           
-          acc[monthKey].total += Number(curr.total_price);
-          acc[monthKey].owner_sum += Number(curr.owner_amount);
-          acc[monthKey].profit += Number(curr.platform_fee);
+          acc[monthKey].total += Number(curr.total_price || 0);
+          acc[monthKey].owner_sum += Number(curr.owner_amount || 0);
+          acc[monthKey].profit += Number(curr.platform_fee || 0);
           
           return acc;
         }, {} as Record<string, any>);
         
         setFinancialStats(Object.values(stats).sort((a: any, b: any) => b.month.localeCompare(a.month)));
+      } else {
+        setFinancialStats([]);
       }
     } else if (activeTab === "edificios") {
       const { data } = await supabase
