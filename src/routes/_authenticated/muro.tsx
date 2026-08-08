@@ -197,8 +197,10 @@ function MuroPage() {
           <h2 className="text-xl font-bold text-slate-900 tracking-tight">Comunicados</h2>
           <button className="text-[11px] font-bold text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors">Ver todos</button>
         </div>
-      </div>
-        {data.posts.length > 0 ? data.posts.map((post) => (
+
+        {/* Comunicados Oficiales */}
+        <div className="space-y-4">
+          {data.posts.length > 0 ? data.posts.map((post) => (
           <div key={post.id} className="premium-card p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
