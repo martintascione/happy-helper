@@ -87,52 +87,19 @@ function AuthenticatedLayout() {
   }, [filteredNavItems]);
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground overflow-x-hidden relative">
-      {/* Sidebar for Desktop */}
-      <aside className="hidden lg:flex flex-col w-72 bg-background p-10 gap-10 border-r border-black/[0.03]">
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-premium">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              </svg>
-            </div>
-            <span className="font-bold text-foreground tracking-tight text-2xl">Tower</span>
-          </div>
-        </div>
-        
-        <nav className="flex flex-col gap-1">
-          {filteredNavItems.map((item) => {
-            const isActive = location.pathname === item.to;
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                preload="intent"
-                className={`flex items-center gap-5 px-6 py-4 rounded-[1.25rem] font-bold transition-all duration-300 ${
-                  isActive 
-                    ? "bg-primary text-primary-foreground shadow-premium scale-[1.02]" 
-                    : "text-muted-foreground hover:text-foreground hover:bg-black/[0.02]"
-                }`}
-              >
-                <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
-                <span className="text-[15px] tracking-tight">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-      </aside>
-
-      <main className="flex-1 flex flex-col relative min-h-screen max-w-full overflow-x-hidden">
-        <header className="flex justify-end p-6 lg:p-8 sticky top-0 z-[50]">
+    <div className="flex min-h-screen bg-background text-foreground overflow-x-hidden relative justify-center">
+      <main className="flex-1 flex flex-col relative min-h-screen max-w-[480px] w-full overflow-x-hidden bg-background">
+        <header className="flex justify-end p-6 sticky top-0 z-[50]">
           <NotificationBell userId={userId} />
         </header>
-        <div className="flex-1 pb-32 lg:pb-8">
+        
+        <div className="flex-1 pb-32">
           <Outlet />
         </div>
 
-        <div className="lg:hidden fixed bottom-12 left-0 right-0 px-10 z-[100]">
-          <nav className="h-[76px] glass rounded-[2.5rem] shadow-pill flex items-center justify-around px-4 relative border border-black/[0.03] ring-1 ring-black/[0.02] touch-none">
+        {/* Bottom Nav Pill */}
+        <div className="fixed bottom-12 left-0 right-0 px-8 z-[100] flex justify-center pointer-events-none">
+          <nav className="h-[76px] glass rounded-[2.5rem] shadow-pill flex items-center justify-around px-4 relative border border-black/[0.03] ring-1 ring-black/[0.02] touch-none w-full max-w-[400px] pointer-events-auto">
             {mobileNavItems.map((item) => {
               const isActive = location.pathname === item.to;
               return (
@@ -150,8 +117,6 @@ function AuthenticatedLayout() {
             })}
           </nav>
         </div>
-
-        {/* Role Switcher removed from here as requested */}
       </main>
     </div>
   );

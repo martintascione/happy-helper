@@ -69,6 +69,44 @@
     letter-spacing: -0.01em;
     overflow-x: hidden;
     width: 100%;
+    touch-action: manipulation;
+  }
+
+  /* Force vertical mobile view only */
+  @media (min-width: 481px) {
+    body::before {
+      content: "📱 Por favor, usa la versión móvil en vertical";
+      position: fixed;
+      inset: 0;
+      background: #F9F8F6;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      padding: 2rem;
+      text-align: center;
+      color: #0A0A0B;
+    }
+  }
+
+  @media (orientation: landscape) and (max-width: 932px) {
+    body::before {
+      content: "🔄 Por favor, gira tu dispositivo a vertical";
+      position: fixed;
+      inset: 0;
+      background: #F9F8F6;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      padding: 2rem;
+      text-align: center;
+      color: #0A0A0B;
+    }
   }
 }
 
